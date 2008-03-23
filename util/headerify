@@ -1,0 +1,25 @@
+#!/bin/bash
+
+NAME="Jacob Kroon"
+EMAIL="<jacob.kroon@gmail.com>"
+YEAR0=2008
+AUTHOR=${NAME}" "${EMAIL}
+
+for filename in $*; do
+	grep $filename -e "Iko - Copyright" > /dev/null
+	has_copyright=$?
+	if [ $has_copyright = 1 ]; then
+		cat - $filename <<  > $filename.tmp
+/*
+ * Iko - Copyright (C) ${YEAR0}-$(date +%Y) ${NAME}
+ *
+ * Contributor(s):
+ *   ${AUTHOR}
+ */
+
+
+		mv $filename.tmp $filename
+	fi
+	sed "s/Iko - Copyright (C) ${YEAR0}.*Jacob Kroon/Iko - Copyright (C) ${YEAR0}-$(date +%Y) ${NAME}/g" $filename > $filename.tmp
+	mv $filename.tmp $filename
+done
