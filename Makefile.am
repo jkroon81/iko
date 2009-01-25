@@ -7,6 +7,7 @@ SUBDIRS =                \
 	gee              \
 	iko              \
 	ikoast           \
+	ikovalacode      \
 	ikoc             \
 	examples         \
 	util

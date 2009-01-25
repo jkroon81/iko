@@ -1,33 +1,30 @@
-bin_PROGRAMS = ikoc
+lib_LTLIBRARIES = libikovalacode.la
 
 CLEANFILES =                                         \
 	*~
 
-ikoc_SOURCES =                                       \
-	ikoc.vala
+libikovalacode_la_SOURCES =                          \
+	iko-valacode-generator.vala
 
-ikoc_VALAFLAGS =                                     \
+libikovalacode_la_VALAFLAGS =                        \
+	--library=ikovalacode                        \
 	--vapidir=$(top_builddir)/gee                \
 	--vapidir=$(top_builddir)/iko                \
 	--vapidir=$(top_builddir)/ikoast             \
-	--vapidir=$(top_builddir)/ikovalacode        \
 	--pkg=gee                                    \
 	--pkg=iko                                    \
 	--pkg=ikoast                                 \
-	--pkg=ikovalacode                            \
-	-C
+	-C -H ikovalacode.h
 
-ikoc_CFLAGS =                                        \
+libikovalacode_la_CFLAGS =                           \
 	@GOBJECT_CFLAGS@                             \
 	-I$(top_srcdir)/gee                          \
 	-I$(top_srcdir)/iko                          \
-	-I$(top_srcdir)/ikoast                       \
-	-I$(top_srcdir)/ikovalacode
+	-I$(top_srcdir)/ikoast
 
-ikoc_LDADD =                                         \
+libikovalacode_la_LIBADD =                           \
 	$(top_builddir)/gee/libgee.la                \
 	$(top_builddir)/iko/libiko.la                \
-	$(top_builddir)/ikoast/libikoast.la          \
-	$(top_builddir)/ikovalacode/libikovalacode.la
+	$(top_builddir)/ikoast/libikoast.la
 
 include Makefile.vm

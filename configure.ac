@@ -14,5 +14,6 @@ AC_OUTPUT(
 	iko/Makefile
 	ikoast/Makefile
 	ikoc/Makefile
+	ikovalacode/Makefile
 	util/Makefile
 	)

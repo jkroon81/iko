@@ -14,6 +14,8 @@ public class Ikoc.Main {
       return 0;
     }
 
+    Environment.set_prgname("ikoc");
+
     var context = new Iko.Context();
     for(i = 1; i < args.length; i++)
       context.add_source_file(new Iko.SourceFile(args[i]));
@@ -27,7 +29,13 @@ public class Ikoc.Main {
     context = null;
 
     system.accept(new Iko.AST.DerivativeSolver());
-    //system.accept(new Iko.AST.Writer());
+    var codegen = new Iko.ValaCode.Generator();
+    system.accept(codegen);
+    var buffer = new StringBuilder(args[1]);
+    buffer.erase(buffer.len - 2, 2);
+    buffer.append(".vala");
+    codegen.file = FileStream.open(buffer.str, "w");
+    system.accept(codegen);
 
     return 0;
   }
