@@ -60,19 +60,17 @@ public class Iko.AST.SimplifyRationals : Visitor {
     if(me.op == Operator.MUL) {
       var op_list_2 = new ArrayList<Expression>();
       for(var i = 0; i < op_list.size; i++) {
-        var op = op_list[i];
-        if(op is BinaryExpression) {
-          var be_sub = op as BinaryExpression;
+        if(op_list[i] is BinaryExpression) {
+          var be_sub = op_list[i] as BinaryExpression;
           var left = new MultiExpression(Operator.MUL);
-          if(op_list_2.size > 0)
-            left.add_operand_list(new ReadOnlyList<Expression>(op_list_2));
+          left.add_operand_list(new ReadOnlyList<Expression>(op_list_2));
           for(var j = i + 1; j < op_list.size; j++)
             left.add_operand(op_list[j]);
           left.add_operand(be_sub.left);
           expr = new BinaryExpression(Operator.DIV, left, be_sub.right);
           return;
         } else
-          op_list_2.add(op);
+          op_list_2.add(op_list[i]);
       }
     }
     var me_new = new MultiExpression(me.op);
