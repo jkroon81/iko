@@ -11,6 +11,10 @@ public abstract class Iko.AST.Expression : Node {
     v.visit_expression(this);
   }
 
+  public bool equals(Expression expr) {
+    return true;
+  }
+
   public Expression simplify() {
     var expr = new TransformNegatives().transform_negatives(this);
     expr = new LevelOperators().level_operators(expr);
