@@ -77,6 +77,6 @@ public class Iko.AST.ExpandTerms : Visitor {
   }
 
   public override void visit_simple_expression(SimpleExpression se) {
-    expr = new BinaryExpression(Operator.POWER, se, new IntegerLiteral("1"));
+    expr = se;
   }
 }

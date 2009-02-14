@@ -68,6 +68,6 @@ public class Iko.AST.CollectTerms : Visitor {
   }
 
   public override void visit_simple_expression(SimpleExpression se) {
-    expr = se;
+    expr = new BinaryExpression(Operator.POWER, se, new IntegerLiteral("1"));
   }
 }
