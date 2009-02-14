@@ -17,10 +17,15 @@ public abstract class Iko.AST.Expression : Node {
 
   public Expression simplify() {
     var expr = new TransformNegatives().transform_negatives(this);
+    expr.accept(new Iko.AST.Writer());
     expr = new LevelOperators().level_operators(expr);
+    expr.accept(new Iko.AST.Writer());
     expr = new SimplifyRationals().simplify_rationals(expr);
+    expr.accept(new Iko.AST.Writer());
     expr = new ExpandTerms().expand_terms(expr);
+    expr.accept(new Iko.AST.Writer());
     expr = new CollectTerms().collect_terms(expr);
+    expr.accept(new Iko.AST.Writer());
     return expr;
   }
 }
