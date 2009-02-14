@@ -16,4 +16,8 @@ public class Iko.AST.SymbolAccess : SimpleExpression {
     base.accept(v);
     v.visit_symbol_access(this);
   }
+
+  public override bool equals(Expression e) {
+    return (e is SymbolAccess && (e as SymbolAccess).symbol == symbol);
+  }
 }

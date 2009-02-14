@@ -11,8 +11,8 @@ public abstract class Iko.AST.Expression : Node {
     v.visit_expression(this);
   }
 
-  public bool equals(Expression expr) {
-    return true;
+  public virtual bool equals(Expression expr) {
+    return false;
   }
 
   public Expression simplify() {
