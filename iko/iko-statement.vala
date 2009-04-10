@@ -5,5 +5,5 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.Klass {
+public abstract class Iko.Statement : Node {
 }
