@@ -6,6 +6,7 @@ EXTRA_DIST =             \
 SUBDIRS =                \
 	gee              \
 	iko              \
+	ikoast           \
 	ikoc             \
 	examples         \
 	util

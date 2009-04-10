@@ -21,7 +21,13 @@ public class Ikoc.Main {
     context.accept(new Iko.Parser());
     context.accept(new Iko.TypeResolver());
     context.accept(new Iko.MemberResolver());
-    context.accept(new Iko.Writer());
+
+    var system = new Iko.AST.System();
+    context.accept(new Iko.AST.Generator(system));
+    context = null;
+
+    system.accept(new Iko.AST.DerivativeSolver());
+    //system.accept(new Iko.AST.Writer());
 
     return 0;
   }

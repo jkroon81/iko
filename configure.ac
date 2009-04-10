@@ -12,6 +12,7 @@ AC_OUTPUT(
 	examples/Makefile
 	gee/Makefile
 	iko/Makefile
+	ikoast/Makefile
 	ikoc/Makefile
 	util/Makefile
 	)
