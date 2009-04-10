@@ -33,7 +33,7 @@ sub write_valamakefile {
 
             while ($pattern =~ s/\b(\S+)\.vala//) {
                 my $base = basename $1;
-                $built_sources .= " $base.c $base.h";
+                $built_sources .= " $base.c";
                 $vala_sources .= " $1.vala";
             }
 
