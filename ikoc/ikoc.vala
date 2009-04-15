@@ -31,11 +31,6 @@ public class Ikoc.Main {
     system.accept(new Iko.AST.DerivativeSolver());
     var codegen = new Iko.ValaCode.Generator();
     system.accept(codegen);
-    var buffer = new StringBuilder(args[1]);
-    buffer.erase(buffer.len - 2, 2);
-    buffer.append(".vala");
-    codegen.file = FileStream.open(buffer.str, "w");
-    system.accept(codegen);
 
     return 0;
   }
