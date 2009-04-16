@@ -249,8 +249,11 @@ public class Iko.Parser : Visitor {
     var loop = true;
     while(loop) {
       var op = get_binary_operator(current());
-      if(op == BinaryExpression.Operator.MINUS ||
-         op == BinaryExpression.Operator.PLUS)
+      if(op == BinaryExpression.Operator.MINUS)
+      {
+        var right = parse_expression_unary();
+        left = new BinaryExpression(get_src(begin), BinaryExpression.Operator.PLUS, left, right);
+      } else if(op == BinaryExpression.Operator.PLUS)
       {
         next();
         var right = parse_expression_additive();
