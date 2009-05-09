@@ -5,12 +5,12 @@ EXTRA_DIST = \
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/aclocal.m4 \
-	$(srcdir)/config.guess \
-	$(srcdir)/config.sub \
-	$(srcdir)/depcomp \
-	$(srcdir)/install-sh \
-	$(srcdir)/ltmain.sh \
-	$(srcdir)/missing
+	$(srcdir)/build/config.guess \
+	$(srcdir)/build/config.sub \
+	$(srcdir)/build/depcomp \
+	$(srcdir)/build/install-sh \
+	$(srcdir)/build/ltmain.sh \
+	$(srcdir)/build/missing
 
 SUBDIRS = \
 	gee \
