@@ -1,7 +1,9 @@
 CLEANFILES = *~
 
-EXTRA_DIST =                          \
-	linear-test-equation.i        \
-	parabola.i                    \
-	step.i                        \
+EXTRA_DIST = \
+	linear-test-equation.i \
+	parabola.i \
+	step.i \
 	stiff-pendulum.i
+
+-include $(top_srcdir)/git.mk
