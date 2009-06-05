@@ -45,6 +45,6 @@ public class Iko.AST.State : DataSymbol {
   }
 
   public ReadOnlyList<IndependentVariable> get_parameters() {
-    return new ReadOnlyList<Expression>(params);
+    return new ReadOnlyList<IndependentVariable>(params);
   }
 }
