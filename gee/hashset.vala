@@ -99,8 +99,13 @@ public class Gee.HashSet<G> : CollectionObject, Iterable<G>, Collection<G>, Set<
 	public bool remove (G key) {
 		Node<G>** node = lookup_node (key);
 		if (*node != null) {
+			Node<G> next = (owned) (*node)->next;
+
 			(*node)->key = null;
-			*node = (*node)->next;
+			delete *node;
+
+			*node = (owned) next;
+
 			_nnodes--;
 			resize ();
 			_stamp++;
@@ -132,7 +137,7 @@ public class Gee.HashSet<G> : CollectionObject, Iterable<G>, Collection<G>, Set<
 
 			for (int i = 0; i < _array_size; i++) {
 				Node<G> node;
-				Node<G> next;
+				Node<G> next = null;
 				for (node = (owned) _nodes[i]; node != null; node = (owned) next) {
 					next = (owned) node.next;
 					uint hash_val = node.key_hash % new_array_size;
