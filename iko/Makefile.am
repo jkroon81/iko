@@ -6,9 +6,6 @@ CLEANFILES = \
 	iko.vapi \
 	*~
 
-MAINTAINERCLEANFILES = \
-	Makefile.vm
-
 libiko_la_SOURCES = \
 	iko-array.vala \
 	iko-array-access.vala \
@@ -72,6 +69,3 @@ libiko_la_LIBADD = \
 	@GOBJECT_LIBS@ \
 	$(top_builddir)/gee/libgee.la
 
-include Makefile.vm
-
--include $(top_srcdir)/git.mk

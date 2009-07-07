@@ -6,9 +6,6 @@ CLEANFILES = \
 	ikovalacode.vapi \
 	*~
 
-MAINTAINERCLEANFILES = \
-	Makefile.vm
-
 libikovalacode_la_SOURCES = \
 	iko-valacode-generator.vala
 
@@ -33,6 +30,3 @@ libikovalacode_la_LIBADD = \
 	$(top_builddir)/iko/libiko.la \
 	$(top_builddir)/ikoast/libikoast.la
 
-include Makefile.vm
-
--include $(top_srcdir)/git.mk

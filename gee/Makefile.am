@@ -6,9 +6,6 @@ CLEANFILES = \
 	gee.vapi \
 	*~
 
-MAINTAINERCLEANFILES = \
-	Makefile.vm
-
 libgee_la_SOURCES = \
 	arraylist.vala \
 	collectionobject.vala \
@@ -35,6 +32,3 @@ libgee_la_CFLAGS = \
 libgee_la_LIBADD = \
 	@GOBJECT_LIBS@
 
-include Makefile.vm
-
--include $(top_srcdir)/git.mk

@@ -3,9 +3,6 @@ bin_PROGRAMS = ikoc
 CLEANFILES = \
 	*~
 
-MAINTAINERCLEANFILES = \
-	Makefile.vm
-
 ikoc_SOURCES = \
 	ikoc.vala
 
@@ -33,6 +30,3 @@ ikoc_LDADD = \
 	$(top_builddir)/ikoast/libikoast.la \
 	$(top_builddir)/ikovalacode/libikovalacode.la
 
-include Makefile.vm
-
--include $(top_srcdir)/git.mk

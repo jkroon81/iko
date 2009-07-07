@@ -6,4 +6,3 @@ EXTRA_DIST = \
 	step.i \
 	stiff-pendulum.i
 
--include $(top_srcdir)/git.mk

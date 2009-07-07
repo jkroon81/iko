@@ -6,9 +6,6 @@ CLEANFILES = \
 	ikoast.vapi \
 	*~
 
-MAINTAINERCLEANFILES = \
-	Makefile.vm
-
 libikoast_la_SOURCES = \
 	iko-ast-binary-expression.vala \
 	iko-ast-collect-terms.vala \
@@ -61,6 +58,3 @@ libikoast_la_LIBADD = \
 	$(top_builddir)/gee/libgee.la \
 	$(top_builddir)/iko/libiko.la
 
-include Makefile.vm
-
--include $(top_srcdir)/git.mk

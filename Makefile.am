@@ -21,4 +21,3 @@ SUBDIRS = \
 	examples \
 	util
 
--include $(top_srcdir)/git.mk
