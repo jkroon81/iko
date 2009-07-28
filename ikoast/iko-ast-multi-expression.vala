@@ -12,8 +12,10 @@ public class Iko.AST.MultiExpression : Expression {
 
   public Operator op { get; construct; }
 
-  public MultiExpression(Operator op) {
+  public MultiExpression(Operator op, ReadOnlyList<Expression>? op_list) {
     this.op = op;
+    if(op_list != null)
+      add_operand_list(op_list);
   }
 
   construct {

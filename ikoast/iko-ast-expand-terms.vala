@@ -1,5 +1,5 @@
 /*
- * Iko - Copyright (C) 2008 Jacob Kroon
+ * Iko - Copyright (C) 2008-2009 Jacob Kroon
  *
  * Contributor(s):
  *   Jacob Kroon <jacob.kroon@gmail.com>
@@ -7,23 +7,11 @@
 
 using Gee;
 
-public class Iko.AST.ExpandTerms : Visitor {
-  Expression expr;
-
-  public Expression expand_terms(Expression e) {
-    e.accept(this);
-    return expr;
-  }
-
+public class Iko.AST.ExpandTerms : ExpressionTransformer {
   public override void visit_binary_expression(BinaryExpression be) {
     assert(be.op == Operator.DIV ||
            be.op == Operator.POWER);
-
-    be.left.accept(this);
-    var left = expr;
-    be.right.accept(this);
-    var right = expr;
-    expr = new BinaryExpression(be.op, left, right);
+    base.visit_binary_expression(be);
   }
 
   public override void visit_multi_expression(MultiExpression me) {
@@ -33,10 +21,8 @@ public class Iko.AST.ExpandTerms : Visitor {
 
     var op_list = new ArrayList<Expression>();
 
-    foreach(var op in me.get_operands()) {
-      op.accept(this);
-      op_list.add(expr);
-    }
+    foreach(var op in me.get_operands())
+      op_list.add(transform(op));
 
     if(me.op == Operator.MUL) {
       var op_list_new = new ArrayList<Expression> ();
@@ -47,15 +33,14 @@ public class Iko.AST.ExpandTerms : Visitor {
           if(me_sub.op == Operator.PLUS) {
             op_list.remove(me_sub);
             foreach(var f1 in me_sub.get_operands()) {
-              var t = new MultiExpression(Operator.MUL);
+              var t = new MultiExpression(Operator.MUL, null);
               t.add_operand(f1);
-              foreach(var f2 in op_list)
-                t.add_operand(f2);
-              t.accept(this);
-              if((expr as MultiExpression).op == Operator.MUL)
-                op_list_new.add(expr);
-              else if((expr as MultiExpression).op == Operator.PLUS)
-                foreach(var sub_op in (expr as MultiExpression).get_operands())
+              t.add_operand_list(new ReadOnlyList<Expression>(op_list));
+              t = transform(t) as MultiExpression;
+              if(t.op == Operator.MUL)
+                op_list_new.add(t);
+              else if(t.op == Operator.PLUS)
+                foreach(var sub_op in t.get_operands())
                   op_list_new.add(sub_op);
               else
                 assert_not_reached();
@@ -65,18 +50,14 @@ public class Iko.AST.ExpandTerms : Visitor {
         }
       }
       if(op_list_new.size > 0) {
-        var me_new = new MultiExpression(Operator.PLUS);
-        me_new.add_operand_list(new ReadOnlyList<Expression>(op_list_new));
-        expr = me_new;
+        q.push_head(new MultiExpression(Operator.PLUS, new ReadOnlyList<Expression>(op_list_new)));
         return;
       }
     }
-    var me_new = new MultiExpression(me.op);
-    me_new.add_operand_list(new ReadOnlyList<Expression>(op_list));
-    expr = me_new;
+    q.push_head(new MultiExpression(me.op, new ReadOnlyList<Expression>(op_list)));
   }
 
   public override void visit_simple_expression(SimpleExpression se) {
-    expr = new BinaryExpression(Operator.POWER, se, new IntegerLiteral("1"));
+    q.push_head(new BinaryExpression(Operator.POWER, se, new IntegerLiteral("1")));
   }
 }

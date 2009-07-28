@@ -15,6 +15,7 @@ libikoast_la_SOURCES = \
 	iko-ast-derivative-method.vala \
 	iko-ast-derivative-solver.vala \
 	iko-ast-expand-terms.vala \
+	iko-ast-expression-transformer.vala \
 	iko-ast-expression.vala \
 	iko-ast-float-literal.vala \
 	iko-ast-float-type.vala \
@@ -23,8 +24,8 @@ libikoast_la_SOURCES = \
 	iko-ast-integer-literal.vala \
 	iko-ast-level-operators.vala \
 	iko-ast-literal.vala \
-	iko-ast-method.vala \
 	iko-ast-method-call.vala \
+	iko-ast-method.vala \
 	iko-ast-multi-expression.vala \
 	iko-ast-node.vala \
 	iko-ast-operator.vala \
@@ -33,8 +34,8 @@ libikoast_la_SOURCES = \
 	iko-ast-square-root-method.vala \
 	iko-ast-state.vala \
 	iko-ast-simplify-rationals.vala \
-	iko-ast-symbol.vala \
 	iko-ast-symbol-access.vala \
+	iko-ast-symbol.vala \
 	iko-ast-system.vala \
 	iko-ast-transform-negatives.vala \
 	iko-ast-unary-expression.vala \

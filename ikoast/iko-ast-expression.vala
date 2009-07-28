@@ -1,5 +1,5 @@
 /*
- * Iko - Copyright (C) 2008 Jacob Kroon
+ * Iko - Copyright (C) 2008-2009 Jacob Kroon
  *
  * Contributor(s):
  *   Jacob Kroon <jacob.kroon@gmail.com>
@@ -12,11 +12,11 @@ public abstract class Iko.AST.Expression : Node {
   }
 
   public Expression simplify() {
-    var expr = new TransformNegatives().transform_negatives(this);
-    expr = new LevelOperators().level_operators(expr);
-    expr = new SimplifyRationals().simplify_rationals(expr);
-    expr = new ExpandTerms().expand_terms(expr);
-    expr = new CollectTerms().collect_terms(expr);
+    var expr = new TransformNegatives().transform(this);
+    expr = new LevelOperators().transform(expr);
+    expr = new SimplifyRationals().transform(expr);
+    expr = new ExpandTerms().transform(expr);
+    expr = new CollectTerms().transform(expr);
     return expr;
   }
 }
