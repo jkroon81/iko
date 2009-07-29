@@ -111,25 +111,23 @@ public class Iko.AST.Writer : Visitor {
   public override void visit_method_call(MethodCall mc) {
     mc.method.accept(this);
     write("(");
-    var args = mc.get_arguments();
-    foreach(var a in args) {
+    foreach(var a in mc.args) {
       a.accept(this);
-      if(a != args[args.size - 1])
+      if(a != mc.args[mc.args.size - 1])
         write(",");
     }
     write(")");
   }
 
   public override void visit_multi_expression(MultiExpression me) {
-    var op_list = me.get_operands();
-    foreach(var op in op_list) {
+    foreach(var op in me.operands) {
       var protect = needs_paranthesis(me.op, op);
       if(protect)
         write("(");
       op.accept(this);
       if(protect)
         write(")");
-      if(op != op_list[op_list.size - 1])
+      if(op != me.operands[me.operands.size - 1])
         write(me.op.to_string());
     }
     if(me.op == Operator.EQUAL)
@@ -140,8 +138,8 @@ public class Iko.AST.Writer : Visitor {
     write(s.name);
     write(" {");
     write("derivative {");
-    foreach(var p in s.get_parameters()) {
-      var expr = s.get_derivative(p);
+    foreach(var p in s.params) {
+      var expr = s.der_map.lookup(p);
       write(p.name);
       write(" = ");
       if(expr != null)
@@ -160,38 +158,33 @@ public class Iko.AST.Writer : Visitor {
 
   public override void visit_system(System s) {
     write("system {");
-    var constants = s.get_constants();
-    if(constants.size > 0) {
+    if(s.constants.size > 0) {
       write("constant {");
-      foreach(var c in constants)
+      foreach(var c in s.constants)
         c.accept(this);
       write("}");
     }
-    var ivars = s.get_independent_variables();
-    if(ivars.size > 0) {
+    if(s.ivars.size > 0) {
       write("independent variable {");
-      foreach(var iv in ivars)
+      foreach(var iv in s.ivars)
         iv.accept(this);
       write("}");
     }
-    var states = s.get_states();
-    if(states.size > 0) {
+    if(s.states.size > 0) {
       write("state {");
-      foreach(var st in states)
+      foreach(var st in s.states)
         st.accept(this);
       write("}");
     }
-    var methods = s.get_methods();
-    if(methods.size > 0) {
+    if(s.methods.size > 0) {
       write("methods {");
-      foreach(var m in methods)
+      foreach(var m in s.methods)
         m.accept(this);
       write("}");
     }
-    var equations = s.get_equations();
-    if(equations.size > 0) {
+    if(s.equations.size > 0) {
       write("equation {");
-      foreach(var eq in equations)
+      foreach(var eq in s.equations)
         eq.accept(this);
       write("}");
     }

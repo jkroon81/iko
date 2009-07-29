@@ -8,7 +8,7 @@
 using Gee;
 
 public class Iko.Method : Member {
-  ArrayList<Parameter> params;
+  public ArrayList<Parameter> params { get; private set; }
 
   public Method(SourceReference? src, Member.Binding binding, DataType data_type, string name) {
     this.src       = src;
@@ -39,9 +39,5 @@ public class Iko.Method : Member {
       params.add(p);
       scope.add(p);
     }
-  }
-
-  public ReadOnlyList<Parameter> get_parameters() {
-    return new ReadOnlyList<Parameter>(params);
   }
 }

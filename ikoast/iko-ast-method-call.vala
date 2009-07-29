@@ -8,7 +8,7 @@
 using Gee;
 
 public class Iko.AST.MethodCall : SimpleExpression {
-  ArrayList<Expression> args;
+  public ArrayList<Expression> args { get; private set; }
 
   public Expression method { get; construct; }
 
@@ -30,13 +30,5 @@ public class Iko.AST.MethodCall : SimpleExpression {
     method.accept(v);
     foreach(var a in args)
       a.accept(v);
-  }
-
-  public void add_argument(Expression a) {
-    args.add(a);
-  }
-
-  public ReadOnlyList<Expression> get_arguments() {
-    return new ReadOnlyList<Expression>(args);
   }
 }

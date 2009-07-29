@@ -127,7 +127,7 @@ public class Iko.Parser : Visitor {
     expect(TokenType.OPEN_BRACE);
     var block = new Block(get_src(begin));
     while(!accept(TokenType.CLOSE_BRACE))
-      block.add_statement(parse_statement());
+      block.statements.add(parse_statement());
     return block;
   }
 
@@ -166,7 +166,7 @@ public class Iko.Parser : Visitor {
     else if(node is Method)
       cl.add_method((Method)node);
     else if(node is Model)
-      cl.set_model((Model)node);
+      cl.add_model((Model)node);
     else if(node is TypeSymbol)
       cl.add_type((TypeSymbol)node);
     else
@@ -319,7 +319,7 @@ public class Iko.Parser : Visitor {
     var field = new Field(get_src(begin), binding, data_type, id);
     if(accept(TokenType.OPEN_BRACKET)) {
       do {
-        field.add_parameter(parse_member_expression());
+        field.params.add(parse_member_expression());
       } while(accept(TokenType.COMMA));
       expect(TokenType.CLOSE_BRACKET);
     }
@@ -373,7 +373,7 @@ public class Iko.Parser : Visitor {
         next();
         var method_call = new MethodCall(get_src(begin), inner);
         do {
-          method_call.add_argument(parse_expression());
+          method_call.args.add(parse_expression());
         } while(accept(TokenType.COMMA));
         expect(TokenType.CLOSE_PARENS);
         expr = method_call;
@@ -437,7 +437,7 @@ public class Iko.Parser : Visitor {
     else if(node is Method)
       ns.add_method((Method)node);
     else if(node is Model)
-      ns.set_model((Model)node);
+      ns.add_model((Model)node);
     else if(node is Namespace)
       ns.add_namespace((Namespace)node);
     else if(node is TypeSymbol)

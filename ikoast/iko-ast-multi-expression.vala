@@ -8,11 +8,11 @@
 using Gee;
 
 public class Iko.AST.MultiExpression : Expression {
-  ArrayList<Expression> operands;
+  public ArrayList<Expression> operands { get; private set; }
 
   public Operator op { get; construct; }
 
-  public MultiExpression(Operator op, ReadOnlyList<Expression>? op_list) {
+  public MultiExpression(Operator op, ArrayList<Expression>? op_list) {
     this.op = op;
     if(op_list != null)
       add_operand_list(op_list);
@@ -33,16 +33,8 @@ public class Iko.AST.MultiExpression : Expression {
       o.accept(v);
   }
 
-  public void add_operand(Expression op) {
-    operands.add(op);
-  }
-
-  public void add_operand_list(ReadOnlyList<Expression> op_list) {
+  public void add_operand_list(ArrayList<Expression> op_list) {
     foreach(var op in op_list)
       operands.add(op);
-  }
-
-  public ReadOnlyList<Expression> get_operands() {
-    return new ReadOnlyList<Expression>(operands);
   }
 }

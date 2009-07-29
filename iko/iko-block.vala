@@ -8,7 +8,7 @@
 using Gee;
 
 public class Iko.Block : Node {
-  ArrayList<Statement> statements;
+  public ArrayList<Statement> statements { get; private set; }
 
   public Block(SourceReference? src) {
     this.src = src;
@@ -27,9 +27,5 @@ public class Iko.Block : Node {
     base.accept_children(v);
     foreach(var stmt in statements)
       stmt.accept(v);
-  }
-
-  public void add_statement(Statement stmt) {
-    statements.add(stmt);
   }
 }

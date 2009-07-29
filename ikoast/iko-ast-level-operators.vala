@@ -22,19 +22,19 @@ public class Iko.AST.LevelOperators : ExpressionTransformer {
       if(left is MultiExpression) {
         var me_sub = left as MultiExpression;
         if(me_sub.op == be.op)
-          me.add_operand_list(new ReadOnlyList<Expression>(me_sub.get_operands()));
+          me.add_operand_list(me_sub.operands);
         else
-          me.add_operand(me_sub);
+          me.operands.add(me_sub);
       } else
-        me.add_operand(left);
+        me.operands.add(left);
       if(right is MultiExpression) {
         var me_sub = right as MultiExpression;
         if(me_sub.op == be.op)
-          me.add_operand_list(new ReadOnlyList<Expression>(me_sub.get_operands()));
+          me.add_operand_list(me_sub.operands);
         else
-          me.add_operand(me_sub);
+          me.operands.add(me_sub);
       } else
-        me.add_operand(right);
+        me.operands.add(right);
       q.push_head(me);
     } else
       q.push_head(new BinaryExpression(be.op, left, right));

@@ -19,14 +19,14 @@ public class Iko.AST.SimplifyRationals : ExpressionTransformer {
       if(left is BinaryExpression) {
         var be_left = left as BinaryExpression;
         var right_new = new MultiExpression(Operator.MUL, null);
-        right_new.add_operand(be_left.right);
-        right_new.add_operand(right);
+        right_new.operands.add(be_left.right);
+        right_new.operands.add(right);
         q.push_head(new BinaryExpression(Operator.DIV, be_left.left, right_new));
       } else if(right is BinaryExpression) {
         var be_right = right as BinaryExpression;
         var left_new = new MultiExpression(Operator.MUL, null);
-        left_new.add_operand(left);
-        left_new.add_operand(be_right.left);
+        left_new.operands.add(left);
+        left_new.operands.add(be_right.left);
         q.push_head(new BinaryExpression(Operator.DIV, left_new, be_right.right));
       } else {
         q.push_head(new BinaryExpression(Operator.DIV, left, right));
@@ -42,7 +42,7 @@ public class Iko.AST.SimplifyRationals : ExpressionTransformer {
 
     var op_list = new ArrayList<Expression>();
 
-    foreach(var op in me.get_operands())
+    foreach(var op in me.operands)
       op_list.add(transform(op));
 
     if(me.op == Operator.MUL) {
@@ -53,16 +53,16 @@ public class Iko.AST.SimplifyRationals : ExpressionTransformer {
           var be_sub = op as BinaryExpression;
           var left = new MultiExpression(Operator.MUL, null);
           if(op_list_2.size > 0)
-            left.add_operand_list(new ReadOnlyList<Expression>(op_list_2));
+            left.add_operand_list(op_list_2);
           for(var j = i + 1; j < op_list.size; j++)
-            left.add_operand(op_list[j]);
-          left.add_operand(be_sub.left);
+            left.operands.add(op_list[j]);
+          left.operands.add(be_sub.left);
           q.push_head(new BinaryExpression(Operator.DIV, left, be_sub.right));
           return;
         } else
           op_list_2.add(op);
       }
     }
-    q.push_head(new MultiExpression(me.op, new ReadOnlyList<Expression>(op_list)));
+    q.push_head(new MultiExpression(me.op, op_list));
   }
 }

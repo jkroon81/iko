@@ -21,26 +21,25 @@ public class Iko.AST.ExpandTerms : ExpressionTransformer {
 
     var op_list = new ArrayList<Expression>();
 
-    foreach(var op in me.get_operands())
+    foreach(var op in me.operands)
       op_list.add(transform(op));
 
     if(me.op == Operator.MUL) {
       var op_list_new = new ArrayList<Expression> ();
-      var op_list_old = new ReadOnlyList<Expression>(op_list);
-      foreach(var op in op_list_old) {
+      foreach(var op in op_list) {
         if(op is MultiExpression) {
           var me_sub = op as MultiExpression;
           if(me_sub.op == Operator.PLUS) {
             op_list.remove(me_sub);
-            foreach(var f1 in me_sub.get_operands()) {
+            foreach(var f1 in me_sub.operands) {
               var t = new MultiExpression(Operator.MUL, null);
-              t.add_operand(f1);
-              t.add_operand_list(new ReadOnlyList<Expression>(op_list));
+              t.operands.add(f1);
+              t.add_operand_list(op_list);
               t = transform(t) as MultiExpression;
               if(t.op == Operator.MUL)
                 op_list_new.add(t);
               else if(t.op == Operator.PLUS)
-                foreach(var sub_op in t.get_operands())
+                foreach(var sub_op in t.operands)
                   op_list_new.add(sub_op);
               else
                 assert_not_reached();
@@ -50,11 +49,11 @@ public class Iko.AST.ExpandTerms : ExpressionTransformer {
         }
       }
       if(op_list_new.size > 0) {
-        q.push_head(new MultiExpression(Operator.PLUS, new ReadOnlyList<Expression>(op_list_new)));
+        q.push_head(new MultiExpression(Operator.PLUS, op_list_new));
         return;
       }
     }
-    q.push_head(new MultiExpression(me.op, new ReadOnlyList<Expression>(op_list)));
+    q.push_head(new MultiExpression(me.op, op_list));
   }
 
   public override void visit_simple_expression(SimpleExpression se) {

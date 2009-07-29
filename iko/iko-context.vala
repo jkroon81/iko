@@ -8,7 +8,7 @@
 using Gee;
 
 public class Iko.Context : Node {
-  ArrayList<SourceFile> source_files;
+  public ArrayList<SourceFile> source_files { get; private set; }
 
   public Namespace root { get; private set; }
 
@@ -32,9 +32,5 @@ public class Iko.Context : Node {
     root.accept(v);
     foreach(var sf in source_files)
       sf.accept(v);
-  }
-
-  public void add_source_file(SourceFile sf) {
-    source_files.add(sf);
   }
 }

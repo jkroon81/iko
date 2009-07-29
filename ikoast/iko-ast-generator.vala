@@ -10,7 +10,7 @@ using Gee;
 public class Iko.AST.Generator : Iko.Visitor {
   Namespace root;
   Queue<string> prefix;
-  Expression expr;
+  Queue<Expression> q;
   FloatType float_type;
   RealType real_type;
 
@@ -19,6 +19,7 @@ public class Iko.AST.Generator : Iko.Visitor {
   public Generator(System system) {
     this.system = system;
     prefix = new Queue<string>();
+    q = new Queue<Expression>();
     float_type = new FloatType();
     real_type = new RealType();
   }
@@ -45,7 +46,12 @@ public class Iko.AST.Generator : Iko.Visitor {
       assert_not_reached();
   }
 
-  void generate_instance(Iko.DataType data_type, string name, ReadOnlyList<Iko.Expression> params) {
+  Expression generate_expression(Iko.Expression e) {
+    e.accept(this);
+    return q.pop_head();
+  }
+
+  void generate_instance(Iko.DataType data_type, string name, ArrayList<Iko.Expression> params) {
     if(data_type is Iko.TypeAccess) {
       prefix.push_tail(name);
       var buffer = new StringBuilder();
@@ -56,7 +62,7 @@ public class Iko.AST.Generator : Iko.Visitor {
         if(params.size > 0) {
           var s = new State(buffer.str, real_type);
           foreach(var p in params)
-            s.add_parameter(system.lookup(expression_to_string(p)) as IndependentVariable);
+            s.params.add(system.bank.lookup(expression_to_string(p)) as IndependentVariable);
           system.add_state(s);
         } else {
           var iv = new IndependentVariable(buffer.str, real_type);
@@ -65,9 +71,9 @@ public class Iko.AST.Generator : Iko.Visitor {
       } else if(type_symbol is Iko.FloatType)
         system.add_constant(new Constant(buffer.str, float_type));
       if(type_symbol is Class)
-        foreach(var f in (type_symbol as Class).get_fields())
+        foreach(var f in (type_symbol as Class).fields)
           if(f.binding == Iko.Member.Binding.INSTANCE)
-            generate_instance(f.data_type, "." + f.name, f.get_parameters());
+            generate_instance(f.data_type, "." + f.name, f.params);
       prefix.pop_tail();
     } else if(data_type is Iko.ArrayType) {
       var length = ((data_type as Iko.ArrayType).length as Iko.IntegerLiteral).value.to_int();
@@ -97,15 +103,11 @@ public class Iko.AST.Generator : Iko.Visitor {
   }
 
   public override void visit_array_access(ArrayAccess aa) {
-    expr = new SymbolAccess(system.lookup(expression_to_string(aa)));
+    q.push_head(new SymbolAccess(system.bank.lookup(expression_to_string(aa))));
   }
 
   public override void visit_binary_expression(Iko.BinaryExpression be) {
-    be.left.accept(this);
-    var left = expr;
-    be.right.accept(this);
-    var right = expr;
-    expr = new BinaryExpression(get_binary_operator(be.op), left, right);
+    q.push_head(new BinaryExpression(get_binary_operator(be.op), generate_expression(be.left), generate_expression(be.right)));
   }
 
   public override void visit_block(Block b) {
@@ -116,14 +118,14 @@ public class Iko.AST.Generator : Iko.Visitor {
     if(!c.visible)
       return;
     prefix.push_tail(c.name + ".");
-    foreach(var t in c.get_types())
+    foreach(var t in c.types)
       t.accept(this);
-    foreach(var f in c.get_fields())
+    foreach(var f in c.fields)
       f.accept(this);
-    foreach(var m in c.get_methods())
+    foreach(var m in c.methods)
       m.accept(this);
-    if(c.get_model() != null)
-      c.get_model().accept(this);
+    if(c.model != null)
+      c.model.accept(this);
     prefix.pop_tail();
   }
 
@@ -134,38 +136,31 @@ public class Iko.AST.Generator : Iko.Visitor {
   }
 
   public override void visit_equation(Iko.Equation eq) {
-    eq.left.accept(this);
-    var left = expr;
-    eq.right.accept(this);
-    var right = expr;
-    system.add_equation(new BinaryExpression(Operator.EQUAL, left, right));
+    system.add_equation(new BinaryExpression(Operator.EQUAL, generate_expression(eq.left), generate_expression(eq.right)));
   }
 
   public override void visit_field(Field f) {
     if(f.binding == Iko.Member.Binding.STATIC)
-      generate_instance(f.data_type, f.name, f.get_parameters());
+      generate_instance(f.data_type, f.name, f.params);
   }
 
   public override void visit_float_literal(Iko.FloatLiteral fl) {
-    expr = new FloatLiteral(fl.value);
+    q.push_head(new FloatLiteral(fl.value));
   }
 
   public override void visit_integer_literal(Iko.IntegerLiteral il) {
-    expr = new IntegerLiteral(il.value);
+    q.push_head(new IntegerLiteral(il.value));
   }
 
   public override void visit_member_access(MemberAccess ma) {
-    expr = new SymbolAccess(system.lookup(expression_to_string(ma)));
+    q.push_head(new SymbolAccess(system.bank.lookup(expression_to_string(ma))));
   }
 
   public override void visit_method_call(Iko.MethodCall mc) {
-    mc.method.accept(this);
-    var expr_tmp = new MethodCall(expr);
-    foreach(var a in mc.get_arguments()) {
-      a.accept(this);
-      expr_tmp.add_argument(expr);
-    }
-    expr = expr_tmp;
+    var expr = new MethodCall(generate_expression(mc.method));
+    foreach(var a in mc.args)
+      expr.args.add(generate_expression(a));
+    q.push_head(expr);
   }
 
   public override void visit_model(Model m) {
@@ -175,22 +170,21 @@ public class Iko.AST.Generator : Iko.Visitor {
   public override void visit_namespace(Namespace ns) {
     if(ns != root)
       prefix.push_tail(ns.name + ".");
-    foreach(var sub_ns in ns.get_namespaces())
+    foreach(var sub_ns in ns.namespaces)
       sub_ns.accept(this);
-    foreach(var t in ns.get_types())
+    foreach(var t in ns.types)
       t.accept(this);
-    foreach(var f in ns.get_fields())
+    foreach(var f in ns.fields)
       f.accept(this);
-    foreach(var m in ns.get_methods())
+    foreach(var m in ns.methods)
       m.accept(this);
-    if(ns.get_model() != null)
-      ns.get_model().accept(this);
+    if(ns.model != null)
+      ns.model.accept(this);
     if(ns != root)
       prefix.pop_tail();
   }
 
   public override void visit_unary_expression(Iko.UnaryExpression ue) {
-    ue.expr.accept(this);
-    expr = new UnaryExpression(get_unary_operator(ue.op), expr);
+    q.push_head(new UnaryExpression(get_unary_operator(ue.op), generate_expression(ue.expr)));
   }
 }

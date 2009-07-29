@@ -8,7 +8,7 @@
 using Gee;
 
 public class Iko.Field : Member {
-  ArrayList<Expression> params;
+  public ArrayList<Expression> params { get; private set; }
 
   public Field(SourceReference? src, Member.Binding binding, DataType data_type, string name) {
     this.src       = src;
@@ -30,13 +30,5 @@ public class Iko.Field : Member {
     base.accept_children(v);
     foreach(var p in params)
       p.accept(v);
-  }
-
-  public void add_parameter(Expression param) {
-    params.add(param);
-  }
-
-  public ReadOnlyList<Expression> get_parameters() {
-    return new ReadOnlyList<Expression>(params);
   }
 }

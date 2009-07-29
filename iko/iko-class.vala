@@ -8,10 +8,10 @@
 using Gee;
 
 public class Iko.Class : TypeSymbol {
-  Model?                model;
-  ArrayList<Field>      fields;
-  ArrayList<Method>     methods;
-  ArrayList<TypeSymbol> types;
+  public Model?                model   { get; private set; }
+  public ArrayList<Field>      fields  { get; private set; }
+  public ArrayList<Method>     methods { get; private set; }
+  public ArrayList<TypeSymbol> types   { get; private set; }
 
   public Class(SourceReference? src, string name) {
     this.src  = src;
@@ -59,6 +59,13 @@ public class Iko.Class : TypeSymbol {
     }
   }
 
+  public void add_model(Model model) {
+    if(this.model != null)
+      Report.error(model.src, "model already defined");
+    else
+      this.model = model;
+  }
+
   public void add_type(TypeSymbol t) {
     if(scope.lookup(t.name) != null)
       Report.error(t.src, "'%s' is already defined in '%s'".printf(t.name, name));
@@ -66,28 +73,5 @@ public class Iko.Class : TypeSymbol {
       types.add(t);
       scope.add(t);
     }
-  }
-
-  public void set_model(Model model) {
-    if(this.model != null)
-      Report.error(model.src, "model already defined");
-    else
-      this.model = model;
-  }
-
-  public ReadOnlyList<Field> get_fields() {
-    return new ReadOnlyList<Field>(fields);
-  }
-
-  public ReadOnlyList<Method> get_methods() {
-    return new ReadOnlyList<Method>(methods);
-  }
-
-  public ReadOnlyList<TypeSymbol> get_types() {
-    return new ReadOnlyList<TypeSymbol>(types);
-  }
-
-  public Model? get_model() {
-    return model;
   }
 }

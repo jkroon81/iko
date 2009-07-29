@@ -8,13 +8,12 @@
 using Gee;
 
 public class Iko.AST.System : Node {
-  ArrayList<Constant>            constants;
-  ArrayList<BinaryExpression>    equations;
-  ArrayList<IndependentVariable> ivars;
-  ArrayList<Method>              methods;
-  ArrayList<State>               states;
-
-  HashTable<string, Symbol> bank;
+  public ArrayList<Constant>            constants { get; private set; }
+  public ArrayList<BinaryExpression>    equations { get; private set; }
+  public ArrayList<IndependentVariable> ivars     { get; private set; }
+  public ArrayList<Method>              methods   { get; private set; }
+  public ArrayList<State>               states    { get; private set; }
+  public HashTable<string, Symbol>      bank      { get; private set; }
 
   construct {
     constants = new ArrayList<Constant>();
@@ -69,29 +68,5 @@ public class Iko.AST.System : Node {
   public void add_state(State s) {
     states.add(s);
     bank.insert(s.name, s);
-  }
-
-  public ReadOnlyList<Constant> get_constants() {
-    return new ReadOnlyList<Constant>(constants);
-  }
-
-  public ReadOnlyList<BinaryExpression> get_equations() {
-    return new ReadOnlyList<BinaryExpression>(equations);
-  }
-
-  public ReadOnlyList<IndependentVariable> get_independent_variables() {
-    return new ReadOnlyList<IndependentVariable>(ivars);
-  }
-
-  public ReadOnlyList<Method> get_methods() {
-    return new ReadOnlyList<Method>(methods);
-  }
-
-  public ReadOnlyList<State> get_states() {
-    return new ReadOnlyList<State>(states);
-  }
-
-  public Symbol lookup(string name) {
-    return bank.lookup(name);
   }
 }

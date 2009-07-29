@@ -18,7 +18,7 @@ public class Ikoc.Main {
 
     var context = new Iko.Context();
     for(i = 1; i < args.length; i++)
-      context.add_source_file(new Iko.SourceFile(args[i]));
+      context.source_files.add(new Iko.SourceFile(args[i]));
     context.accept(new Iko.Parser());
     context.accept(new Iko.TypeResolver());
     context.accept(new Iko.MemberResolver());

@@ -25,9 +25,9 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
 
   public override void visit_multi_expression(MultiExpression me) {
     var op_list = new ArrayList<Expression>();
-    foreach(var op in me.get_operands())
+    foreach(var op in me.operands)
       op_list.add(transform(op));
-    q.push_head(new MultiExpression(me.op, new ReadOnlyList<Expression>(op_list)));
+    q.push_head(new MultiExpression(me.op, op_list));
   }
 
   public override void visit_simple_expression(SimpleExpression se) {

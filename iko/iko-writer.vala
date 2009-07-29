@@ -91,13 +91,13 @@ public class Iko.Writer : Visitor {
     if(!c.visible)
       return;
     write("class %s {".printf(c.name));
-    foreach(var t in c.get_types())
+    foreach(var t in c.types)
       t.accept(this);
-    foreach(var f in c.get_fields())
+    foreach(var f in c.fields)
       f.accept(this);
-    if(c.get_model() != null)
-      c.get_model().accept(this);
-    foreach(var m in c.get_methods())
+    if(c.model != null)
+      c.model.accept(this);
+    foreach(var m in c.methods)
       m.accept(this);
     write("}");
   }
@@ -120,12 +120,11 @@ public class Iko.Writer : Visitor {
       write("static ");
     f.data_type.accept(this);
     write(" %s".printf(f.name));
-    var params = f.get_parameters();
-    if(params.size > 0) {
+    if(f.params.size > 0) {
       write("[");
-      foreach(var p in params) {
+      foreach(var p in f.params) {
         p.accept(this);
-        if(p != params[params.size - 1])
+        if(p != f.params[f.params.size - 1])
           write(",");
       }
       write("]");
@@ -152,11 +151,10 @@ public class Iko.Writer : Visitor {
       write("static ");
     m.data_type.accept(this);
     write(" %s(".printf(m.name));
-    var params = m.get_parameters();
-    foreach(var p in params) {
+    foreach(var p in m.params) {
       p.data_type.accept(this);
       write(" %s".printf(p.name));
-      if(p != params[params.size - 1])
+      if(p != m.params[m.params.size - 1])
         write(",");
     }
     write(");");
@@ -165,10 +163,9 @@ public class Iko.Writer : Visitor {
   public override void visit_method_call(MethodCall mc) {
     mc.method.accept(this);
     write("(");
-    var args = mc.get_arguments();
-    foreach(var a in args) {
+    foreach(var a in mc.args) {
       a.accept(this);
-      if(a != args[args.size - 1])
+      if(a != mc.args[mc.args.size - 1])
         write(",");
     }
     write(")");
@@ -182,16 +179,16 @@ public class Iko.Writer : Visitor {
   public override void visit_namespace(Namespace ns) {
     if(ns != root)
       write("namespace %s {".printf(ns.name));
-    foreach(var n in ns.get_namespaces())
+    foreach(var n in ns.namespaces)
       n.accept(this);
-    foreach(var t in ns.get_types())
+    foreach(var t in ns.types)
       t.accept(this);
-    foreach(var m in ns.get_methods())
+    foreach(var m in ns.methods)
       m.accept(this);
-    foreach(var f in ns.get_fields())
+    foreach(var f in ns.fields)
       f.accept(this);
-    if(ns.get_model() != null)
-      ns.get_model().accept(this);
+    if(ns.model != null)
+      ns.model.accept(this);
     if(ns != root)
       write("}");
   }
