@@ -184,7 +184,7 @@ public class Iko.Parser : Visitor {
     while(accept(TokenType.OPEN_BRACKET)) {
       var length = parse_expression();
       expect(TokenType.CLOSE_BRACKET);
-      data_type = new Array(get_src(begin), data_type, length);
+      data_type = new ArrayType(get_src(begin), data_type, length);
     }
     return data_type;
   }

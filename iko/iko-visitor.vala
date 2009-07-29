@@ -6,8 +6,8 @@
  */
 
 public abstract class Iko.Visitor : Object {
-  public virtual void visit_array(Array array) {}
   public virtual void visit_array_access(ArrayAccess access) {}
+  public virtual void visit_array_type(ArrayType type) {}
   public virtual void visit_binary_expression(BinaryExpression expr) {}
   public virtual void visit_block(Block block) {}
   public virtual void visit_class(Class klass) {}

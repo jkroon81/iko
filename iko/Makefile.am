@@ -7,8 +7,8 @@ CLEANFILES = \
 	*~
 
 libiko_la_SOURCES = \
-	iko-array.vala \
 	iko-array-access.vala \
+	iko-array-type.vala \
 	iko-binary-expression.vala \
 	iko-block.vala \
 	iko-class.vala \

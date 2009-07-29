@@ -69,10 +69,10 @@ public class Iko.AST.Generator : Iko.Visitor {
           if(f.binding == Iko.Member.Binding.INSTANCE)
             generate_instance(f.data_type, "." + f.name, f.get_parameters());
       prefix.pop_tail();
-    } else if(data_type is Iko.Array) {
-      var length = ((data_type as Iko.Array).length as Iko.IntegerLiteral).value.to_int();
+    } else if(data_type is Iko.ArrayType) {
+      var length = ((data_type as Iko.ArrayType).length as Iko.IntegerLiteral).value.to_int();
       for(var i = 0; i < length; i++)
-        generate_instance((data_type as Iko.Array).element_type, name + "[" + i.to_string() + "]", params);
+        generate_instance((data_type as Iko.ArrayType).element_type, name + "[" + i.to_string() + "]", params);
     } else
       assert_not_reached();
   }

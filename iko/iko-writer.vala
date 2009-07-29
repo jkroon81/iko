@@ -49,17 +49,17 @@ public class Iko.Writer : Visitor {
     }
   }
 
-  public override void visit_array(Array a) {
-    a.element_type.accept(this);
-    write("[");
-    a.length.accept(this);
-    write("]");
-  }
-
   public override void visit_array_access(ArrayAccess aa) {
     aa.array.accept(this);
     write("[");
     aa.index.accept(this);
+    write("]");
+  }
+
+  public override void visit_array_type(ArrayType at) {
+    at.element_type.accept(this);
+    write("[");
+    at.length.accept(this);
     write("]");
   }
 

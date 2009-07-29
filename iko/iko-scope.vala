@@ -12,6 +12,9 @@ public class Iko.Scope : Object {
 
   public Scope(Symbol symbol) {
     this.symbol = symbol;
+  }
+
+  construct {
     bank = new HashTable<string, Symbol>(str_hash, str_equal);
   }
 
