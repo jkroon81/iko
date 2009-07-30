@@ -34,6 +34,8 @@ public class Iko.AST.Writer : Visitor {
 
     if(op == Operator.DIV)
       return true;
+    if(op == Operator.MINUS && op_child == Operator.PLUS)
+      return true;
     if(op_child.priority() < op.priority())
       return true;
     return false;
