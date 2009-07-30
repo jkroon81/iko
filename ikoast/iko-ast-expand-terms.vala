@@ -43,8 +43,4 @@ public class Iko.AST.ExpandTerms : ExpressionTransformer {
     }
     q.push_head(me);
   }
-
-  public override void visit_simple_expression(SimpleExpression se_in) {
-    q.push_head(new BinaryExpression(Operator.POWER, se_in, new IntegerLiteral("1")));
-  }
 }
