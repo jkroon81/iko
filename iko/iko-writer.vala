@@ -6,15 +6,15 @@
  */
 
 public class Iko.Writer : Visitor {
-  Namespace root;
-  bool      newline;
-  int       indent;
-
-  public unowned FileStream file { get; set; default = stdout; }
+  StringBuilder buffer;
+  Namespace     root;
+  bool          newline;
+  int           indent;
 
   public int indent_size { private get; set; default = 2; }
 
   construct {
+    buffer  = new StringBuilder();
     newline = true;
     indent  = 0;
   }
@@ -25,28 +25,34 @@ public class Iko.Writer : Visitor {
     while(*c != 0) {
       switch(*c) {
       case '{':
-        file.printf("{\n");
+        buffer.append("{\n");
         newline = true;
         indent += indent_size;
         break;
       case '}':
         indent -= indent_size;
-        file.printf("%s}\n", string.nfill(indent, ' '));
+        buffer.append_printf("%s}\n", string.nfill(indent, ' '));
         newline = true;
         break;
       case ';':
-        file.printf(";\n");
+        buffer.append(";\n");
         newline = true;
         break;
       default:
         if(newline)
-          file.printf("%s", string.nfill(indent, ' '));
-        file.printf("%c", *c);
+          buffer.append(string.nfill(indent, ' '));
+        buffer.append_c(*c);
         newline = false;
         break;
       }
       c++;
     }
+  }
+
+  public string generate_string(Node n) {
+    buffer.truncate(0);
+    n.accept(this);
+    return buffer.str;
   }
 
   public override void visit_array_access(ArrayAccess aa) {

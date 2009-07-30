@@ -22,16 +22,15 @@ public class Ikoc.Main {
     context.accept(new Iko.Parser());
     context.accept(new Iko.TypeResolver());
     context.accept(new Iko.MemberResolver());
-    context.accept(new Iko.Writer());
+    stdout.printf(new Iko.Writer().generate_string(context));
 
     var system = new Iko.AST.System();
     context.accept(new Iko.AST.Generator(system));
     context = null;
     system.accept(new Iko.AST.DerivativeSolver());
-    system.accept(new Iko.AST.Writer());
+    stdout.printf(new Iko.AST.Writer().generate_string(system));
 
-    var codegen = new Iko.ValaCode.Generator();
-    system.accept(codegen);
+    stdout.printf(new Iko.ValaCode.Writer().generate_string(system));
 
     return 0;
   }

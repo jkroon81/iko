@@ -7,7 +7,7 @@ CLEANFILES = \
 	*~
 
 libikovalacode_la_SOURCES = \
-	iko-valacode-generator.vala
+	iko-valacode-writer.vala
 
 libikovalacode_la_VALAFLAGS = \
 	--library=ikovalacode \

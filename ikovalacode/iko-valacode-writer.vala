@@ -5,17 +5,17 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.ValaCode.Generator : Iko.AST.Visitor {
-  bool in_comment;
-  bool newline;
-  int  indent;
-  char prev;
-
-  public unowned FileStream file { private get; set; default = stdout; }
+public class Iko.ValaCode.Writer : Iko.AST.Visitor {
+  StringBuilder buffer;
+  bool          in_comment;
+  bool          newline;
+  int           indent;
+  char          prev;
 
   public int indent_size { private get; set; default = 2; }
 
   construct {
+    buffer     = new StringBuilder();
     in_comment = false;
     newline    = true;
     indent     = 0;
@@ -28,42 +28,48 @@ public class Iko.ValaCode.Generator : Iko.AST.Visitor {
     while(*c != 0) {
       switch(*c) {
       case '*':
-        file.printf("*");
+        buffer.append_c('*');
         if(prev == '/')
           in_comment = true;
         break;
       case '/':
-        file.printf("/");
+        buffer.append_c('/');
         if(prev == '*') {
           in_comment = false;
-          file.printf("\n");
+          buffer.append_c('\n');
           newline = true;
         }
         break;
       case '{':
-        file.printf("{\n");
+        buffer.append("{\n");
         newline = true;
         indent += indent_size;
         break;
       case '}':
         indent -= indent_size;
-        file.printf("\n%s}", string.nfill(indent, ' '));
+        buffer.append_printf("\n%s}", string.nfill(indent, ' '));
         newline = false;
         break;
       case ';':
-        file.printf(";\n");
+        buffer.append(";\n");
         newline = true;
         break;
       default:
         if(newline)
-          file.printf("%s", string.nfill(indent, ' '));
-        file.printf("%c", *c);
+          buffer.append(string.nfill(indent, ' '));
+        buffer.append_c(*c);
         newline = false;
         break;
       }
       prev = *c;
       c++;
     }
+  }
+
+  public string generate_string(Iko.AST.Node n) {
+    buffer.truncate(0);
+    n.accept(this);
+    return buffer.str;
   }
 
   void write_comment(string str) {
