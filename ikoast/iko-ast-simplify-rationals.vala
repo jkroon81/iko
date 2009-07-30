@@ -25,8 +25,8 @@ public class Iko.AST.SimplifyRationals : ExpressionTransformer {
         var be_right = be.right as BinaryExpression;
         var left_new = new MultiExpression(Operator.MUL, null);
         left_new.operands.add(be.left);
-        left_new.operands.add(be_right.left);
-        q.push_head(new BinaryExpression(Operator.DIV, left_new, be_right.right));
+        left_new.operands.add(be_right.right);
+        q.push_head(new BinaryExpression(Operator.DIV, left_new, be_right.left));
       } else
         q.push_head(be);
     } else
