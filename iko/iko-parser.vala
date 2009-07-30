@@ -1,5 +1,5 @@
 /*
- * Iko - Copyright (C) 2008-2008 Jacob Kroon
+ * Iko - Copyright (C) 2008-2009 Jacob Kroon
  *
  * Contributor(s):
  *   Jacob Kroon <jacob.kroon@gmail.com>
