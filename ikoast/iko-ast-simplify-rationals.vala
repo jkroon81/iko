@@ -15,13 +15,13 @@ public class Iko.AST.SimplifyRationals : ExpressionTransformer {
     var be = q.pop_head() as BinaryExpression;
 
     if(be.op == Operator.DIV) {
-      if(be.left is BinaryExpression) {
+      if(be.left is BinaryExpression && (be.left as BinaryExpression).op == Operator.DIV) {
         var be_left = be.left as BinaryExpression;
         var right_new = new MultiExpression(Operator.MUL, null);
         right_new.operands.add(be_left.right);
         right_new.operands.add(be.right);
         q.push_head(new BinaryExpression(Operator.DIV, be_left.left, right_new));
-      } else if(be.right is BinaryExpression) {
+      } else if(be.right is BinaryExpression && (be.right as BinaryExpression).op == Operator.DIV) {
         var be_right = be.right as BinaryExpression;
         var left_new = new MultiExpression(Operator.MUL, null);
         left_new.operands.add(be.left);
@@ -41,21 +41,18 @@ public class Iko.AST.SimplifyRationals : ExpressionTransformer {
     var me = q.pop_head() as MultiExpression;
 
     if(me.op == Operator.MUL) {
-      var op_list = new ArrayList<Expression>();
       for(var i = 0; i < me.operands.size; i++) {
         var op = me.operands[i];
-        if(op is BinaryExpression) {
+        if(op is BinaryExpression && (op as BinaryExpression).op == Operator.DIV) {
           var be_sub = op as BinaryExpression;
           var left = new MultiExpression(Operator.MUL, null);
-          if(op_list.size > 0)
-            left.add_operand_list(op_list);
-          for(var j = i + 1; j < me.operands.size; j++)
-            left.operands.add(me.operands[j]);
+          for(var j = 0; j < me.operands.size; j++)
+            if(j != i)
+              left.operands.add(me.operands[j]);
           left.operands.add(be_sub.left);
           q.push_head(new BinaryExpression(Operator.DIV, left, be_sub.right));
           return;
-        } else
-          op_list.add(op);
+        }
       }
     }
     q.push_head(me);
