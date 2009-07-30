@@ -83,8 +83,6 @@ public class Iko.AST.Writer : Visitor {
     be.right.accept(this);
     if(protect)
       write(")");
-    if(be.op == Operator.EQUAL)
-      write(";");
   }
 
   public override void visit_constant(Constant c) {
@@ -130,8 +128,6 @@ public class Iko.AST.Writer : Visitor {
       if(op != me.operands[me.operands.size - 1])
         write(me.op.to_string());
     }
-    if(me.op == Operator.EQUAL)
-      write(";");
   }
 
   public override void visit_state(State s) {
@@ -184,8 +180,10 @@ public class Iko.AST.Writer : Visitor {
     }
     if(s.equations.size > 0) {
       write("equation {");
-      foreach(var eq in s.equations)
+      foreach(var eq in s.equations) {
         eq.accept(this);
+        write(";");
+      }
       write("}");
     }
     write("}");
