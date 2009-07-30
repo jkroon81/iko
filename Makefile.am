@@ -18,6 +18,7 @@ SUBDIRS = \
 	ikoast \
 	ikovalacode \
 	ikoc \
+	test \
 	examples \
 	util
 
