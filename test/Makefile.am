@@ -3,6 +3,10 @@ bin_PROGRAMS = transformer
 CLEANFILES = \
 	*~
 
+EXTRA_DIST = \
+	algebra.i \
+	simplify.i
+
 transformer_SOURCES = \
 	transformer.vala
 
