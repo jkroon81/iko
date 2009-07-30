@@ -30,23 +30,24 @@ public class Transformer.Main {
     var writer = new Iko.AST.Writer();
     foreach(var e in system.equations) {
       var expr = e as Iko.AST.Expression;
-      stdout.printf("original :            ");
+      stdout.printf("original            : ");
       expr.accept(writer);
       stdout.printf("\ntransform negatives : ");
       expr = new Iko.AST.TransformNegatives().transform(expr);
       expr.accept(writer);
-      stdout.printf("\nlevel operators :     ");
+      stdout.printf("\nlevel operators     : ");
       expr = new Iko.AST.LevelOperators().transform(expr);
       expr.accept(writer);
-      stdout.printf("\nsimplify rationals :  ");
+      stdout.printf("\nsimplify rationals  : ");
       expr = new Iko.AST.SimplifyRationals().transform(expr);
       expr.accept(writer);
-      stdout.printf("\nexpand terms :        ");
+      stdout.printf("\nexpand terms        : ");
       expr = new Iko.AST.ExpandTerms().transform(expr);
       expr.accept(writer);
-      stdout.printf("\ncollect terms :       ");
+      stdout.printf("\ncollect terms       : ");
       expr = new Iko.AST.CollectTerms().transform(expr);
       expr.accept(writer);
+      stdout.printf("\n\n");
     }
 
     return 0;
