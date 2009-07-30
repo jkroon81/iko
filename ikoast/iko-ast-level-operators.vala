@@ -8,35 +8,34 @@
 using Gee;
 
 public class Iko.AST.LevelOperators : ExpressionTransformer {
-  public override void visit_binary_expression(BinaryExpression be) {
-    assert(be.op != Operator.MINUS);
-
-    var left = transform(be.left);
-    var right = transform(be.right);
+  public override void visit_binary_expression(BinaryExpression be_in) {
+    assert(be_in.op != Operator.MINUS);
+    base.visit_binary_expression(be_in);
+    var be = q.pop_head() as BinaryExpression;
 
     if(be.op == Operator.EQUAL ||
        be.op == Operator.MUL   ||
        be.op == Operator.PLUS)
     {
       var me = new MultiExpression(be.op, null);
-      if(left is MultiExpression) {
-        var me_sub = left as MultiExpression;
+      if(be.left is MultiExpression) {
+        var me_sub = be.left as MultiExpression;
         if(me_sub.op == be.op)
           me.add_operand_list(me_sub.operands);
         else
           me.operands.add(me_sub);
       } else
-        me.operands.add(left);
-      if(right is MultiExpression) {
-        var me_sub = right as MultiExpression;
+        me.operands.add(be.left);
+      if(be.right is MultiExpression) {
+        var me_sub = be.right as MultiExpression;
         if(me_sub.op == be.op)
           me.add_operand_list(me_sub.operands);
         else
           me.operands.add(me_sub);
       } else
-        me.operands.add(right);
+        me.operands.add(be.right);
       q.push_head(me);
     } else
-      q.push_head(new BinaryExpression(be.op, left, right));
+      q.push_head(be);
   }
 }

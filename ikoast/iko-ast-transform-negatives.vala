@@ -8,25 +8,27 @@
 using Gee;
 
 public class Iko.AST.TransformNegatives : ExpressionTransformer {
-  public override void visit_binary_expression(BinaryExpression be) {
-    var left = transform(be.left);
-    var right = transform(be.right);
+  public override void visit_binary_expression(BinaryExpression be_in) {
+    base.visit_binary_expression(be_in);
+    var be = q.pop_head() as BinaryExpression;
 
     if(be.op == Operator.MINUS) {
-      right = new BinaryExpression(Operator.MUL, new IntegerLiteral("-1"), right);
-      q.push_head(new BinaryExpression(Operator.PLUS, left, right));
+      var right = new BinaryExpression(Operator.MUL, new IntegerLiteral("-1"), be.right);
+      q.push_head(new BinaryExpression(Operator.PLUS, be.left, right));
     } else
-      q.push_head(new BinaryExpression(be.op, left, right));
+      q.push_head(be);
   }
 
-  public override void visit_unary_expression(UnaryExpression ue) {
-    var expr = transform(ue.expr);
+  public override void visit_unary_expression(UnaryExpression ue_in) {
+    base.visit_unary_expression(ue_in);
+    var ue = q.pop_head() as UnaryExpression;
+
     switch(ue.op) {
     case Operator.MINUS:
-      q.push_head(new BinaryExpression(Operator.MUL, new IntegerLiteral("-1"), expr));
+      q.push_head(new BinaryExpression(Operator.MUL, new IntegerLiteral("-1"), ue.expr));
       break;
     case Operator.PLUS:
-      q.push_head(expr);
+      q.push_head(ue.expr);
       break;
     default:
       assert_not_reached();
