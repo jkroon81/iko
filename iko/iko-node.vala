@@ -10,6 +10,9 @@ public abstract class Iko.Node : Object {
 
   public SourceReference? src { get; construct; }
 
-  public virtual void accept(Visitor v) {}
+  public virtual void accept(Visitor v) {
+    v.visit_node(this);
+  }
+
   public virtual void accept_children(Visitor v) {}
 }

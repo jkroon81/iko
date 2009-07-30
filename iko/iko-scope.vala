@@ -6,7 +6,7 @@
  */
 
 public class Iko.Scope : Object {
-  HashTable<string, Symbol> bank;
+  HashTable<string, Symbol> map;
 
   public Symbol symbol { get; construct; }
 
@@ -15,16 +15,18 @@ public class Iko.Scope : Object {
   }
 
   construct {
-    bank = new HashTable<string, Symbol>(str_hash, str_equal);
+    map = new HashTable<string, Symbol>(str_hash, str_equal);
   }
 
   public void add(Symbol sym) {
     assert(sym.parent == null);
-    bank.insert(sym.name, sym);
+    assert(map.lookup(sym.name) == null);
+
     sym.parent = symbol;
+    map.insert(sym.name, sym);
   }
 
   public Symbol? lookup(string name) {
-    return bank.lookup(name);
+    return map.lookup(name);
   }
 }

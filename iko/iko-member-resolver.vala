@@ -8,26 +8,6 @@
 public class Iko.MemberResolver : Visitor {
   Symbol? current_symbol;
 
-  public override void visit_block(Block b) {
-    b.accept_children(this);
-  }
-
-  public override void visit_context(Context c) {
-    c.accept_children(this);
-  }
-
-  public override void visit_equation(Equation e) {
-    e.accept_children(this);
-  }
-
-  public override void visit_expression(Expression e) {
-    e.accept_children(this);
-  }
-
-  public override void visit_field(Field f) {
-    f.accept_children(this);
-  }
-
   public override void visit_member_access(MemberAccess m) {
     Member member = null;
 
@@ -57,13 +37,11 @@ public class Iko.MemberResolver : Visitor {
     }
   }
 
-  public override void visit_model(Model m) {
-    m.accept_children(this);
-  }
-
-  public override void visit_symbol(Symbol s) {
-    current_symbol = s;
-    s.accept_children(this);
-    current_symbol = s.parent;
+  public override void visit_node(Node n) {
+    if(n is Symbol)
+      current_symbol = n as Symbol;
+    n.accept_children(this);
+    if(n is Symbol)
+      current_symbol = (n as Symbol).parent;
   }
 }

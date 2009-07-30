@@ -8,12 +8,12 @@
 public class Iko.TypeResolver : Visitor {
   Symbol? current_symbol;
 
-  public override void visit_context(Context c) {
-    c.accept_children(this);
-  }
-
-  public override void visit_data_type(DataType data_type) {
-    data_type.accept_children(this);
+  public override void visit_node(Node n) {
+    if(n is Symbol)
+      current_symbol = n as Symbol;
+    n.accept_children(this);
+    if(n is Symbol)
+      current_symbol = (n as Symbol).parent;
   }
 
   public override void visit_type_access(TypeAccess t) {
@@ -43,11 +43,5 @@ public class Iko.TypeResolver : Visitor {
       else
         t.type_symbol = type_symbol;
     }
-  }
-
-  public override void visit_symbol(Symbol s) {
-    current_symbol = s;
-    s.accept_children(this);
-    current_symbol = s.parent;
   }
 }

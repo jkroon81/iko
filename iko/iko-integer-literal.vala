@@ -7,8 +7,8 @@
 
 public class Iko.IntegerLiteral : Literal {
   public IntegerLiteral(SourceReference? src, string value) {
-    this.src   = src;
-    this.value = value;
+    this.src     = src;
+    this.value   = value;
     literal_type = new TypeAccess(null, null, new UnresolvedType(null, "int"));
   }
 
