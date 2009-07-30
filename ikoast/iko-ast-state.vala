@@ -10,7 +10,7 @@ using Gee;
 public class Iko.AST.State : DataSymbol {
   public ArrayList<IndependentVariable> params { get; private set;}
 
-  public HashTable<IndependentVariable, Expression> der_map { get; private set; }
+  public HashTable<IndependentVariable, Expression> der { get; private set; }
 
   public State(string name, DataType data_type) {
     this.name      = name;
@@ -18,8 +18,8 @@ public class Iko.AST.State : DataSymbol {
   }
 
   construct {
-    params  = new ArrayList<IndependentVariable>();
-    der_map = new HashTable<IndependentVariable, Expression>(direct_hash, direct_equal);
+    params = new ArrayList<IndependentVariable>();
+    der    = new HashTable<IndependentVariable, Expression>(direct_hash, direct_equal);
   }
 
   public override void accept(Visitor v) {

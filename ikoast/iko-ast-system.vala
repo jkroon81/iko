@@ -13,7 +13,7 @@ public class Iko.AST.System : Node {
   public ArrayList<IndependentVariable> ivars     { get; private set; }
   public ArrayList<Method>              methods   { get; private set; }
   public ArrayList<State>               states    { get; private set; }
-  public HashTable<string, Symbol>      bank      { get; private set; }
+  public HashTable<string, Symbol>      map       { get; private set; }
 
   construct {
     constants = new ArrayList<Constant>();
@@ -21,7 +21,7 @@ public class Iko.AST.System : Node {
     ivars = new ArrayList<IndependentVariable>();
     methods = new ArrayList<Method>();
     states = new ArrayList<State>();
-    bank = new HashTable<string, Symbol>(str_hash, str_equal);
+    map = new HashTable<string, Symbol>(str_hash, str_equal);
     add_method(new DerivativeMethod());
     add_method(new SquareRootMethod());
   }
@@ -47,7 +47,7 @@ public class Iko.AST.System : Node {
 
   public void add_constant(Constant c) {
     constants.add(c);
-    bank.insert(c.name, c);
+    map.insert(c.name, c);
   }
 
   public void add_equation(BinaryExpression eq) {
@@ -57,16 +57,16 @@ public class Iko.AST.System : Node {
 
   public void add_independent_variable(IndependentVariable iv) {
     ivars.add(iv);
-    bank.insert(iv.name, iv);
+    map.insert(iv.name, iv);
   }
 
   public void add_method(Method m) {
     methods.add(m);
-    bank.insert(m.name, m);
+    map.insert(m.name, m);
   }
 
   public void add_state(State s) {
     states.add(s);
-    bank.insert(s.name, s);
+    map.insert(s.name, s);
   }
 }

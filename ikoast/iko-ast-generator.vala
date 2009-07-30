@@ -62,7 +62,7 @@ public class Iko.AST.Generator : Iko.Visitor {
         if(params.size > 0) {
           var s = new State(buffer.str, real_type);
           foreach(var p in params)
-            s.params.add(system.bank.lookup(expression_to_string(p)) as IndependentVariable);
+            s.params.add(system.map.lookup(expression_to_string(p)) as IndependentVariable);
           system.add_state(s);
         } else {
           var iv = new IndependentVariable(buffer.str, real_type);
@@ -103,7 +103,7 @@ public class Iko.AST.Generator : Iko.Visitor {
   }
 
   public override void visit_array_access(ArrayAccess aa) {
-    q.push_head(new SymbolAccess(system.bank.lookup(expression_to_string(aa))));
+    q.push_head(new SymbolAccess(system.map.lookup(expression_to_string(aa))));
   }
 
   public override void visit_binary_expression(Iko.BinaryExpression be) {
@@ -153,7 +153,7 @@ public class Iko.AST.Generator : Iko.Visitor {
   }
 
   public override void visit_member_access(MemberAccess ma) {
-    q.push_head(new SymbolAccess(system.bank.lookup(expression_to_string(ma))));
+    q.push_head(new SymbolAccess(system.map.lookup(expression_to_string(ma))));
   }
 
   public override void visit_method_call(Iko.MethodCall mc) {

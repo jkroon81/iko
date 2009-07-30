@@ -139,7 +139,7 @@ public class Iko.AST.Writer : Visitor {
     write(" {");
     write("derivative {");
     foreach(var p in s.params) {
-      var expr = s.der_map.lookup(p);
+      var expr = s.der.lookup(p);
       write(p.name);
       write(" = ");
       if(expr != null)
