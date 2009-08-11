@@ -15,7 +15,7 @@ public class Iko.AST.MultiExpression : Expression {
   public MultiExpression(Operator op, ArrayList<Expression>? op_list) {
     this.op = op;
     if(op_list != null)
-      add_operand_list(op_list);
+      operands.add_all(op_list);
   }
 
   construct {
@@ -31,10 +31,5 @@ public class Iko.AST.MultiExpression : Expression {
     base.accept_children(v);
     foreach(var o in operands)
       o.accept(v);
-  }
-
-  public void add_operand_list(ArrayList<Expression> op_list) {
-    foreach(var op in op_list)
-      operands.add(op);
   }
 }

@@ -30,7 +30,7 @@ public class Iko.AST.ExpandTerms : ExpressionTransformer {
           foreach(var f1 in me_sub.operands) {
             var t = new MultiExpression(Operator.MUL, null);
             t.operands.add(f1);
-            t.add_operand_list(me.operands);
+            t.operands.add_all(me.operands);
             op_list.add(t);
           }
           break;

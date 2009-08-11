@@ -21,7 +21,7 @@ public class Iko.AST.LevelOperators : ExpressionTransformer {
       if(be.left is MultiExpression) {
         var me_sub = be.left as MultiExpression;
         if(me_sub.op == be.op)
-          me.add_operand_list(me_sub.operands);
+          me.operands.add_all(me_sub.operands);
         else
           me.operands.add(me_sub);
       } else
@@ -29,7 +29,7 @@ public class Iko.AST.LevelOperators : ExpressionTransformer {
       if(be.right is MultiExpression) {
         var me_sub = be.right as MultiExpression;
         if(me_sub.op == be.op)
-          me.add_operand_list(me_sub.operands);
+          me.operands.add_all(me_sub.operands);
         else
           me.operands.add(me_sub);
       } else
