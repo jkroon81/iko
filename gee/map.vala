@@ -23,11 +23,16 @@
 /**
  * A map is a generic collection of key/value pairs.
  */
-public interface Gee.Map<K,V> : CollectionObject {
+public interface Gee.Map<K,V> : GLib.Object {
 	/**
 	 * The number of items in this map.
 	 */
 	public abstract int size { get; }
+
+	/**
+	 * Specifies whether this map is empty.
+	 */
+	public abstract bool is_empty { get; }
 
 	/**
 	 * Returns the keys of this map as a read-only set.
@@ -73,16 +78,39 @@ public interface Gee.Map<K,V> : CollectionObject {
 	/**
 	 * Removes the specified key from this map.
 	 *
-	 * @param key the key to remove from the map
+	 * @param key   the key to remove from the map
+	 * @param value the receiver variable for the removed value
 	 *
 	 * @return    true if the map has been changed, false otherwise
 	 */
-	public abstract bool remove (K key);
+	public abstract bool remove (K key, out V? value = null);
 
 	/**
 	 * Removes all items from this collection. Must not be called on
 	 * read-only collections.
 	 */
 	public abstract void clear ();
+
+	/**
+	 * Inserts all items that are contained in the input map to this map.
+	 *
+	 *  @param map the map which items are inserted to this map
+	 */
+	public abstract void set_all (Map<K,V> map);
+
+	/**
+	 * Removes all items from this map that are common to the input map 
+	 * and this map.
+	 *
+	 *  @param map the map which common items are deleted from this map
+	 */
+	public abstract bool remove_all (Map<K,V> map);
+
+	/**
+	 * Returns true it this map contains all items as the input map.
+	 *
+	 * @param map the map which items will be compared with this map.
+	 */
+	public abstract bool contains_all (Map<K,V> map);
 }
 

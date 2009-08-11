@@ -25,13 +25,17 @@ using GLib;
 /**
  * Represents a read-only collection of items.
  */
-public class Gee.ReadOnlyCollection<G> : CollectionObject, Iterable<G>, Collection<G> {
+public class Gee.ReadOnlyCollection<G> : Object, Iterable<G>, Collection<G> {
 	public int size {
 		get { return _collection.size; }
 	}
 
+	public bool is_empty {
+		get { return _collection.is_empty; }
+	}
+
 	public Collection<G> collection {
-		set { _collection = value; }
+		construct { _collection = value; }
 	}
 
 	private Collection<G> _collection;
@@ -40,8 +44,8 @@ public class Gee.ReadOnlyCollection<G> : CollectionObject, Iterable<G>, Collecti
 		this.collection = collection;
 	}
 
-	public Type get_element_type () {
-		return typeof (G);
+	public Type element_type {
+		get { return typeof (G); }
 	}
 
 	public Gee.Iterator<G> iterator () {
@@ -72,12 +76,37 @@ public class Gee.ReadOnlyCollection<G> : CollectionObject, Iterable<G>, Collecti
 		assert_not_reached ();
 	}
 
-	private class Iterator<G> : CollectionObject, Gee.Iterator<G> {
+	public bool add_all (Collection<G> collection) {
+		assert_not_reached ();
+	}
+
+	public bool contains_all (Collection<G> collection) {
+		foreach (G element in collection) {
+			if (!contains (element)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public bool remove_all (Collection<G> collection) {
+		assert_not_reached ();
+	}
+
+	public bool retain_all(Collection<G> collection) {
+		assert_not_reached ();
+	}
+
+	public G[] to_array() {
+		return _collection.to_array ();
+	}
+
+	private class Iterator<G> : Object, Gee.Iterator<G> {
 		public bool next () {
 			return false;
 		}
 
-		public G? get () {
+		public new G? get () {
 			return null;
 		}
 	}

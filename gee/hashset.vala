@@ -27,18 +27,14 @@ using GLib;
 /**
  * Hashtable implementation of the Set interface.
  */
-public class Gee.HashSet<G> : CollectionObject, Iterable<G>, Collection<G>, Set<G> {
-	public int size {
+public class Gee.HashSet<G> : AbstractCollection<G>, Set<G> {
+	public override int size {
 		get { return _nnodes; }
 	}
 
-	public HashFunc hash_func {
-		set { _hash_func = value; }
-	}
+	public HashFunc hash_func { construct; get; }
 
-	public EqualFunc equal_func {
-		set { _equal_func = value; }
-	}
+	public EqualFunc equal_func { construct; get; }
 
 	private int _array_size;
 	private int _nnodes;
@@ -47,47 +43,43 @@ public class Gee.HashSet<G> : CollectionObject, Iterable<G>, Collection<G>, Set<
 	// concurrent modification protection
 	private int _stamp = 0;
 
-	private HashFunc _hash_func;
-	private EqualFunc _equal_func;
-
 	private const int MIN_SIZE = 11;
 	private const int MAX_SIZE = 13845163;
 
 	public HashSet (HashFunc hash_func = GLib.direct_hash, EqualFunc equal_func = GLib.direct_equal) {
 		this.hash_func = hash_func;
 		this.equal_func = equal_func;
+	}
+
+	construct {
 		_array_size = MIN_SIZE;
 		_nodes = new Node<G>[_array_size];
 	}
 
 	private Node<G>** lookup_node (G key) {
-		uint hash_value = _hash_func (key);
+		uint hash_value = hash_func (key);
 		Node<G>** node = &_nodes[hash_value % _array_size];
-		while ((*node) != null && (hash_value != (*node)->key_hash || !_equal_func ((*node)->key, key))) {
+		while ((*node) != null && (hash_value != (*node)->key_hash || !equal_func ((*node)->key, key))) {
 			node = &((*node)->next);
 		}
 		return node;
 	}
 
-	public bool contains (G key) {
+	public override bool contains (G key) {
 		Node<G>** node = lookup_node (key);
 		return (*node != null);
 	}
 
-	public Type get_element_type () {
-		return typeof (G);
-	}
-
-	public Gee.Iterator<G> iterator () {
+	public override Gee.Iterator<G> iterator () {
 		return new Iterator<G> (this);
 	}
 
-	public bool add (G key) {
+	public override bool add (G key) {
 		Node<G>** node = lookup_node (key);
 		if (*node != null) {
 			return false;
 		} else {
-			uint hash_value = _hash_func (key);
+			uint hash_value = hash_func (key);
 			*node = new Node<G> (key, hash_value);
 			_nnodes++;
 			resize ();
@@ -96,7 +88,7 @@ public class Gee.HashSet<G> : CollectionObject, Iterable<G>, Collection<G>, Set<
 		}
 	}
 
-	public bool remove (G key) {
+	public override bool remove (G key) {
 		Node<G>** node = lookup_node (key);
 		if (*node != null) {
 			Node<G> next = (owned) (*node)->next;
@@ -114,7 +106,7 @@ public class Gee.HashSet<G> : CollectionObject, Iterable<G>, Collection<G>, Set<
 		return false;
 	}
 
-	public void clear () {
+	public override void clear () {
 		for (int i = 0; i < _array_size; i++) {
 			Node<G> node = (owned) _nodes[i];
 			while (node != null) {
@@ -166,9 +158,9 @@ public class Gee.HashSet<G> : CollectionObject, Iterable<G>, Collection<G>, Set<
 		}
 	}
 
-	private class Iterator<G> : CollectionObject, Gee.Iterator<G> {
-		public HashSet<G> set {
-			set {
+	private class Iterator<G> : Object, Gee.Iterator<G> {
+		public new HashSet<G> set {
+			construct {
 				_set = value;
 				_stamp = _set._stamp;
 			}
@@ -196,7 +188,7 @@ public class Gee.HashSet<G> : CollectionObject, Iterable<G>, Collection<G>, Set<
 			return (_node != null);
 		}
 
-		public G? get () {
+		public new G? get () {
 			assert (_stamp == _set._stamp);
 			assert (_node != null);
 			return _node.key;

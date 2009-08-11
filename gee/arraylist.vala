@@ -27,18 +27,15 @@ using GLib;
 /**
  * Arrays of arbitrary elements which grow automatically as elements are added.
  */
-public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, List<G> {
-	public int size {
+public class Gee.ArrayList<G> : AbstractList<G> {
+	public override int size {
 		get { return _size; }
 	}
 
-	public EqualFunc equal_func {
-		set { _equal_func = value; }
-	}
+	public EqualFunc equal_func { construct; get; }
 
 	private G[] _items = new G[4];
 	private int _size;
-	private EqualFunc _equal_func;
 
 	// concurrent modification protection
 	private int _stamp = 0;
@@ -47,40 +44,38 @@ public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, Li
 		this.equal_func = equal_func;
 	}
 
-	public Type get_element_type () {
-		return typeof (G);
-	}
-
-	public Gee.Iterator<G> iterator () {
+	public override Gee.Iterator<G> iterator () {
 		return new Iterator<G> (this);
 	}
 
-	public bool contains (G item) {
+	public override bool contains (G item) {
 		return (index_of (item) != -1);
 	}
 
-	public int index_of (G item) {
+	public override int index_of (G item) {
 		for (int index = 0; index < _size; index++) {
-			if (_equal_func (_items[index], item)) {
+			if (equal_func (_items[index], item)) {
 				return index;
 			}
 		}
 		return -1;
 	}
 
-	public G? get (int index) {
-		assert (index >= 0 && index < _size);
+	public override G? get (int index) {
+		assert (index >= 0);
+		assert (index < _size);
 
 		return _items[index];
 	}
 
-	public void set (int index, G item) {
-		assert (index >= 0 && index < _size);
+	public override void set (int index, G item) {
+		assert (index >= 0);
+		assert (index < _size);
 
 		_items[index] = item;
 	}
 
-	public bool add (G item) {
+	public override bool add (G item) {
 		if (_size == _items.length) {
 			grow_if_needed (1);
 		}
@@ -89,8 +84,9 @@ public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, Li
 		return true;
 	}
 
-	public void insert (int index, G item) {
-		assert (index >= 0 && index <= _size);
+	public override void insert (int index, G item) {
+		assert (index >= 0);
+		assert (index <= _size);
 
 		if (_size == _items.length) {
 			grow_if_needed (1);
@@ -100,9 +96,9 @@ public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, Li
 		_stamp++;
 	}
 
-	public bool remove (G item) {
+	public override bool remove (G item) {
 		for (int index = 0; index < _size; index++) {
-			if (_equal_func (_items[index], item)) {
+			if (equal_func (_items[index], item)) {
 				remove_at (index);
 				return true;
 			}
@@ -110,8 +106,9 @@ public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, Li
 		return false;
 	}
 
-	public void remove_at (int index) {
-		assert (index >= 0 && index < _size);
+	public override void remove_at (int index) {
+		assert (index >= 0);
+		assert (index < _size);
 
 		_items[index] = null;
 
@@ -120,7 +117,7 @@ public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, Li
 		_stamp++;
 	}
 
-	public void clear () {
+	public override void clear () {
 		for (int index = 0; index < _size; index++) {
 			_items[index] = null;
 		}
@@ -128,8 +125,60 @@ public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, Li
 		_stamp++;
 	}
 
+	public override List<G>? slice (int start, int stop) {
+		return_val_if_fail (start <= stop, null);
+		return_val_if_fail (start >= 0, null);
+		return_val_if_fail (stop <= _size, null);
+
+		var slice = new ArrayList<G> (this.equal_func);
+		for (int i = start; i < stop; i++) {
+			slice.add (this[i]);
+		}
+
+		return slice;
+	}
+
+	public override bool add_all (Collection<G> collection) {
+		if (collection.is_empty) {
+			return false;
+		}
+
+		grow_if_needed (collection.size);
+		foreach (G item in collection) {
+			_items[_size++] = item;
+		}
+		_stamp++;
+		return true;
+	}
+
+	public override bool remove_all (Collection<G> collection) {
+		bool changed = false;
+		for (int index = 0; index < _size; index++) {
+			if (collection.contains (_items[index])) {
+				remove_at (index);
+				index--;
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
+	public override bool retain_all (Collection<G> collection) {
+		bool changed = false;
+		for (int index = 0; index < _size; index++) {
+			if (!collection.contains (_items[index])) {
+				remove_at (index);
+				index--;
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
 	private void shift (int start, int delta) {
-		assert (start >= 0 && start <= _size && start >= -delta);
+		assert (start >= 0);
+		assert (start <= _size);
+		assert (start >= -delta);
 
 		_items.move (start, start + delta, _size - start);
 
@@ -152,9 +201,9 @@ public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, Li
 		_items.resize (value);
 	}
 
-	private class Iterator<G> : CollectionObject, Gee.Iterator<G> {
+	private class Iterator<G> : Object, Gee.Iterator<G> {
 		public ArrayList<G> list {
-			set {
+			construct {
 				_list = value;
 				_stamp = _list._stamp;
 			}
@@ -164,7 +213,7 @@ public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, Li
 		private int _index = -1;
 
 		// concurrent modification protection
-		public int _stamp = 0;
+		private int _stamp = 0;
 
 		public Iterator (ArrayList list) {
 			this.list = list;
@@ -178,7 +227,7 @@ public class Gee.ArrayList<G> : CollectionObject, Iterable<G>, Collection<G>, Li
 			return (_index < _list._size);
 		}
 
-		public G? get () {
+		public new G? get () {
 			assert (_stamp == _list._stamp);
 
 			if (_index < 0 || _index >= _list._size) {

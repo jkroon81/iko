@@ -1,6 +1,6 @@
-/* collectionobject.vala
+/* functions.vala
  *
- * Copyright (C) 2008  Jürg Billeter
+ * Copyright (C) 2009  Maciej Piechotka
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,14 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  *
  * Author:
- * 	Jürg Billeter <j@bitron.ch>
+ * 	Maciej Piechotka <uzytkownik2@gmail.com>
  */
 
 using GLib;
 
-/**
- * Base class for all collections.
- */
-public class Gee.CollectionObject {
+namespace Gee {
+	public static int direct_compare (void* _val1, void* _val2) {
+		long val1 = (long)_val1, val2 = (long)_val2;
+		if (val1 > val2) {
+			return 1;
+		} else if (val1 == val2) {
+			return 0;
+		} else {
+			return -1;
+		}
+	}
 }
-

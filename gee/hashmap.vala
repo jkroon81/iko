@@ -27,22 +27,16 @@ using GLib;
 /**
  * Hashtable implementation of the Map interface.
  */
-public class Gee.HashMap<K,V> : CollectionObject, Map<K,V> {
-	public int size {
+public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
+	public override int size {
 		get { return _nnodes; }
 	}
 
-	public HashFunc key_hash_func {
-		set { _key_hash_func = value; }
-	}
+	public HashFunc key_hash_func { construct; get; }
 
-	public EqualFunc key_equal_func {
-		set { _key_equal_func = value; }
-	}
+	public EqualFunc key_equal_func { construct; get; }
 
-	public EqualFunc value_equal_func {
-		set { _value_equal_func = value; }
-	}
+	public EqualFunc value_equal_func { construct; get; }
 
 	private int _array_size;
 	private int _nnodes;
@@ -51,10 +45,6 @@ public class Gee.HashMap<K,V> : CollectionObject, Map<K,V> {
 	// concurrent modification protection
 	private int _stamp = 0;
 
-	private HashFunc _key_hash_func;
-	private EqualFunc _key_equal_func;
-	private EqualFunc _value_equal_func;
-
 	private const int MIN_SIZE = 11;
 	private const int MAX_SIZE = 13845163;
 
@@ -62,33 +52,36 @@ public class Gee.HashMap<K,V> : CollectionObject, Map<K,V> {
 		this.key_hash_func = key_hash_func;
 		this.key_equal_func = key_equal_func;
 		this.value_equal_func = value_equal_func;
+	}
+
+	construct {
 		_array_size = MIN_SIZE;
 		_nodes = new Node<K,V>[_array_size];
 	}
 
-	public Set<K> get_keys () {
+	public override Set<K> get_keys () {
 		return new KeySet<K,V> (this);
 	}
 
-	public Collection<V> get_values () {
+	public override Collection<V> get_values () {
 		return new ValueCollection<K,V> (this);
 	}
 
 	private Node<K,V>** lookup_node (K key) {
-		uint hash_value = _key_hash_func (key);
+		uint hash_value = key_hash_func (key);
 		Node<K,V>** node = &_nodes[hash_value % _array_size];
-		while ((*node) != null && (hash_value != (*node)->key_hash || !_key_equal_func ((*node)->key, key))) {
+		while ((*node) != null && (hash_value != (*node)->key_hash || !key_equal_func ((*node)->key, key))) {
 			node = &((*node)->next);
 		}
 		return node;
 	}
 
-	public bool contains (K key) {
+	public override bool contains (K key) {
 		Node<K,V>** node = lookup_node (key);
 		return (*node != null);
 	}
 
-	public V? get (K key) {
+	public override V? get (K key) {
 		Node<K,V>* node = (*lookup_node (key));
 		if (node != null) {
 			return node->value;
@@ -97,12 +90,12 @@ public class Gee.HashMap<K,V> : CollectionObject, Map<K,V> {
 		}
 	}
 
-	public void set (K key, V value) {
+	public override void set (K key, V value) {
 		Node<K,V>** node = lookup_node (key);
 		if (*node != null) {
 			(*node)->value = value;
 		} else {
-			uint hash_value = _key_hash_func (key);
+			uint hash_value = key_hash_func (key);
 			*node = new Node<K,V> (key, value, hash_value);
 			_nnodes++;
 			resize ();
@@ -110,10 +103,14 @@ public class Gee.HashMap<K,V> : CollectionObject, Map<K,V> {
 		_stamp++;
 	}
 
-	public bool remove (K key) {
+	public override bool remove (K key, out V? value = null) {
 		Node<K,V>** node = lookup_node (key);
 		if (*node != null) {
 			Node<K,V> next = (owned) (*node)->next;
+
+			if (&value != null) {
+				value = (owned) (*node)->value;
+			}
 
 			(*node)->key = null;
 			(*node)->value = null;
@@ -129,7 +126,7 @@ public class Gee.HashMap<K,V> : CollectionObject, Map<K,V> {
 		return false;
 	}
 
-	public void clear () {
+	public override void clear () {
 		for (int i = 0; i < _array_size; i++) {
 			Node<K,V> node = (owned) _nodes[i];
 			while (node != null) {
@@ -184,49 +181,53 @@ public class Gee.HashMap<K,V> : CollectionObject, Map<K,V> {
 		}
 	}
 
-	private class KeySet<K,V> : CollectionObject, Iterable<K>, Collection<K>, Set<K> {
-		public HashMap<K,V> map {
-			set { _map = value; }
-		}
-
-		private HashMap<K,V> _map;
+	private class KeySet<K,V> : AbstractCollection<K>, Set<K> {
+		public HashMap<K,V> map { construct; get; }
 
 		public KeySet (HashMap map) {
 			this.map = map;
 		}
 
-		public Type get_element_type () {
-			return typeof (K);
+		public override Iterator<K> iterator () {
+			return new KeyIterator<K,V> (map);
 		}
 
-		public Iterator<K> iterator () {
-			return new KeyIterator<K,V> (_map);
+		public override int size {
+			get { return map.size; }
 		}
 
-		public int size {
-			get { return _map.size; }
-		}
-
-		public bool add (K key) {
+		public override bool add (K key) {
 			assert_not_reached ();
 		}
 
-		public void clear () {
+		public override void clear () {
 			assert_not_reached ();
 		}
 
-		public bool remove (K key) {
+		public override bool remove (K key) {
 			assert_not_reached ();
 		}
 
-		public bool contains (K key) {
+		public override bool contains (K key) {
 			return _map.contains (key);
+		}
+
+		public override bool add_all (Collection<K> collection) {
+			assert_not_reached ();
+		}
+
+		public override bool remove_all (Collection<K> collection) {
+			assert_not_reached ();
+		}
+
+		public override bool retain_all (Collection<K> collection) {
+			assert_not_reached ();
 		}
 	}
 
-	private class KeyIterator<K,V> : CollectionObject, Iterator<K> {
+	private class KeyIterator<K,V> : Object, Iterator<K> {
 		public HashMap<K,V> map {
-			set {
+			construct {
 				_map = value;
 				_stamp = _map._stamp;
 			}
@@ -254,62 +255,66 @@ public class Gee.HashMap<K,V> : CollectionObject, Map<K,V> {
 			return (_node != null);
 		}
 
-		public K? get () {
+		public new K? get () {
 			assert (_stamp == _map._stamp);
 			assert (_node != null);
 			return _node.key;
 		}
 	}
 
-	private class ValueCollection<K,V> : CollectionObject, Iterable<V>, Collection<V> {
-		public HashMap<K,V> map {
-			set { _map = value; }
-		}
-
-		private HashMap<K,V> _map;
+	private class ValueCollection<K,V> : AbstractCollection<K> {
+		public HashMap<K,V> map { construct; get; }
 
 		public ValueCollection (HashMap map) {
 			this.map = map;
 		}
 
-		public Type get_element_type () {
-			return typeof (V);
+		public override Iterator<V> iterator () {
+			return new ValueIterator<K,V> (map);
 		}
 
-		public Iterator<V> iterator () {
-			return new ValueIterator<K,V> (_map);
+		public override int size {
+			get { return map.size; }
 		}
 
-		public int size {
-			get { return _map.size; }
-		}
-
-		public bool add (V value) {
+		public override bool add (V value) {
 			assert_not_reached ();
 		}
 
-		public void clear () {
+		public override void clear () {
 			assert_not_reached ();
 		}
 
-		public bool remove (V value) {
+		public override bool remove (V value) {
 			assert_not_reached ();
 		}
 
-		public bool contains (V value) {
+		public override bool contains (V value) {
 			Iterator<V> it = iterator ();
 			while (it.next ()) {
-				if (_map._value_equal_func (it.get (), value)) {
+				if (map.value_equal_func (it.get (), value)) {
 					return true;
 				}
 			}
 			return false;
 		}
+
+		public override bool add_all (Collection<V> collection) {
+			assert_not_reached ();
+		}
+
+		public override bool remove_all (Collection<V> collection) {
+			assert_not_reached ();
+		}
+
+		public override bool retain_all (Collection<V> collection) {
+			assert_not_reached ();
+		}
 	}
 
-	private class ValueIterator<K,V> : CollectionObject, Iterator<V> {
+	private class ValueIterator<K,V> : Object, Iterator<V> {
 		public HashMap<K,V> map {
-			set {
+			construct {
 				_map = value;
 				_stamp = _map._stamp;
 			}
@@ -337,7 +342,7 @@ public class Gee.HashMap<K,V> : CollectionObject, Map<K,V> {
 			return (_node != null);
 		}
 
-		public V? get () {
+		public new V? get () {
 			assert (_stamp == _map._stamp);
 			assert (_node != null);
 			return _node.value;

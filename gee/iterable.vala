@@ -26,8 +26,11 @@ using GLib;
  * Implemented by classes that support a simple iteration over instances of the
  * collection.
  */
-public interface Gee.Iterable<G> : CollectionObject {
-	public abstract Type get_element_type ();
+public interface Gee.Iterable<G> : GLib.Object {
+	/**
+	 * The type of the elements in this collection.
+	 */
+	public abstract Type element_type { get; }
 
 	/**
 	 * Returns a Iterator that can be used for simple iteration over a

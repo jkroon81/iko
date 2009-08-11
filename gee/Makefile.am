@@ -7,20 +7,26 @@ CLEANFILES = \
 	*~
 
 libgee_la_SOURCES = \
+	abstractcollection.vala \
+	abstractlist.vala \
+	abstractmap.vala \
 	arraylist.vala \
-	collectionobject.vala \
 	collection.vala \
+	functions.vala \
 	hashmap.vala \
 	hashset.vala \
 	iterable.vala \
 	iterator.vala \
+	linkedlist.vala \
 	list.vala \
 	map.vala \
 	readonlycollection.vala \
 	readonlylist.vala \
 	readonlymap.vala \
 	readonlyset.vala \
-	set.vala
+	set.vala \
+	treemap.vala \
+	treeset.vala
 
 libgee_la_VALAFLAGS = \
 	--library=gee \

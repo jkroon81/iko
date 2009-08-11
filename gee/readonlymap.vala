@@ -25,13 +25,17 @@ using GLib;
 /**
  * Represents a read-only collection of key/value pairs.
  */
-public class Gee.ReadOnlyMap<K,V> : CollectionObject, Map<K,V> {
+public class Gee.ReadOnlyMap<K,V> : Object, Map<K,V> {
 	public int size {
 		get { return _map.size; }
 	}
 
+	public bool is_empty {
+		get { return _map.is_empty; }
+	}
+
 	public Map<K,V> map {
-		set { _map = value; }
+		construct { _map = value; }
 	}
 
 	private Map<K,V> _map;
@@ -64,7 +68,7 @@ public class Gee.ReadOnlyMap<K,V> : CollectionObject, Map<K,V> {
 		return _map.contains (key);
 	}
 
-	public V? get (K key) {
+	public new V? get (K key) {
 		if (_map == null) {
 			return null;
 		}
@@ -72,16 +76,32 @@ public class Gee.ReadOnlyMap<K,V> : CollectionObject, Map<K,V> {
 		return _map.get (key);
 	}
 
-	public void set (K key, V value) {
+	public new void set (K key, V value) {
 		assert_not_reached ();
 	}
 
-	public bool remove (K key) {
+	public bool remove (K key, out V? value = null) {
 		assert_not_reached ();
 	}
 
 	public void clear () {
 		assert_not_reached ();
+	}
+
+	public void set_all (Map<K,V> map) {
+		assert_not_reached ();
+	}
+
+	public bool remove_all (Map<K,V> map) {
+		assert_not_reached ();
+	}
+
+	public bool contains_all (Map<K,V> map) {
+		if (_map == null) {
+			return false;
+		}
+
+		return _map.contains_all (map);
 	}
 }
 
