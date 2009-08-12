@@ -249,27 +249,41 @@ public class Iko.Parser : Visitor {
     var loop = true;
     while(loop) {
       var op = get_binary_operator(current());
-      if(op == BinaryExpression.Operator.MINUS ||
-         op == BinaryExpression.Operator.PLUS)
-      {
+      switch(op) {
+      case BinaryExpression.Operator.MINUS:
+      case BinaryExpression.Operator.PLUS:
         next();
         var right = parse_expression_multiplicative();
         left = new BinaryExpression(get_src(begin), op, left, right);
-      } else if(op == BinaryExpression.Operator.DIV ||
-                op == BinaryExpression.Operator.MUL ||
-                op == BinaryExpression.Operator.POWER)
-      {
-        next();
-        var right = parse_expression_multiplicative();
-        left = new BinaryExpression(get_src(begin), op, left, right);
-      } else
+        break;
+      default:
         loop = false;
+        break;
+      }
     }
     return left;
   }
 
   Expression parse_expression_multiplicative() throws ParseError {
-    return parse_expression_unary();
+    var begin = get_location();
+    var left = parse_expression_unary();
+    var loop = true;
+    while(loop) {
+      var op = get_binary_operator(current());
+      switch(op) {
+      case BinaryExpression.Operator.DIV:
+      case BinaryExpression.Operator.MUL:
+      case BinaryExpression.Operator.POWER:
+        next();
+        var right = parse_expression_unary();
+        left = new BinaryExpression(get_src(begin), op, left, right);
+        break;
+      default:
+        loop = false;
+        break;
+      }
+    }
+    return left;
   }
 
   Expression parse_expression_parenthesized() throws ParseError {
