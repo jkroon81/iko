@@ -6,7 +6,7 @@
  */
 
 public abstract class Iko.Symbol : Node {
-  public string  name   { get; construct; }
+  public string  name   { get; construct; default = "(null)"; }
   public Symbol? parent { get; set; }
   public Scope   scope  { get; private set; }
 
