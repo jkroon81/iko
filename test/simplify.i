@@ -1,9 +1,4 @@
-real a;
-real b;
-real c;
-real d;
-real e;
-real f;
+real a, b, c, d, e, f;
 
 model {
   -a = 0;

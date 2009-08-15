@@ -1,6 +1,4 @@
-real A;
-real B;
-real C;
+real A, B, C;
 
 model {
   A + B = B + A;
