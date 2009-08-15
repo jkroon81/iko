@@ -95,11 +95,6 @@ public class Iko.Parser : Visitor {
     }
   }
 
-  void rollback(SourceLocation location) {
-    while(!tokens[index].begin.matches(location))
-      prev();
-  }
-
   public override void visit_context(Context context) {
     this.context = context;
     context.accept_children(this);
@@ -159,18 +154,28 @@ public class Iko.Parser : Visitor {
   }
 
   void parse_class_member(Class cl) throws ParseError {
-    var begin = get_location();
-    var node = parse_declaration(cl);
-    if(node is Field)
-      cl.add_field((Field)node);
-    else if(node is Method)
-      cl.add_method((Method)node);
-    else if(node is Model)
-      cl.add_model((Model)node);
-    else if(node is TypeSymbol)
-      cl.add_type((TypeSymbol)node);
-    else
-      syntax_error(begin, "expected class member");
+    switch(current()) {
+    case TokenType.CLASS: cl.add_type(parse_class_declaration() as TypeSymbol); break;
+    case TokenType.MODEL: cl.add_model(parse_model_declaration() as Model);     break;
+    default:
+      var begin = get_location();
+      var binding = Member.Binding.INSTANCE;
+      if(accept(TokenType.STATIC))
+        binding = Member.Binding.STATIC;
+      var data_type = parse_data_type();
+      do {
+        var id = parse_identifier();
+        var node = parse_member_declaration(begin, binding, data_type, id);
+        if(node is Field)
+          cl.add_field((Field)node);
+        else if(node is Method)
+          cl.add_method((Method)node);
+        else
+          syntax_error(begin, "expected class member");
+      } while(accept(TokenType.COMMA));
+      expect(TokenType.SEMICOLON);
+      break;
+    }
   }
 
   DataType parse_data_type() throws ParseError {
@@ -187,38 +192,6 @@ public class Iko.Parser : Visitor {
       data_type = new ArrayType(get_src(begin), data_type, length);
     }
     return data_type;
-  }
-
-  Node parse_declaration(Symbol parent) throws ParseError {
-    Node node;
-    var begin = get_location();
-
-    switch(current()) {
-    case TokenType.CLASS:     node = parse_class_declaration(); break;
-    case TokenType.MODEL:     node = parse_model_declaration(); break;
-    case TokenType.NAMESPACE: node = parse_namespace_declaration(); break;
-    default:
-      accept(TokenType.STATIC);
-      var data_type = parse_data_type();
-      var id = parse_identifier();
-      switch(current()) {
-      case TokenType.OPEN_PARENS:
-        rollback(begin);
-        node = parse_method_declaration(parent);
-        break;
-      case TokenType.OPEN_BRACKET:
-      case TokenType.SEMICOLON:
-        rollback(begin);
-        node = parse_field_declaration(parent);
-        break;
-      default:
-        assert_not_reached();
-      }
-      data_type = null;
-      id = null;
-      break;
-    }
-    return node;
   }
 
   void parse_declarations(Symbol parent) throws ParseError {
@@ -320,13 +293,12 @@ public class Iko.Parser : Visitor {
     return parse_expression_primary();
   }
 
-  Field parse_field_declaration(Symbol parent) throws ParseError {
-    var begin = get_location();
-    var binding = Member.Binding.INSTANCE;
-    if(accept(TokenType.STATIC) || parent is Namespace)
-      binding = Member.Binding.STATIC;
-    var data_type = parse_data_type();
-    var id = parse_identifier();
+  Field parse_field_declaration(SourceLocation begin,
+                                Member.Binding binding,
+                                DataType       data_type,
+                                string         id)
+  throws ParseError
+  {
     var field = new Field(get_src(begin), binding, data_type, id);
     if(accept(TokenType.OPEN_BRACKET)) {
       do {
@@ -334,7 +306,6 @@ public class Iko.Parser : Visitor {
       } while(accept(TokenType.COMMA));
       expect(TokenType.CLOSE_BRACKET);
     }
-    expect(TokenType.SEMICOLON);
     return field;
   }
 
@@ -355,6 +326,24 @@ public class Iko.Parser : Visitor {
     expect(TokenType.INTEGER);
     var value = get_prev_string();
     return new IntegerLiteral(get_src(begin), value);
+  }
+
+  Node parse_member_declaration(SourceLocation begin,
+                                Member.Binding binding,
+                                DataType       data_type,
+                                string         id)
+  throws ParseError
+  {
+    switch(current()) {
+    case TokenType.OPEN_PARENS:
+      return parse_method_declaration(begin, binding, data_type, id);
+    case TokenType.COMMA:
+    case TokenType.OPEN_BRACKET:
+    case TokenType.SEMICOLON:
+      return parse_field_declaration(begin, binding, data_type, id);
+    default:
+      assert_not_reached();
+    }
   }
 
   Expression parse_member_expression() throws ParseError {
@@ -398,13 +387,12 @@ public class Iko.Parser : Visitor {
     return expr;
   }
 
-  Method parse_method_declaration(Symbol parent) throws ParseError {
-    var begin = get_location();
-    var binding = Member.Binding.INSTANCE;
-    if(accept(TokenType.STATIC) || parent is Namespace)
-      binding = Member.Binding.STATIC;
-    var data_type = parse_data_type();
-    var id = parse_identifier();
+  Method parse_method_declaration(SourceLocation begin,
+                                  Member.Binding binding,
+                                  DataType       data_type,
+                                  string         id)
+  throws ParseError
+  {
     var method = new Method(get_src(begin), binding, data_type, id);
     expect(TokenType.OPEN_PARENS);
     if(current() != TokenType.CLOSE_PARENS)
@@ -441,20 +429,27 @@ public class Iko.Parser : Visitor {
   }
 
   void parse_namespace_member(Namespace ns) throws ParseError {
-    var begin = get_location();
-    var node = parse_declaration(ns);
-    if(node is Field)
-      ns.add_field((Field)node);
-    else if(node is Method)
-      ns.add_method((Method)node);
-    else if(node is Model)
-      ns.add_model((Model)node);
-    else if(node is Namespace)
-      ns.add_namespace((Namespace)node);
-    else if(node is TypeSymbol)
-      ns.add_type((TypeSymbol)node);
-    else
-      syntax_error(begin, "expected namespace member");
+    switch(current()) {
+    case TokenType.CLASS:     ns.add_type(parse_class_declaration() as TypeSymbol);         break;
+    case TokenType.MODEL:     ns.add_model(parse_model_declaration() as Model);             break;
+    case TokenType.NAMESPACE: ns.add_namespace(parse_namespace_declaration() as Namespace); break;
+    default:
+      var begin = get_location();
+      var binding = Member.Binding.STATIC;
+      var data_type = parse_data_type();
+      do {
+        var id = parse_identifier();
+        var node = parse_member_declaration(begin, binding, data_type, id);
+        if(node is Field)
+          ns.add_field((Field)node);
+        else if(node is Method)
+          ns.add_method((Method)node);
+        else
+          syntax_error(begin, "expected namespace member");
+      } while(accept(TokenType.COMMA));
+      expect(TokenType.SEMICOLON);
+      break;
+    }
   }
 
   Parameter parse_parameter() throws ParseError {
