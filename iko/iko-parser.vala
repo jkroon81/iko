@@ -154,11 +154,21 @@ public class Iko.Parser : Visitor {
   }
 
   void parse_class_member(Class cl) throws ParseError {
+    var begin = get_location();
     switch(current()) {
-    case TokenType.CLASS: cl.add_type(parse_class_declaration() as TypeSymbol); break;
-    case TokenType.MODEL: cl.add_model(parse_model_declaration() as Model);     break;
+    case TokenType.CLASS:
+      var sym = parse_class_declaration();
+      if(sym is TypeSymbol)
+        cl.add_type(sym as TypeSymbol);
+      else if(sym is Namespace)
+        syntax_error(begin, "class can not contain namespace");
+      else
+        assert_not_reached();
+      break;
+    case TokenType.MODEL:
+      cl.add_model(parse_model_declaration());
+      break;
     default:
-      var begin = get_location();
       var binding = Member.Binding.INSTANCE;
       if(accept(TokenType.STATIC))
         binding = Member.Binding.STATIC;
@@ -328,10 +338,10 @@ public class Iko.Parser : Visitor {
     return new IntegerLiteral(get_src(begin), value);
   }
 
-  Node parse_member_declaration(SourceLocation begin,
-                                Member.Binding binding,
-                                DataType       data_type,
-                                string         id)
+  Member parse_member_declaration(SourceLocation begin,
+                                  Member.Binding binding,
+                                  DataType       data_type,
+                                  string         id)
   throws ParseError
   {
     switch(current()) {
@@ -410,7 +420,7 @@ public class Iko.Parser : Visitor {
     return new Model(get_src(begin), block);
   }
 
-  Symbol parse_namespace_declaration() throws ParseError {
+  Namespace parse_namespace_declaration() throws ParseError {
     var begin = get_location();
     expect(TokenType.NAMESPACE);
     var id = parse_identifier();
@@ -430,9 +440,21 @@ public class Iko.Parser : Visitor {
 
   void parse_namespace_member(Namespace ns) throws ParseError {
     switch(current()) {
-    case TokenType.CLASS:     ns.add_type(parse_class_declaration() as TypeSymbol);         break;
-    case TokenType.MODEL:     ns.add_model(parse_model_declaration() as Model);             break;
-    case TokenType.NAMESPACE: ns.add_namespace(parse_namespace_declaration() as Namespace); break;
+    case TokenType.CLASS:
+      var sym = parse_class_declaration();
+      if(sym is TypeSymbol)
+        ns.add_type(sym as TypeSymbol);
+      else if(sym is Namespace)
+        ns.add_namespace(sym as Namespace);
+      else
+        assert_not_reached();
+      break;
+    case TokenType.MODEL:
+      ns.add_model(parse_model_declaration());
+      break;
+    case TokenType.NAMESPACE:
+      ns.add_namespace(parse_namespace_declaration());
+      break;
     default:
       var begin = get_location();
       var binding = Member.Binding.STATIC;
