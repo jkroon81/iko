@@ -8,10 +8,6 @@ check_PROGRAMS = \
 CLEANFILES = \
 	*~
 
-EXTRA_DIST = \
-	algebra.i \
-	simplify.i
-
 TESTS = \
 	test-algebra \
 	test-simplify
