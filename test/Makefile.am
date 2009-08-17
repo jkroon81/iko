@@ -2,7 +2,8 @@ bin_PROGRAMS = \
 	transformer
 
 check_PROGRAMS = \
-	test-algebra
+	test-algebra \
+	test-simplify
 
 CLEANFILES = \
 	*~
@@ -12,9 +13,11 @@ EXTRA_DIST = \
 	simplify.i
 
 TESTS = \
-	test-algebra
+	test-algebra \
+	test-simplify
 
 test_algebra_SOURCES = test-algebra.vala
+test_simplify_SOURCES = test-simplify.vala
 transformer_SOURCES = transformer.vala
 
 VALAFLAGS = \
