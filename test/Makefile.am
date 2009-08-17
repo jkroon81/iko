@@ -16,8 +16,8 @@ TESTS = \
 	test-algebra \
 	test-simplify
 
-test_algebra_SOURCES = test-algebra.vala
-test_simplify_SOURCES = test-simplify.vala
+test_algebra_SOURCES = test-common.vala test-algebra.vala
+test_simplify_SOURCES = test-common.vala test-simplify.vala
 transformer_SOURCES = transformer.vala
 
 VALAFLAGS = \
@@ -39,4 +39,3 @@ LDADD = \
 	$(top_builddir)/gee/libgee.la \
 	$(top_builddir)/iko/libiko.la \
 	$(top_builddir)/ikoast/libikoast.la
-
