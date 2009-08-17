@@ -4,5 +4,3 @@ depcomp
 install-sh
 ltmain.sh
 missing
-shave
-shave-libtool

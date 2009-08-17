@@ -8,11 +8,9 @@ AC_PATH_PROG(VALAC, valac, valac)
 
 PKG_CHECK_MODULES(GOBJECT, gobject-2.0)
 
-SHAVE_INIT([build], [enable])
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 AC_OUTPUT(
-	build/shave
-	build/shave-libtool
 	Makefile
 	examples/Makefile
 	gee/Makefile
