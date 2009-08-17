@@ -32,7 +32,6 @@ public abstract class Iko.Visitor : Object {
   public virtual void visit_node(Node n) {}
   public virtual void visit_parameter(Parameter param) {}
   public virtual void visit_real_type(RealType type) {}
-  public virtual void visit_source_file(SourceFile source_file) {}
   public virtual void visit_square_root_method(SquareRootMethod sqrt) {}
   public virtual void visit_symbol(Symbol symbol) {}
   public virtual void visit_type_access(TypeAccess type) {}

@@ -38,7 +38,6 @@ libiko_la_SOURCES = \
 	iko-report.vala \
 	iko-scanner.vala \
 	iko-scope.vala \
-	iko-source-file.vala \
 	iko-source-location.vala \
 	iko-source-reference.vala \
 	iko-square-root-method.vala \

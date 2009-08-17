@@ -199,10 +199,6 @@ public class Iko.Writer : Visitor {
       write("}");
   }
 
-  public override void visit_source_file(SourceFile sf) {
-    sf.accept_children(this);
-  }
-
   public override void visit_type_access(TypeAccess ta) {
     if(ta.inner != null) {
       ta.inner.accept(this);

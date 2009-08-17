@@ -14,23 +14,22 @@ public class Iko.Scanner : Object {
 
   public string filename { get; construct; }
 
-  public Scanner(string filename) {
-    this.filename = filename;
-  }
-
-  public bool map() {
+  public Scanner.from_file(string filename) throws FileError {
     char *begin;
 
-    try {
-      mapped_file = new MappedFile(filename, false);
-      begin = mapped_file.get_contents();
-      end = begin + mapped_file.get_length();
-      current = begin;
-      line = column = 1;
-      return true;
-    } catch(FileError e) {
-      return false;
-    }
+    this.filename = filename;
+    mapped_file = new MappedFile(filename, false);
+    begin = mapped_file.get_contents();
+    end = begin + mapped_file.get_length();
+    current = begin;
+    line = column = 1;
+  }
+
+  public Scanner.from_string(string code) {
+    this.filename = "(string)";
+    end = (char*)code + code.size();
+    current = code;
+    line = column = 1;
   }
 
   bool matches(char *begin, string keyword) {

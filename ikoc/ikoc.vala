@@ -17,9 +17,9 @@ public class Ikoc.Main {
     Environment.set_prgname("ikoc");
 
     var context = new Iko.Context();
+    var parser = new Iko.Parser();
     for(i = 1; i < args.length; i++)
-      context.source_files.add(new Iko.SourceFile(args[i]));
-    context.accept(new Iko.Parser());
+      parser.parse_source_file(context, args[i]);
     context.accept(new Iko.TypeResolver());
     context.accept(new Iko.MemberResolver());
     stdout.printf(new Iko.Writer().generate_string(context));

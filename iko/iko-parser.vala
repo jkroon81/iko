@@ -9,11 +9,10 @@ public errordomain Iko.ParseError {
   SYNTAX
 }
 
-public class Iko.Parser : Visitor {
+public class Iko.Parser : Object {
   const int TOKEN_BUFFER_SIZE = 16;
 
   Scanner scanner;
-  Context context;
   TokenInfo[] tokens;
   int index;
   int size;
@@ -92,28 +91,6 @@ public class Iko.Parser : Visitor {
     case TokenType.MINUS: return UnaryExpression.Operator.MINUS;
     case TokenType.PLUS:  return UnaryExpression.Operator.PLUS;
     default:              return UnaryExpression.Operator.NONE;
-    }
-  }
-
-  public override void visit_context(Context context) {
-    this.context = context;
-    context.accept_children(this);
-  }
-
-  public override void visit_source_file(SourceFile source_file) {
-    scanner = new Scanner(source_file.filename);
-    if(!scanner.map()) {
-      Report.error(null, "error opening file '%s'".printf(source_file.filename));
-      return;
-    }
-    index = -1;
-    size = 0;
-    next();
-
-    try {
-      parse_declarations(context.root);
-    } catch (ParseError e) {
-      // Error already reported
     }
   }
 
@@ -479,6 +456,36 @@ public class Iko.Parser : Visitor {
     var data_type = parse_data_type();
     var id = parse_identifier();
     return new Parameter(get_src(begin), data_type, id);
+  }
+
+  public void parse_source_file(Context context, string filename) {
+    try {
+      scanner = new Scanner.from_file(filename);
+      index = -1;
+      size = 0;
+      next();
+
+      try {
+        parse_declarations(context.root);
+      } catch (ParseError e) {
+        // Error already reported
+      }
+    } catch(FileError e) {
+      Report.error(null, "error opening file '%s'".printf(filename));
+    }
+  }
+
+  public void parse_source_string(Context context, string code) {
+    scanner = new Scanner.from_string(code);
+    index = -1;
+    size = 0;
+    next();
+
+    try {
+      parse_declarations(context.root);
+    } catch (ParseError e) {
+      // Error already reported
+    }
   }
 
   Statement parse_statement() throws ParseError {
