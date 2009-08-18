@@ -3,6 +3,7 @@ bin_PROGRAMS = \
 
 check_PROGRAMS = \
 	test-algebra \
+	test-power \
 	test-simplify
 
 CLEANFILES = \
@@ -10,9 +11,11 @@ CLEANFILES = \
 
 TESTS = \
 	test-algebra \
+	test-power \
 	test-simplify
 
 test_algebra_SOURCES = test-common.vala test-algebra.vala
+test_power_SOURCES = test-common.vala test-power.vala
 test_simplify_SOURCES = test-common.vala test-simplify.vala
 transformer_SOURCES = transformer.vala
 
