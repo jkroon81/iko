@@ -2,21 +2,21 @@ bin_PROGRAMS = \
 	transformer
 
 check_PROGRAMS = \
-	test-algebra \
-	test-power \
-	test-simplify
+	test-addition \
+	test-multiplication \
+	test-power
 
 CLEANFILES = \
 	*~
 
 TESTS = \
-	test-algebra \
-	test-power \
-	test-simplify
+	test-addition \
+	test-multiplication \
+	test-power
 
-test_algebra_SOURCES = test-common.vala test-algebra.vala
+test_addition_SOURCES = test-common.vala test-addition.vala
+test_multiplication_SOURCES = test-common.vala test-multiplication.vala
 test_power_SOURCES = test-common.vala test-power.vala
-test_simplify_SOURCES = test-common.vala test-simplify.vala
 transformer_SOURCES = transformer.vala
 
 VALAFLAGS = \

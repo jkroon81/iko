@@ -10,9 +10,12 @@ namespace TestCommon {
   const string RED   = "\033[1;31m";
   const string GREEN = "\033[1;32m";
 
-  public static int test(string src, string text_ref) {
+  public static int test(string left, string right) {
+    int retval;
+
     var context = new Iko.Context();
     var parser = new Iko.Parser();
+    string src = "real A,B,C,D,E,F; model { %s = %s; }".printf(left, right);
     parser.parse_source_string(context, src);
     context.accept(new Iko.TypeResolver());
     context.accept(new Iko.MemberResolver());
@@ -23,17 +26,16 @@ namespace TestCommon {
 
     assert(system.equations.size == 1);
     var writer = new Iko.AST.Writer();
-    var text_gen = writer.generate_string(system.equations[0].simplify());
-    if(text_gen != text_ref) {
-      stdout.printf(RED + "FAIL" + RESET + " %s " + RED + "!=" + RESET + " %s\n",
-                    text_gen,
-                    text_ref);
-      return 1;
+    var left_gen = writer.generate_string(system.equations[0].left.simplify());
+    var right_gen = writer.generate_string(system.equations[0].right.simplify());
+    if(left_gen != right_gen) {
+      stdout.printf(RED + "FAIL" + RESET);
+      retval = 1;
     } else {
-      stdout.printf(GREEN + "PASS" + RESET + " %s " + GREEN + "==" + RESET + " %s\n",
-                    text_gen,
-                    text_ref);
-      return 0;
+      stdout.printf(GREEN + "PASS" + RESET);
+      retval = 0;
     }
+    stdout.printf(" %s = %s [ %s = %s ]\n", left, right, left_gen, right_gen);
+    return retval;
   }
 }

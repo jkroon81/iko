@@ -13,11 +13,11 @@ public class TestPower.Main {
 
     Environment.set_prgname("test-power");
 
-    n_errors += test("real A; model { A^0 = 1; }", "1=1");
-    n_errors += test("real A, B; model { A^-B = 0; }", "1/A^B=0");
-    n_errors += test("real A, B, C; model { A^B * A^C = 0; }", "A^(B+C)=0");
-    n_errors += test("real A, B, C; model { ( A^B )^C = 0; }", "A^(B*C)=0");
-    n_errors += test("real A, B, C; model { A^B * C^B = 0; }", "(A*C)^B=0");
+    n_errors += test("A^0", "1");
+    n_errors += test("A^-B", "1/A^B");
+    n_errors += test("A^B * A^C", "A^(B+C)");
+    n_errors += test("(A^B)^C", "A^(B*C)");
+    n_errors += test("A^B * C^B", "(A*C)^B");
     return n_errors;
   }
 }
