@@ -17,6 +17,7 @@ public abstract class Iko.AST.Expression : Node {
     expr = new SimplifyRationals().transform(expr);
     expr = new ExpandTerms().transform(expr);
     expr = new CollectTerms().transform(expr);
+    expr = new FoldConstants().transform(expr);
     return expr;
   }
 }

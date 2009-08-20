@@ -19,6 +19,7 @@ libikoast_la_SOURCES = \
 	iko-ast-expression.vala \
 	iko-ast-float-literal.vala \
 	iko-ast-float-type.vala \
+	iko-ast-fold-constants.vala \
 	iko-ast-generator.vala \
 	iko-ast-independent-variable.vala \
 	iko-ast-integer-literal.vala \
