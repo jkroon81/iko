@@ -32,8 +32,6 @@ public class Iko.AST.Writer : Visitor {
     else
       assert_not_reached();
 
-    if(op == Operator.DIV)
-      return true;
     if(op == Operator.MINUS && op_child == Operator.PLUS)
       return true;
     if(op_child.priority() < op.priority())

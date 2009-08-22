@@ -21,7 +21,7 @@ public enum Iko.AST.Operator {
     case MINUS: return 1;
     case MUL:   return 2;
     case PLUS:  return 1;
-    case POWER: return 2;
+    case POWER: return 3;
     default:    assert_not_reached();
     }
   }
