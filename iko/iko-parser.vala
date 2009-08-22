@@ -226,16 +226,15 @@ public class Iko.Parser : Object {
 
   Expression parse_expression_multiplicative() throws ParseError {
     var begin = get_location();
-    var left = parse_expression_unary();
+    var left = parse_expression_power();
     var loop = true;
     while(loop) {
       var op = get_binary_operator(current());
       switch(op) {
       case BinaryExpression.Operator.DIV:
       case BinaryExpression.Operator.MUL:
-      case BinaryExpression.Operator.POWER:
         next();
-        var right = parse_expression_unary();
+        var right = parse_expression_power();
         left = new BinaryExpression(get_src(begin), op, left, right);
         break;
       default:
@@ -251,6 +250,26 @@ public class Iko.Parser : Object {
     var expr = parse_expression();
     expect(TokenType.CLOSE_PARENS);
     return expr;
+  }
+
+  Expression parse_expression_power() throws ParseError {
+    var begin = get_location();
+    var left = parse_expression_unary();
+    var loop = true;
+    while(loop) {
+      var op = get_binary_operator(current());
+      switch(op) {
+      case BinaryExpression.Operator.POWER:
+        next();
+        var right = parse_expression_unary();
+        left = new BinaryExpression(get_src(begin), op, left, right);
+        break;
+      default:
+        loop = false;
+        break;
+      }
+    }
+    return left;
   }
 
   Expression parse_expression_primary() throws ParseError {
