@@ -1,4 +1,5 @@
 test-addition
+test-constant-folding
 test-multiplication
 test-power
 transformer

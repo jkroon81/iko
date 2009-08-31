@@ -3,6 +3,7 @@ bin_PROGRAMS = \
 
 check_PROGRAMS = \
 	test-addition \
+	test-constant-folding \
 	test-multiplication \
 	test-power
 
@@ -11,10 +12,12 @@ CLEANFILES = \
 
 TESTS = \
 	test-addition \
+	test-constant-folding \
 	test-multiplication \
 	test-power
 
 test_addition_SOURCES = test-common.vala test-addition.vala
+test_constant_folding_SOURCES = test-common.vala test-constant-folding.vala
 test_multiplication_SOURCES = test-common.vala test-multiplication.vala
 test_power_SOURCES = test-common.vala test-power.vala
 transformer_SOURCES = transformer.vala
