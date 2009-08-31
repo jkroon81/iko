@@ -15,11 +15,25 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
 
     var be = q.pop_head() as BinaryExpression;
     switch(be.op) {
+    case Operator.DIV:
+      if(be.right is Literal) {
+        var den = (be.right as Literal).value.to_double();
+        if(den == 1.0)
+          q.push_head(be.left);
+        else if(be.left is Literal) {
+          var num = (be.left as Literal).value.to_double();
+          q.push_head(new FloatLiteral((num / den).to_string()));
+        } else
+          q.push_head(be);
+      } else
+        q.push_head(be);
+      break;
     case Operator.POWER:
       if(be.right is Literal) {
-        if((be.right as Literal).value.to_double() == 0.0)
+        var exp = (be.right as Literal).value.to_double();
+        if(exp == 0.0)
           q.push_head(new IntegerLiteral("1"));
-        else if((be.right as Literal).value.to_double() == 1.0)
+        else if(exp == 1.0)
           q.push_head(be.left);
         else
           q.push_head(be);
@@ -45,48 +59,51 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
       Literal lfactor = new IntegerLiteral("1");
       foreach(var op in me.operands) {
         if(op is Literal) {
-          var l = op as Literal;
-          if(l.value.to_double() == 0.0) {
+          var nvalue = (op as Literal).value.to_double();
+          if(nvalue == 0.0) {
             q.push_head(new IntegerLiteral("0"));
             return;
-          } else if(l.value.to_double() == 1.0)
-            continue;
-          else {
-            if(lfactor is IntegerLiteral) {
-              if(l is IntegerLiteral)
-                lfactor = new IntegerLiteral((lfactor.value.to_int() * l.value.to_int()).to_string());
-              else if(l is FloatLiteral)
-                lfactor = new FloatLiteral((lfactor.value.to_int() * l.value.to_double()).to_string());
-            } else if(lfactor is FloatLiteral) {
-              lfactor = new FloatLiteral((lfactor.value.to_double() * l.value.to_double()).to_string());
-            } else
-              assert_not_reached();
-          }
+          } else
+            lfactor = new FloatLiteral((lfactor.value.to_double() * nvalue).to_string());
         } else
           op_list.add(op);
       }
       if(lfactor.value.to_double() != 1.0)
         op_list.add(lfactor);
-      if(op_list.size == 0)
+      switch(op_list.size) {
+      case 0:
         q.push_head(new IntegerLiteral("1"));
-      else if(op_list.size == 1)
+        break;
+      case 1:
         q.push_head(op_list[0]);
-      else
+        break;
+      default:
         q.push_head(new MultiExpression(Operator.MUL, op_list));
+        break;
+      }
       break;
     case Operator.PLUS:
+      Literal lterm = new IntegerLiteral("0");
       foreach(var op in me.operands) {
-        if(op is Literal && (op as Literal).value.to_double() == 0.0)
-          continue;
-        else
+        if(op is Literal) {
+          var nvalue = (op as Literal).value.to_double();
+          lterm = new FloatLiteral((lterm.value.to_double() + nvalue).to_string());
+        } else
           op_list.add(op);
       }
-      if(op_list.size == 0)
+      if(lterm.value.to_double() != 0.0)
+        op_list.add(lterm);
+      switch(op_list.size) {
+      case 0:
         q.push_head(new IntegerLiteral("0"));
-      else if(op_list.size == 1)
+        break;
+      case 1:
         q.push_head(op_list[0]);
-      else
+        break;
+      default:
         q.push_head(new MultiExpression(Operator.PLUS, op_list));
+        break;
+      }
       break;
     default:
       q.push_head(me);
