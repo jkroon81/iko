@@ -124,14 +124,15 @@ public class Iko.AST.Writer : Visitor {
   }
 
   public override void visit_multi_expression(MultiExpression me) {
-    foreach(var op in me.operands) {
+    for(int i = 0; i < me.operands.size; i++) {
+      var op = me.operands[i];
       var protect = needs_paranthesis(me.op, op);
       if(protect)
         write("(");
       op.accept(this);
       if(protect)
         write(")");
-      if(op != me.operands[me.operands.size - 1])
+      if(i != me.operands.size - 1)
         write(me.op.to_string());
     }
   }
