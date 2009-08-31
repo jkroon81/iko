@@ -69,7 +69,7 @@ public class Iko.AST.ExpandTerms : ExpressionTransformer {
             var t = new MultiExpression(Operator.MUL, null);
             t.operands.add(f1);
             t.operands.add_all(me.operands);
-            op_list.add(t);
+            op_list.add(transform(t));
           }
           break;
         }
