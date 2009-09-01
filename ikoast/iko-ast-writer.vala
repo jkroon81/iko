@@ -115,9 +115,9 @@ public class Iko.AST.Writer : Visitor {
   public override void visit_method_call(MethodCall mc) {
     mc.method.accept(this);
     write("(");
-    foreach(var a in mc.args) {
-      a.accept(this);
-      if(a != mc.args[mc.args.size - 1])
+    for(int i = 0; i < mc.args.size; i++) {
+      mc.args[i].accept(this);
+      if(i != mc.args.size - 1)
         write(",");
     }
     write(")");

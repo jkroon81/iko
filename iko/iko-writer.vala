@@ -128,9 +128,9 @@ public class Iko.Writer : Visitor {
     write(" %s".printf(f.name));
     if(f.params.size > 0) {
       write("[");
-      foreach(var p in f.params) {
-        p.accept(this);
-        if(p != f.params[f.params.size - 1])
+      for(int i = 0; i < f.params.size; i++) {
+        f.params[i].accept(this);
+        if(i != f.params.size - 1)
           write(",");
       }
       write("]");
@@ -157,10 +157,10 @@ public class Iko.Writer : Visitor {
       write("static ");
     m.data_type.accept(this);
     write(" %s(".printf(m.name));
-    foreach(var p in m.params) {
-      p.data_type.accept(this);
-      write(" %s".printf(p.name));
-      if(p != m.params[m.params.size - 1])
+    for(int i = 0; i < m.params.size; i++) {
+      m.params[i].data_type.accept(this);
+      write(" %s".printf(m.params[i].name));
+      if(i != m.params.size - 1)
         write(",");
     }
     write(");");
@@ -169,9 +169,9 @@ public class Iko.Writer : Visitor {
   public override void visit_method_call(MethodCall mc) {
     mc.method.accept(this);
     write("(");
-    foreach(var a in mc.args) {
-      a.accept(this);
-      if(a != mc.args[mc.args.size - 1])
+    for(int i = 0; i < mc.args.size; i++) {
+      mc.args[i].accept(this);
+      if(i != mc.args.size - 1)
         write(",");
     }
     write(")");
