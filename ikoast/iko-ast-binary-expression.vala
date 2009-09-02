@@ -5,16 +5,10 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.AST.BinaryExpression : Expression {
+public abstract class Iko.AST.BinaryExpression : Expression {
   public Operator   op    { get; construct; }
   public Expression left  { get; construct; }
   public Expression right { get; construct; }
-
-  public BinaryExpression(Operator op, Expression left, Expression right) {
-    this.op    = op;
-    this.left  = left;
-    this.right = right;
-  }
 
   public override void accept(Visitor v) {
     base.accept(v);

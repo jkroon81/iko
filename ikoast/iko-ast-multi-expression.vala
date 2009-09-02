@@ -7,16 +7,10 @@
 
 using Gee;
 
-public class Iko.AST.MultiExpression : Expression {
+public abstract class Iko.AST.MultiExpression : Expression {
   public ArrayList<Expression> operands { get; private set; }
 
   public Operator op { get; construct; }
-
-  public MultiExpression(Operator op, ArrayList<Expression>? op_list) {
-    this.op = op;
-    if(op_list != null)
-      operands.add_all(op_list);
-  }
 
   construct {
     operands = new ArrayList<Expression>();

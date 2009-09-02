@@ -19,22 +19,34 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
     return q.pop_head();
   }
 
-  public override void visit_binary_expression(BinaryExpression be) {
-    q.push_head(new BinaryExpression(be.op, transform(be.left), transform(be.right)));
+  public ArrayList<Expression> transform_list(ArrayList<Expression> operands) {
+    var op_list = new ArrayList<Expression>();
+    foreach(var op in operands)
+      op_list.add(transform(op));
+    return op_list;
   }
 
-  public override void visit_multi_expression(MultiExpression me) {
-    var op_list = new ArrayList<Expression>();
-    foreach(var op in me.operands)
-      op_list.add(transform(op));
-    q.push_head(new MultiExpression(me.op, op_list));
+  public override void visit_additive_expression(AdditiveExpression ae) {
+    q.push_head(new AdditiveExpression(transform_list(ae.operands)));
+  }
+
+  public override void visit_division_expression(DivisionExpression de) {
+    q.push_head(new DivisionExpression(transform(de.left), transform(de.right)));
+  }
+
+  public override void visit_equality_expression(EqualityExpression ee) {
+    q.push_head(new EqualityExpression(transform(ee.left), transform(ee.right)));
+  }
+
+  public override void visit_multiplicative_expression(MultiplicativeExpression me) {
+    q.push_head(new MultiplicativeExpression(transform_list(me.operands)));
+  }
+
+  public override void visit_power_expression(PowerExpression pe) {
+    q.push_head(new PowerExpression(transform(pe.left), transform(pe.right)));
   }
 
   public override void visit_simple_expression(SimpleExpression se) {
     q.push_head(se);
-  }
-
-  public override void visit_unary_expression(UnaryExpression ue) {
-    q.push_head(new UnaryExpression(ue.op, transform(ue.expr)));
   }
 }

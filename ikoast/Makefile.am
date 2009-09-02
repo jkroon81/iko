@@ -7,6 +7,7 @@ CLEANFILES = \
 	*~
 
 libikoast_la_SOURCES = \
+	iko-ast-additive-expression.vala \
 	iko-ast-binary-expression.vala \
 	iko-ast-collect-terms.vala \
 	iko-ast-constant.vala \
@@ -14,6 +15,8 @@ libikoast_la_SOURCES = \
 	iko-ast-data-type.vala \
 	iko-ast-derivative-method.vala \
 	iko-ast-derivative-solver.vala \
+	iko-ast-division-expression.vala \
+	iko-ast-equality-expression.vala \
 	iko-ast-expand-terms.vala \
 	iko-ast-expression-transformer.vala \
 	iko-ast-expression.vala \
@@ -28,8 +31,10 @@ libikoast_la_SOURCES = \
 	iko-ast-method-call.vala \
 	iko-ast-method.vala \
 	iko-ast-multi-expression.vala \
+	iko-ast-multiplicative-expression.vala \
 	iko-ast-node.vala \
 	iko-ast-operator.vala \
+	iko-ast-power-expression.vala \
 	iko-ast-real-type.vala \
 	iko-ast-simple-expression.vala \
 	iko-ast-square-root-method.vala \
@@ -38,8 +43,6 @@ libikoast_la_SOURCES = \
 	iko-ast-symbol-access.vala \
 	iko-ast-symbol.vala \
 	iko-ast-system.vala \
-	iko-ast-transform-negatives.vala \
-	iko-ast-unary-expression.vala \
 	iko-ast-visitor.vala \
 	iko-ast-writer.vala
 

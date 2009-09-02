@@ -27,8 +27,6 @@ public class Iko.AST.Writer : Visitor {
       op_child = (e as BinaryExpression).op;
     else if(e is MultiExpression)
       op_child = (e as MultiExpression).op;
-    else if(e is UnaryExpression)
-      op_child = (e as UnaryExpression).op;
     else
       assert_not_reached();
 
@@ -194,10 +192,5 @@ public class Iko.AST.Writer : Visitor {
       write("}");
     }
     write("}");
-  }
-
-  public override void visit_unary_expression(UnaryExpression ue) {
-    write(ue.op.to_string());
-    ue.expr.accept(this);
   }
 }

@@ -5,109 +5,97 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.AST.FoldConstants : ExpressionTransformer {
-  public override void visit_binary_expression(BinaryExpression be_in) {
-    assert(be_in.op == Operator.DIV ||
-           be_in.op == Operator.POWER);
-    base.visit_binary_expression(be_in);
+  public override void visit_division_expression(DivisionExpression de_in) {
+    base.visit_division_expression(de_in);
+    var de = q.pop_head() as DivisionExpression;
 
-    var be = q.pop_head() as BinaryExpression;
-    switch(be.op) {
-    case Operator.DIV:
-      if(be.right is Literal) {
-        var den = (be.right as Literal).value.to_double();
-        if(den == 1.0)
-          q.push_head(be.left);
-        else if(be.left is Literal) {
-          var num = (be.left as Literal).value.to_double();
-          q.push_head(new FloatLiteral((num / den).to_string()));
-        } else
-          q.push_head(be);
+    if(de.right is Literal) {
+      var den = (de.right as Literal).value.to_double();
+      if(den == 1.0)
+        q.push_head(de.left);
+      else if(de.left is Literal) {
+        var num = (de.left as Literal).value.to_double();
+        q.push_head(new FloatLiteral((num / den).to_string()));
       } else
-        q.push_head(be);
+        q.push_head(de);
+    } else
+      q.push_head(de);
+  }
+
+  public override void visit_additive_expression(AdditiveExpression ae_in) {
+    base.visit_additive_expression(ae_in);
+    var ae = q.pop_head() as AdditiveExpression;
+
+    var op_list = new Gee.ArrayList<Expression>();
+    Literal lterm = new IntegerLiteral("0");
+    foreach(var op in ae.operands) {
+      if(op is Literal) {
+        var nvalue = (op as Literal).value.to_double();
+        lterm = new FloatLiteral((lterm.value.to_double() + nvalue).to_string());
+      } else
+        op_list.add(op);
+    }
+    if(lterm.value.to_double() != 0.0)
+      op_list.add(lterm);
+    switch(op_list.size) {
+    case 0:
+      q.push_head(new IntegerLiteral("0"));
       break;
-    case Operator.POWER:
-      if(be.right is Literal) {
-        var exp = (be.right as Literal).value.to_double();
-        if(exp == 0.0)
-          q.push_head(new IntegerLiteral("1"));
-        else if(exp == 1.0)
-          q.push_head(be.left);
-        else
-          q.push_head(be);
-      } else
-        q.push_head(be);
+    case 1:
+      q.push_head(op_list[0]);
       break;
     default:
-      q.push_head(be);
+      q.push_head(new AdditiveExpression(op_list));
       break;
     }
   }
 
-  public override void visit_multi_expression(MultiExpression me_in) {
-    assert(me_in.op == Operator.EQUAL ||
-           me_in.op == Operator.MUL   ||
-           me_in.op == Operator.PLUS);
-    base.visit_multi_expression(me_in);
+  public override void visit_multiplicative_expression(MultiplicativeExpression me_in) {
+    base.visit_multiplicative_expression(me_in);
+    var me = q.pop_head() as MultiplicativeExpression;
 
-    var me = q.pop_head() as MultiExpression;
-    var op_list = new ArrayList<Expression>();
-    switch(me.op) {
-    case Operator.MUL:
-      Literal lfactor = new IntegerLiteral("1");
-      foreach(var op in me.operands) {
-        if(op is Literal) {
-          var nvalue = (op as Literal).value.to_double();
-          if(nvalue == 0.0) {
-            q.push_head(new IntegerLiteral("0"));
-            return;
-          } else
-            lfactor = new FloatLiteral((lfactor.value.to_double() * nvalue).to_string());
+    var op_list = new Gee.ArrayList<Expression>();
+    Literal lfactor = new IntegerLiteral("1");
+    foreach(var op in me.operands) {
+      if(op is Literal) {
+        var nvalue = (op as Literal).value.to_double();
+        if(nvalue == 0.0) {
+          q.push_head(new IntegerLiteral("0"));
+          return;
         } else
-          op_list.add(op);
-      }
-      if(lfactor.value.to_double() != 1.0)
-        op_list.add(lfactor);
-      switch(op_list.size) {
-      case 0:
-        q.push_head(new IntegerLiteral("1"));
-        break;
-      case 1:
-        q.push_head(op_list[0]);
-        break;
-      default:
-        q.push_head(new MultiExpression(Operator.MUL, op_list));
-        break;
-      }
+          lfactor = new FloatLiteral((lfactor.value.to_double() * nvalue).to_string());
+      } else
+        op_list.add(op);
+    }
+    if(lfactor.value.to_double() != 1.0)
+      op_list.add(lfactor);
+    switch(op_list.size) {
+    case 0:
+      q.push_head(new IntegerLiteral("1"));
       break;
-    case Operator.PLUS:
-      Literal lterm = new IntegerLiteral("0");
-      foreach(var op in me.operands) {
-        if(op is Literal) {
-          var nvalue = (op as Literal).value.to_double();
-          lterm = new FloatLiteral((lterm.value.to_double() + nvalue).to_string());
-        } else
-          op_list.add(op);
-      }
-      if(lterm.value.to_double() != 0.0)
-        op_list.add(lterm);
-      switch(op_list.size) {
-      case 0:
-        q.push_head(new IntegerLiteral("0"));
-        break;
-      case 1:
-        q.push_head(op_list[0]);
-        break;
-      default:
-        q.push_head(new MultiExpression(Operator.PLUS, op_list));
-        break;
-      }
+    case 1:
+      q.push_head(op_list[0]);
       break;
     default:
-      q.push_head(me);
+      q.push_head(new MultiplicativeExpression(op_list));
       break;
     }
+  }
+
+  public override void visit_power_expression(PowerExpression pe_in) {
+    base.visit_power_expression(pe_in);
+    var pe = q.pop_head() as PowerExpression;
+
+    if(pe.right is Literal) {
+      var exp = (pe.right as Literal).value.to_double();
+      if(exp == 0.0)
+        q.push_head(new IntegerLiteral("1"));
+      else if(exp == 1.0)
+        q.push_head(pe.left);
+      else
+        q.push_head(pe);
+    } else
+      q.push_head(pe);
   }
 }

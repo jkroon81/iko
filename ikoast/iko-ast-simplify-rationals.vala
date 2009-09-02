@@ -8,51 +8,41 @@
 using Gee;
 
 public class Iko.AST.SimplifyRationals : ExpressionTransformer {
-  public override void visit_binary_expression(BinaryExpression be_in) {
-    assert(be_in.op == Operator.DIV ||
-           be_in.op == Operator.POWER);
-    base.visit_binary_expression(be_in);
-    var be = q.pop_head() as BinaryExpression;
+  public override void visit_division_expression(DivisionExpression de_in) {
+    base.visit_division_expression(de_in);
+    var de = q.pop_head() as DivisionExpression;
 
-    if(be.op == Operator.DIV) {
-      if(be.left is BinaryExpression && (be.left as BinaryExpression).op == Operator.DIV) {
-        var be_left = be.left as BinaryExpression;
-        var right_new = new MultiExpression(Operator.MUL, null);
-        right_new.operands.add(be_left.right);
-        right_new.operands.add(be.right);
-        q.push_head(new BinaryExpression(Operator.DIV, be_left.left, right_new));
-      } else if(be.right is BinaryExpression && (be.right as BinaryExpression).op == Operator.DIV) {
-        var be_right = be.right as BinaryExpression;
-        var left_new = new MultiExpression(Operator.MUL, null);
-        left_new.operands.add(be.left);
-        left_new.operands.add(be_right.right);
-        q.push_head(new BinaryExpression(Operator.DIV, left_new, be_right.left));
-      } else
-        q.push_head(be);
+    if(de.left is DivisionExpression) {
+      var de_left = de.left as DivisionExpression;
+      var right_new = new MultiplicativeExpression(null);
+      right_new.operands.add(de_left.right);
+      right_new.operands.add(de.right);
+      q.push_head(new DivisionExpression(de_left.left, right_new));
+    } else if(de.right is DivisionExpression) {
+      var de_right = de.right as DivisionExpression;
+      var left_new = new MultiplicativeExpression(null);
+      left_new.operands.add(de.left);
+      left_new.operands.add(de_right.right);
+      q.push_head(new DivisionExpression(left_new, de_right.left));
     } else
-      q.push_head(be);
+      q.push_head(de);
   }
 
-  public override void visit_multi_expression(MultiExpression me_in) {
-    assert(me_in.op == Operator.EQUAL ||
-           me_in.op == Operator.MUL   ||
-           me_in.op == Operator.PLUS);
-    base.visit_multi_expression(me_in);
-    var me = q.pop_head() as MultiExpression;
+  public override void visit_multiplicative_expression(MultiplicativeExpression me_in) {
+    base.visit_multiplicative_expression(me_in);
+    var me = q.pop_head() as MultiplicativeExpression;
 
-    if(me.op == Operator.MUL) {
-      for(var i = 0; i < me.operands.size; i++) {
-        var op = me.operands[i];
-        if(op is BinaryExpression && (op as BinaryExpression).op == Operator.DIV) {
-          var be_sub = op as BinaryExpression;
-          var left = new MultiExpression(Operator.MUL, null);
-          for(var j = 0; j < me.operands.size; j++)
-            if(j != i)
-              left.operands.add(me.operands[j]);
-          left.operands.add(be_sub.left);
-          q.push_head(new BinaryExpression(Operator.DIV, left, be_sub.right));
-          return;
-        }
+    for(var i = 0; i < me.operands.size; i++) {
+      var op = me.operands[i];
+      if(op is DivisionExpression) {
+        var de_sub = op as DivisionExpression;
+        var left = new MultiplicativeExpression(null);
+        for(var j = 0; j < me.operands.size; j++)
+          if(j != i)
+            left.operands.add(me.operands[j]);
+        left.operands.add(de_sub.left);
+        q.push_head(new DivisionExpression(left, de_sub.right));
+        return;
       }
     }
     q.push_head(me);

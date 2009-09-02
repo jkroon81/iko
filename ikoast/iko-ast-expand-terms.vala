@@ -5,80 +5,64 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.AST.ExpandTerms : ExpressionTransformer {
-  public override void visit_binary_expression(BinaryExpression be_in) {
-    assert(be_in.op == Operator.DIV ||
-           be_in.op == Operator.POWER);
-    base.visit_binary_expression(be_in);
-    var be = q.pop_head() as BinaryExpression;
+  public override void visit_multiplicative_expression(MultiplicativeExpression me_in) {
+    base.visit_multiplicative_expression(me_in);
+    var me = q.pop_head() as MultiplicativeExpression;
 
-    if(be.op == Operator.POWER) {
-      if(be.right is Literal) {
-        var exp = (be.right as Literal).value.to_double();
-        if(exp == Math.floor(exp)) {
-          if(exp > 0.0) {
-            var me = new MultiExpression(Operator.MUL, null);
-            for(int i = 0; i < Math.floor(exp); i++) {
-              me.operands.add(be.left);
-            }
-            q.push_head(transform(me));
-            return;
-          }
+    var op_list = new Gee.ArrayList<Expression>();
+    foreach(var op in me.operands) {
+      if(op is AdditiveExpression) {
+        var ae_sub = op as AdditiveExpression;
+        me.operands.remove(ae_sub);
+        foreach(var f1 in ae_sub.operands) {
+          var t = new MultiplicativeExpression(null);
+          t.operands.add(f1);
+          t.operands.add_all(me.operands);
+          op_list.add(transform(t));
         }
-      }
-      if(be.right is MultiExpression) {
-        var be_right = be.right as MultiExpression;
-        if(be_right.op == Operator.PLUS) {
-          var me = new MultiExpression(Operator.MUL, null);
-          foreach(var op in be_right.operands)
-            me.operands.add(transform(new BinaryExpression(Operator.POWER, be.left, op)));
-          q.push_head(me);
-          return;
-        }
-      }
-      if(be.left is MultiExpression) {
-        var be_left = be.left as MultiExpression;
-        if(be_left.op == Operator.MUL) {
-          var me = new MultiExpression(Operator.MUL, null);
-          foreach(var op in be_left.operands)
-            me.operands.add(transform(new BinaryExpression(Operator.POWER, op, be.right)));
-          q.push_head(me);
-          return;
-        }
+        break;
       }
     }
-    q.push_head(be);
+    if(op_list.size > 0)
+      q.push_head(new AdditiveExpression(op_list));
+    else
+      q.push_head(me);
   }
 
-  public override void visit_multi_expression(MultiExpression me_in) {
-    assert(me_in.op == Operator.EQUAL ||
-           me_in.op == Operator.MUL   ||
-           me_in.op == Operator.PLUS);
-    base.visit_multi_expression(me_in);
-    var me = q.pop_head() as MultiExpression;
+  public override void visit_power_expression(PowerExpression pe_in) {
+    base.visit_power_expression(pe_in);
+    var pe = q.pop_head() as PowerExpression;
 
-    if(me.op == Operator.MUL) {
-      var op_list = new ArrayList<Expression>();
-      foreach(var op in me.operands) {
-        if(op is MultiExpression && (op as MultiExpression).op == Operator.PLUS) {
-          var me_sub = op as MultiExpression;
-          me.operands.remove(me_sub);
-          foreach(var f1 in me_sub.operands) {
-            var t = new MultiExpression(Operator.MUL, null);
-            t.operands.add(f1);
-            t.operands.add_all(me.operands);
-            op_list.add(transform(t));
+    if(pe.right is Literal) {
+      var exp = (pe.right as Literal).value.to_double();
+      if(exp == Math.floor(exp)) {
+        if(exp > 0.0) {
+          var me = new MultiplicativeExpression(null);
+          for(int i = 0; i < Math.floor(exp); i++) {
+            me.operands.add(pe.left);
           }
-          break;
+          q.push_head(transform(me));
+          return;
         }
       }
-      if(op_list.size > 0) {
-        q.push_head(new MultiExpression(Operator.PLUS, op_list));
-        return;
-      }
     }
-    q.push_head(me);
+    if(pe.right is AdditiveExpression) {
+      var ae_right = pe.right as AdditiveExpression;
+      var me = new MultiplicativeExpression(null);
+      foreach(var op in ae_right.operands)
+        me.operands.add(transform(new PowerExpression(pe.left, op)));
+      q.push_head(me);
+      return;
+    }
+    if(pe.left is MultiplicativeExpression) {
+      var me_left = pe.left as MultiplicativeExpression;
+      var me = new MultiplicativeExpression(null);
+      foreach(var op in me_left.operands)
+        me.operands.add(transform(new PowerExpression(op, pe.right)));
+      q.push_head(me);
+      return;
+    }
+    q.push_head(pe);
   }
 }

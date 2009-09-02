@@ -31,8 +31,6 @@ public class Transformer.Main {
     foreach(var e in system.equations) {
       var expr = e as Iko.AST.Expression;
       stdout.printf("original            : %s\n", writer.generate_string(expr));
-      expr = new Iko.AST.TransformNegatives().transform(expr);
-      stdout.printf("transform negatives : %s\n", writer.generate_string(expr));
       expr = new Iko.AST.LevelOperators().transform(expr);
       stdout.printf("level operators     : %s\n", writer.generate_string(expr));
       expr = new Iko.AST.SimplifyRationals().transform(expr);

@@ -107,7 +107,25 @@ public class Iko.AST.Generator : Iko.Visitor {
   }
 
   public override void visit_binary_expression(Iko.BinaryExpression be) {
-    q.push_head(new BinaryExpression(get_binary_operator(be.op), generate_expression(be.left), generate_expression(be.right)));
+    switch(get_binary_operator(be.op)) {
+    case Operator.DIV:
+      q.push_head(new DivisionExpression(generate_expression(be.left), generate_expression(be.right)));
+      break;
+    case Operator.MINUS:
+      q.push_head(new AdditiveExpression.from_binary(generate_expression(be.left), new MultiplicativeExpression.from_binary(new IntegerLiteral("-1"), generate_expression(be.right))));
+      break;
+    case Operator.MUL:
+      q.push_head(new MultiplicativeExpression.from_binary(generate_expression(be.left), generate_expression(be.right)));
+      break;
+    case Operator.PLUS:
+      q.push_head(new AdditiveExpression.from_binary(generate_expression(be.left), generate_expression(be.right)));
+      break;
+    case Operator.POWER:
+      q.push_head(new PowerExpression(generate_expression(be.left), generate_expression(be.right)));
+      break;
+    default:
+      assert_not_reached();
+    }
   }
 
   public override void visit_block(Block b) {
@@ -136,7 +154,7 @@ public class Iko.AST.Generator : Iko.Visitor {
   }
 
   public override void visit_equation(Iko.Equation eq) {
-    system.add_equation(new BinaryExpression(Operator.EQUAL, generate_expression(eq.left), generate_expression(eq.right)));
+    system.add_equation(new EqualityExpression(generate_expression(eq.left), generate_expression(eq.right)));
   }
 
   public override void visit_field(Field f) {
@@ -185,6 +203,15 @@ public class Iko.AST.Generator : Iko.Visitor {
   }
 
   public override void visit_unary_expression(Iko.UnaryExpression ue) {
-    q.push_head(new UnaryExpression(get_unary_operator(ue.op), generate_expression(ue.expr)));
+    switch(get_unary_operator(ue.op)) {
+    case Operator.MINUS:
+      q.push_head(new MultiplicativeExpression.from_binary(new IntegerLiteral("-1"), generate_expression(ue.expr)));
+      break;
+    case Operator.PLUS:
+      q.push_head(generate_expression(ue.expr));
+      break;
+    default:
+      assert_not_reached();
+    }
   }
 }

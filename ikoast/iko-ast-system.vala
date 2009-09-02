@@ -9,7 +9,7 @@ using Gee;
 
 public class Iko.AST.System : Node {
   public ArrayList<Constant>            constants { get; private set; }
-  public ArrayList<BinaryExpression>    equations { get; private set; }
+  public ArrayList<EqualityExpression>  equations { get; private set; }
   public ArrayList<IndependentVariable> ivars     { get; private set; }
   public ArrayList<Method>              methods   { get; private set; }
   public ArrayList<State>               states    { get; private set; }
@@ -17,7 +17,7 @@ public class Iko.AST.System : Node {
 
   construct {
     constants = new ArrayList<Constant>();
-    equations = new ArrayList<BinaryExpression>();
+    equations = new ArrayList<EqualityExpression>();
     ivars = new ArrayList<IndependentVariable>();
     methods = new ArrayList<Method>();
     states = new ArrayList<State>();
@@ -50,8 +50,7 @@ public class Iko.AST.System : Node {
     map.insert(c.name, c);
   }
 
-  public void add_equation(BinaryExpression eq) {
-    assert(eq.op == Operator.EQUAL);
+  public void add_equation(EqualityExpression eq) {
     equations.add(eq);
   }
 
