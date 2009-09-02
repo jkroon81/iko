@@ -78,7 +78,9 @@ public class Iko.AST.Generator : Iko.Visitor {
     } else if(data_type is Iko.ArrayType) {
       var length = ((data_type as Iko.ArrayType).length as Iko.IntegerLiteral).value.to_int();
       for(var i = 0; i < length; i++)
-        generate_instance((data_type as Iko.ArrayType).element_type, name + "[" + i.to_string() + "]", params);
+        generate_instance((data_type as Iko.ArrayType).element_type,
+                          name + "[" + i.to_string() + "]",
+                          params);
     } else
       assert_not_reached();
   }
@@ -109,19 +111,31 @@ public class Iko.AST.Generator : Iko.Visitor {
   public override void visit_binary_expression(Iko.BinaryExpression be) {
     switch(get_binary_operator(be.op)) {
     case Operator.DIV:
-      q.push_head(new DivisionExpression(generate_expression(be.left), generate_expression(be.right)));
+      q.push_head(new DivisionExpression(generate_expression(be.left),
+                                         generate_expression(be.right)));
       break;
     case Operator.MINUS:
-      q.push_head(new AdditiveExpression.from_binary(generate_expression(be.left), new MultiplicativeExpression.from_binary(new IntegerLiteral("-1"), generate_expression(be.right))));
+      q.push_head(
+        new AdditiveExpression.from_binary(
+          generate_expression(be.left),
+          new MultiplicativeExpression.from_binary(
+            new IntegerLiteral("-1"),
+            generate_expression(be.right)
+          )
+        )
+      );
       break;
     case Operator.MUL:
-      q.push_head(new MultiplicativeExpression.from_binary(generate_expression(be.left), generate_expression(be.right)));
+      q.push_head(new MultiplicativeExpression.from_binary(generate_expression(be.left),
+                                                           generate_expression(be.right)));
       break;
     case Operator.PLUS:
-      q.push_head(new AdditiveExpression.from_binary(generate_expression(be.left), generate_expression(be.right)));
+      q.push_head(new AdditiveExpression.from_binary(generate_expression(be.left),
+                                                     generate_expression(be.right)));
       break;
     case Operator.POWER:
-      q.push_head(new PowerExpression(generate_expression(be.left), generate_expression(be.right)));
+      q.push_head(new PowerExpression(generate_expression(be.left),
+                                      generate_expression(be.right)));
       break;
     default:
       assert_not_reached();
@@ -154,7 +168,8 @@ public class Iko.AST.Generator : Iko.Visitor {
   }
 
   public override void visit_equation(Iko.Equation eq) {
-    system.add_equation(new EqualityExpression(generate_expression(eq.left), generate_expression(eq.right)));
+    system.add_equation(new EqualityExpression(generate_expression(eq.left),
+                                               generate_expression(eq.right)));
   }
 
   public override void visit_field(Field f) {
@@ -205,7 +220,8 @@ public class Iko.AST.Generator : Iko.Visitor {
   public override void visit_unary_expression(Iko.UnaryExpression ue) {
     switch(get_unary_operator(ue.op)) {
     case Operator.MINUS:
-      q.push_head(new MultiplicativeExpression.from_binary(new IntegerLiteral("-1"), generate_expression(ue.expr)));
+      q.push_head(new MultiplicativeExpression.from_binary(new IntegerLiteral("-1"),
+                                                           generate_expression(ue.expr)));
       break;
     case Operator.PLUS:
       q.push_head(generate_expression(ue.expr));
