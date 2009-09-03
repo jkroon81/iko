@@ -7,10 +7,8 @@
 
 using Gee;
 
-public abstract class Iko.AST.MultiExpression : Expression {
+public abstract class Iko.AST.MultiExpression : ArithmeticExpression {
   public ArrayList<Expression> operands { get; private set; }
-
-  public Operator op { get; construct; }
 
   construct {
     operands = new ArrayList<Expression>();

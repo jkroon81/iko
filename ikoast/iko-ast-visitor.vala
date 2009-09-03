@@ -7,6 +7,7 @@
 
 public abstract class Iko.AST.Visitor : Object {
   public virtual void visit_additive_expression(AdditiveExpression ae) {}
+  public virtual void visit_arithmetic_expression(ArithmeticExpression ae) {}
   public virtual void visit_binary_expression(BinaryExpression be) {}
   public virtual void visit_constant(Constant c) {}
   public virtual void visit_data_symbol(DataSymbol ds) {}

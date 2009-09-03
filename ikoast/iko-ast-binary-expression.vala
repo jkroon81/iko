@@ -5,8 +5,7 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public abstract class Iko.AST.BinaryExpression : Expression {
-  public Operator   op    { get; construct; }
+public abstract class Iko.AST.BinaryExpression : ArithmeticExpression {
   public Expression left  { get; construct; }
   public Expression right { get; construct; }
 

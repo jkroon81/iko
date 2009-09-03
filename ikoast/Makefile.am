@@ -8,6 +8,7 @@ CLEANFILES = \
 
 libikoast_la_SOURCES = \
 	iko-ast-additive-expression.vala \
+	iko-ast-arithmetic-expression.vala \
 	iko-ast-binary-expression.vala \
 	iko-ast-collect-terms.vala \
 	iko-ast-constant.vala \
