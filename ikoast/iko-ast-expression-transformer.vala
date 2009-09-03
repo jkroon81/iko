@@ -27,7 +27,7 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
   }
 
   public override void visit_additive_expression(AdditiveExpression ae) {
-    q.push_head(new AdditiveExpression(transform_list(ae.operands)));
+    q.push_head(new AdditiveExpression.list(transform_list(ae.operands)));
   }
 
   public override void visit_division_expression(DivisionExpression de) {
@@ -39,7 +39,7 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
   }
 
   public override void visit_multiplicative_expression(MultiplicativeExpression me) {
-    q.push_head(new MultiplicativeExpression(transform_list(me.operands)));
+    q.push_head(new MultiplicativeExpression.list(transform_list(me.operands)));
   }
 
   public override void visit_power_expression(PowerExpression pe) {

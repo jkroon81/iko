@@ -6,16 +6,19 @@
  */
 
 public class Iko.AST.AdditiveExpression : MultiExpression {
-  public AdditiveExpression(Gee.ArrayList<Expression>? op_list) {
-    op = Operator.PLUS;
-    if(op_list != null)
-      operands.add_all(op_list);
-  }
-
-  public AdditiveExpression.from_binary(Expression left, Expression right) {
+  public AdditiveExpression.binary(Expression left, Expression right) {
     op = Operator.PLUS;
     operands.add(left);
     operands.add(right);
+  }
+
+  public AdditiveExpression.empty() {
+    op = Operator.PLUS;
+  }
+
+  public AdditiveExpression.list(Gee.ArrayList<Expression> op_list) {
+    op = Operator.PLUS;
+    operands.add_all(op_list);
   }
 
   public override void accept(Visitor v) {

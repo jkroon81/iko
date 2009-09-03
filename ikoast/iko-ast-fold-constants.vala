@@ -46,7 +46,7 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
       q.push_head(op_list[0]);
       break;
     default:
-      q.push_head(new AdditiveExpression(op_list));
+      q.push_head(new AdditiveExpression.list(op_list));
       break;
     }
   }
@@ -78,7 +78,7 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
       q.push_head(op_list[0]);
       break;
     default:
-      q.push_head(new MultiplicativeExpression(op_list));
+      q.push_head(new MultiplicativeExpression.list(op_list));
       break;
     }
   }

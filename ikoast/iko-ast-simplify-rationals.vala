@@ -14,15 +14,11 @@ public class Iko.AST.SimplifyRationals : ExpressionTransformer {
 
     if(de.left is DivisionExpression) {
       var de_left = de.left as DivisionExpression;
-      var right_new = new MultiplicativeExpression(null);
-      right_new.operands.add(de_left.right);
-      right_new.operands.add(de.right);
+      var right_new = new MultiplicativeExpression.binary(de_left.right, de.right);
       q.push_head(new DivisionExpression(de_left.left, right_new));
     } else if(de.right is DivisionExpression) {
       var de_right = de.right as DivisionExpression;
-      var left_new = new MultiplicativeExpression(null);
-      left_new.operands.add(de.left);
-      left_new.operands.add(de_right.right);
+      var left_new = new MultiplicativeExpression.binary(de.left, de_right.right);
       q.push_head(new DivisionExpression(left_new, de_right.left));
     } else
       q.push_head(de);
@@ -36,10 +32,8 @@ public class Iko.AST.SimplifyRationals : ExpressionTransformer {
       var op = me.operands[i];
       if(op is DivisionExpression) {
         var de_sub = op as DivisionExpression;
-        var left = new MultiplicativeExpression(null);
-        for(var j = 0; j < me.operands.size; j++)
-          if(j != i)
-            left.operands.add(me.operands[j]);
+        var left = new MultiplicativeExpression.list(me.operands);
+        left.operands.remove(op);
         left.operands.add(de_sub.left);
         q.push_head(new DivisionExpression(left, de_sub.right));
         return;

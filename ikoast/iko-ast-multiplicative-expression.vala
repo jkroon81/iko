@@ -6,16 +6,19 @@
  */
 
 public class Iko.AST.MultiplicativeExpression : MultiExpression {
-  public MultiplicativeExpression(Gee.ArrayList<Expression>? op_list) {
-    op = Operator.MUL;
-    if(op_list != null)
-      operands.add_all(op_list);
-  }
-
-  public MultiplicativeExpression.from_binary(Expression left, Expression right) {
+  public MultiplicativeExpression.binary(Expression left, Expression right) {
     op = Operator.MUL;
     operands.add(left);
     operands.add(right);
+  }
+
+  public MultiplicativeExpression.empty() {
+    op = Operator.MUL;
+  }
+
+  public MultiplicativeExpression.list(Gee.ArrayList<Expression> op_list) {
+    op = Operator.MUL;
+    operands.add_all(op_list);
   }
 
   public override void accept(Visitor v) {
