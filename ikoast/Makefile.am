@@ -34,7 +34,6 @@ libikoast_la_SOURCES = \
 	iko-ast-multi-expression.vala \
 	iko-ast-multiplicative-expression.vala \
 	iko-ast-node.vala \
-	iko-ast-operator.vala \
 	iko-ast-power-expression.vala \
 	iko-ast-real-type.vala \
 	iko-ast-simple-expression.vala \

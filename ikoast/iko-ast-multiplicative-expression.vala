@@ -7,17 +7,14 @@
 
 public class Iko.AST.MultiplicativeExpression : MultiExpression {
   public MultiplicativeExpression.binary(Expression left, Expression right) {
-    op = Operator.MUL;
     operands.add(left);
     operands.add(right);
   }
 
   public MultiplicativeExpression.empty() {
-    op = Operator.MUL;
   }
 
   public MultiplicativeExpression.list(Gee.ArrayList<Expression> op_list) {
-    op = Operator.MUL;
     operands.add_all(op_list);
   }
 

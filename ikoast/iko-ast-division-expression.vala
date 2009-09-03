@@ -7,7 +7,6 @@
 
 public class Iko.AST.DivisionExpression : BinaryExpression {
   public DivisionExpression(Expression left, Expression right) {
-    op         = Operator.DIV;
     this.left  = left;
     this.right = right;
   }

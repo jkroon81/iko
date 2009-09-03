@@ -6,10 +6,9 @@
  */
 
 public class Iko.AST.PowerExpression : BinaryExpression {
-  public PowerExpression(Expression bais, Expression exp) {
-    op         = Operator.POWER;
-    this.left  = bais;
-    this.right = exp;
+  public PowerExpression(Expression left, Expression right) {
+    this.left  = left;
+    this.right = right;
   }
 
   public override void accept(Visitor v) {

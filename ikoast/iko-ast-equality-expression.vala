@@ -7,7 +7,6 @@
 
 public class Iko.AST.EqualityExpression : BinaryExpression {
   public EqualityExpression(Expression left, Expression right) {
-    op         = Operator.EQUAL;
     this.left  = left;
     this.right = right;
   }
