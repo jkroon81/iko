@@ -18,25 +18,6 @@ public class Iko.AST.Writer : Visitor {
     indent  = 0;
   }
 
-  bool needs_paranthesis(Operator op, Expression e) {
-    Operator op_child = Operator.NONE;
-
-    if(e is SimpleExpression)
-      return false;
-    else if(e is BinaryExpression)
-      op_child = (e as BinaryExpression).op;
-    else if(e is MultiExpression)
-      op_child = (e as MultiExpression).op;
-    else
-      assert_not_reached();
-
-    if(op == Operator.MINUS && op_child == Operator.PLUS)
-      return true;
-    if(op_child.priority() < op.priority())
-      return true;
-    return false;
-  }
-
   void write(string str) {
     char *c = (char*) str;
 
@@ -73,25 +54,35 @@ public class Iko.AST.Writer : Visitor {
     return buffer.str;
   }
 
-  public override void visit_binary_expression(BinaryExpression be) {
-    var protect = needs_paranthesis(be.op, be.left);
-    if(protect)
-      write("(");
-    be.left.accept(this);
-    if(protect)
-      write(")");
-    write(be.op.to_string());
-    protect = needs_paranthesis(be.op, be.right);
-    if(protect)
-      write("(");
-    be.right.accept(this);
-    if(protect)
-      write(")");
+  public override void visit_additive_expression(AdditiveExpression ae) {
+    for(int i = 0; i < ae.operands.size; i++) {
+      ae.operands[i].accept(this);
+      if(i != ae.operands.size - 1)
+        write("+");
+    }
   }
 
   public override void visit_constant(Constant c) {
     write(c.name);
     write(";");
+  }
+
+  public override void visit_division_expression(DivisionExpression de) {
+    if(de.left is AdditiveExpression)
+      write("(");
+    de.left.accept(this);
+    if(de.left is AdditiveExpression)
+      write(")");
+    write("/");
+    if(de.right is AdditiveExpression ||
+       de.right is MultiplicativeExpression ||
+       de.right is DivisionExpression)
+      write("(");
+    de.right.accept(this);
+    if(de.right is AdditiveExpression ||
+       de.right is MultiplicativeExpression ||
+       de.right is DivisionExpression)
+      write(")");
   }
 
   public override void visit_independent_variable(IndependentVariable iv) {
@@ -121,18 +112,30 @@ public class Iko.AST.Writer : Visitor {
     write(")");
   }
 
-  public override void visit_multi_expression(MultiExpression me) {
+  public override void visit_multiplicative_expression(MultiplicativeExpression me) {
     for(int i = 0; i < me.operands.size; i++) {
-      var op = me.operands[i];
-      var protect = needs_paranthesis(me.op, op);
-      if(protect)
-        write("(");
-      op.accept(this);
-      if(protect)
-        write(")");
+      //if(me.operands[i] is AdditiveExpression)
+      //  write("(");
+      me.operands[i].accept(this);
+      //if(me.operands[i] is AdditiveExpression)
+      //  write(")");
       if(i != me.operands.size - 1)
-        write(me.op.to_string());
+        write("*");
     }
+  }
+
+  public override void visit_power_expression(PowerExpression pe) {
+    if(!(pe.left is SimpleExpression))
+      write("(");
+    pe.left.accept(this);
+    if(!(pe.left is SimpleExpression))
+      write(")");
+    write("^");
+    if(!(pe.right is SimpleExpression))
+      write("(");
+    pe.right.accept(this);
+    if(!(pe.right is SimpleExpression))
+      write(")");
   }
 
   public override void visit_state(State s) {
