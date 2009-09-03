@@ -11,9 +11,6 @@ public class Iko.AST.AdditiveExpression : MultiExpression {
     operands.add(right);
   }
 
-  public AdditiveExpression.empty() {
-  }
-
   public AdditiveExpression.list(Gee.ArrayList<Expression> op_list) {
     operands.add_all(op_list);
   }

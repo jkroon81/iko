@@ -11,9 +11,6 @@ public class Iko.AST.MultiplicativeExpression : MultiExpression {
     operands.add(right);
   }
 
-  public MultiplicativeExpression.empty() {
-  }
-
   public MultiplicativeExpression.list(Gee.ArrayList<Expression> op_list) {
     operands.add_all(op_list);
   }
