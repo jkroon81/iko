@@ -114,11 +114,11 @@ public class Iko.AST.Writer : Visitor {
 
   public override void visit_multiplicative_expression(MultiplicativeExpression me) {
     for(int i = 0; i < me.operands.size; i++) {
-      //if(me.operands[i] is AdditiveExpression)
-      //  write("(");
+      if(me.operands[i] is AdditiveExpression)
+        write("(");
       me.operands[i].accept(this);
-      //if(me.operands[i] is AdditiveExpression)
-      //  write(")");
+      if(me.operands[i] is AdditiveExpression)
+        write(")");
       if(i != me.operands.size - 1)
         write("*");
     }
