@@ -33,32 +33,32 @@ public class Iko.AST.ExpandTerms : ExpressionTransformer {
     base.visit_power_expression(pe_in);
     var pe = q.pop_head() as PowerExpression;
 
-    if(pe.right is Literal) {
-      var exp = (pe.right as Literal).value.to_double();
+    if(pe.exp is Literal) {
+      var exp = (pe.exp as Literal).value.to_double();
       if(exp == Math.floor(exp)) {
         if(exp > 0.0) {
           var me = new MultiplicativeExpression();
           for(int i = 0; i < Math.floor(exp); i++) {
-            me.operands.add(pe.left);
+            me.operands.add(pe.bais);
           }
           q.push_head(transform(me));
           return;
         }
       }
     }
-    if(pe.right is AdditiveExpression) {
-      var ae_right = pe.right as AdditiveExpression;
+    if(pe.exp is AdditiveExpression) {
+      var exp = pe.exp as AdditiveExpression;
       var me = new MultiplicativeExpression();
-      foreach(var op in ae_right.operands)
-        me.operands.add(transform(new PowerExpression(pe.left, op)));
+      foreach(var op in exp.operands)
+        me.operands.add(transform(new PowerExpression(pe.bais, op)));
       q.push_head(me);
       return;
     }
-    if(pe.left is MultiplicativeExpression) {
-      var me_left = pe.left as MultiplicativeExpression;
+    if(pe.bais is MultiplicativeExpression) {
+      var bais = pe.bais as MultiplicativeExpression;
       var me = new MultiplicativeExpression();
-      foreach(var op in me_left.operands)
-        me.operands.add(transform(new PowerExpression(op, pe.right)));
+      foreach(var op in bais.operands)
+        me.operands.add(transform(new PowerExpression(op, pe.exp)));
       q.push_head(me);
       return;
     }

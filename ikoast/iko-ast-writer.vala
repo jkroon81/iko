@@ -68,20 +68,20 @@ public class Iko.AST.Writer : Visitor {
   }
 
   public override void visit_division_expression(DivisionExpression de) {
-    if(de.left is AdditiveExpression)
+    if(de.num is AdditiveExpression)
       write("(");
-    de.left.accept(this);
-    if(de.left is AdditiveExpression)
+    de.num.accept(this);
+    if(de.num is AdditiveExpression)
       write(")");
     write("/");
-    if(de.right is AdditiveExpression ||
-       de.right is MultiplicativeExpression ||
-       de.right is DivisionExpression)
+    if(de.den is AdditiveExpression ||
+       de.den is MultiplicativeExpression ||
+       de.den is DivisionExpression)
       write("(");
-    de.right.accept(this);
-    if(de.right is AdditiveExpression ||
-       de.right is MultiplicativeExpression ||
-       de.right is DivisionExpression)
+    de.den.accept(this);
+    if(de.den is AdditiveExpression ||
+       de.den is MultiplicativeExpression ||
+       de.den is DivisionExpression)
       write(")");
   }
 
@@ -125,16 +125,16 @@ public class Iko.AST.Writer : Visitor {
   }
 
   public override void visit_power_expression(PowerExpression pe) {
-    if(!(pe.left is SimpleExpression))
+    if(!(pe.bais is SimpleExpression))
       write("(");
-    pe.left.accept(this);
-    if(!(pe.left is SimpleExpression))
+    pe.bais.accept(this);
+    if(!(pe.bais is SimpleExpression))
       write(")");
     write("^");
-    if(!(pe.right is SimpleExpression))
+    if(!(pe.exp is SimpleExpression))
       write("(");
-    pe.right.accept(this);
-    if(!(pe.right is SimpleExpression))
+    pe.exp.accept(this);
+    if(!(pe.exp is SimpleExpression))
       write(")");
   }
 

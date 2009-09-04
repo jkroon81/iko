@@ -5,7 +5,15 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.AST.MultiplicativeExpression : MultiExpression {
+using Gee;
+
+public class Iko.AST.MultiplicativeExpression : ArithmeticExpression {
+  public ArrayList<Expression> operands { get; private set; }
+
+  construct {
+    operands = new ArrayList<Expression>();
+  }
+
   public MultiplicativeExpression.binary(Expression left, Expression right) {
     operands.add(left);
     operands.add(right);
@@ -18,5 +26,11 @@ public class Iko.AST.MultiplicativeExpression : MultiExpression {
   public override void accept(Visitor v) {
     base.accept(v);
     v.visit_multiplicative_expression(this);
+  }
+
+  public override void accept_children(Visitor v) {
+    base.accept_children(v);
+    foreach(var op in operands)
+      op.accept(v);
   }
 }

@@ -10,12 +10,12 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     base.visit_division_expression(de_in);
     var de = q.pop_head() as DivisionExpression;
 
-    if(de.right is Literal) {
-      var den = (de.right as Literal).value.to_double();
+    if(de.den is Literal) {
+      var den = (de.den as Literal).value.to_double();
       if(den == 1.0)
-        q.push_head(de.left);
-      else if(de.left is Literal) {
-        var num = (de.left as Literal).value.to_double();
+        q.push_head(de.num);
+      else if(de.num is Literal) {
+        var num = (de.num as Literal).value.to_double();
         q.push_head(new FloatLiteral((num / den).to_string()));
       } else
         q.push_head(de);
@@ -87,12 +87,12 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     base.visit_power_expression(pe_in);
     var pe = q.pop_head() as PowerExpression;
 
-    if(pe.right is Literal) {
-      var exp = (pe.right as Literal).value.to_double();
+    if(pe.exp is Literal) {
+      var exp = (pe.exp as Literal).value.to_double();
       if(exp == 0.0)
         q.push_head(new IntegerLiteral("1"));
       else if(exp == 1.0)
-        q.push_head(pe.left);
+        q.push_head(pe.bais);
       else
         q.push_head(pe);
     } else

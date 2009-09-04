@@ -8,7 +8,6 @@
 public abstract class Iko.AST.Visitor : Object {
   public virtual void visit_additive_expression(AdditiveExpression ae) {}
   public virtual void visit_arithmetic_expression(ArithmeticExpression ae) {}
-  public virtual void visit_binary_expression(BinaryExpression be) {}
   public virtual void visit_constant(Constant c) {}
   public virtual void visit_data_symbol(DataSymbol ds) {}
   public virtual void visit_data_type(DataType data_type) {}
@@ -23,7 +22,6 @@ public abstract class Iko.AST.Visitor : Object {
   public virtual void visit_literal(Literal l) {}
   public virtual void visit_method(Method m) {}
   public virtual void visit_method_call(MethodCall mc) {}
-  public virtual void visit_multi_expression(MultiExpression me) {}
   public virtual void visit_multiplicative_expression(MultiplicativeExpression me) {}
   public virtual void visit_power_expression(PowerExpression pe) {}
   public virtual void visit_real_type(RealType r) {}
