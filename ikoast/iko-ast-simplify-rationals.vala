@@ -5,8 +5,6 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.AST.SimplifyRationals : ExpressionTransformer {
   public override void visit_division_expression(DivisionExpression de_in) {
     base.visit_division_expression(de_in);

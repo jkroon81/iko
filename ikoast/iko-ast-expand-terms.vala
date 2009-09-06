@@ -10,7 +10,7 @@ public class Iko.AST.ExpandTerms : ExpressionTransformer {
     base.visit_multiplicative_expression(me_in);
     var me = q.pop_head() as MultiplicativeExpression;
 
-    var op_list = new Gee.ArrayList<Expression>();
+    var ae = new AdditiveExpression();
     foreach(var op in me.operands) {
       if(op is AdditiveExpression) {
         var ae_sub = op as AdditiveExpression;
@@ -18,13 +18,13 @@ public class Iko.AST.ExpandTerms : ExpressionTransformer {
         foreach(var f1 in ae_sub.operands) {
           var t = new MultiplicativeExpression.list(me.operands);
           t.operands.add(f1);
-          op_list.add(transform(t));
+          ae.operands.add(transform(t));
         }
         break;
       }
     }
-    if(op_list.size > 0)
-      q.push_head(new AdditiveExpression.list(op_list));
+    if(ae.operands.size > 0)
+      q.push_head(ae);
     else
       q.push_head(me);
   }

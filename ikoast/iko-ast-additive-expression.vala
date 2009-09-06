@@ -19,7 +19,7 @@ public class Iko.AST.AdditiveExpression : ArithmeticExpression {
     operands.add(right);
   }
 
-  public AdditiveExpression.list(Gee.ArrayList<Expression> op_list) {
+  public AdditiveExpression.list(ArrayList<Expression> op_list) {
     operands.add_all(op_list);
   }
 

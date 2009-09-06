@@ -5,8 +5,6 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public abstract class Iko.AST.ExpressionTransformer : Visitor {
   internal Queue<Expression> q;
 
@@ -19,15 +17,11 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
     return q.pop_head();
   }
 
-  public ArrayList<Expression> transform_list(ArrayList<Expression> operands) {
-    var op_list = new ArrayList<Expression>();
-    foreach(var op in operands)
-      op_list.add(transform(op));
-    return op_list;
-  }
-
   public override void visit_additive_expression(AdditiveExpression ae) {
-    q.push_head(new AdditiveExpression.list(transform_list(ae.operands)));
+    var ae_new = new AdditiveExpression();
+    foreach(var op in ae.operands)
+      ae_new.operands.add(transform(op));
+    q.push_head(ae_new);
   }
 
   public override void visit_division_expression(DivisionExpression de) {
@@ -39,7 +33,10 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
   }
 
   public override void visit_multiplicative_expression(MultiplicativeExpression me) {
-    q.push_head(new MultiplicativeExpression.list(transform_list(me.operands)));
+    var me_new = new MultiplicativeExpression();
+    foreach(var op in me.operands)
+      me_new.operands.add(transform(op));
+    q.push_head(me_new);
   }
 
   public override void visit_power_expression(PowerExpression pe) {

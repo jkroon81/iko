@@ -27,26 +27,26 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     base.visit_additive_expression(ae_in);
     var ae = q.pop_head() as AdditiveExpression;
 
-    var op_list = new Gee.ArrayList<Expression>();
+    var ae_new = new AdditiveExpression();
     Literal lterm = new IntegerLiteral("0");
     foreach(var op in ae.operands) {
       if(op is Literal) {
         var nvalue = (op as Literal).value.to_double();
         lterm = new FloatLiteral((lterm.value.to_double() + nvalue).to_string());
       } else
-        op_list.add(op);
+        ae_new.operands.add(op);
     }
     if(lterm.value.to_double() != 0.0)
-      op_list.add(lterm);
-    switch(op_list.size) {
+      ae_new.operands.add(lterm);
+    switch(ae_new.operands.size) {
     case 0:
       q.push_head(new IntegerLiteral("0"));
       break;
     case 1:
-      q.push_head(op_list[0]);
+      q.push_head(ae_new.operands[0]);
       break;
     default:
-      q.push_head(new AdditiveExpression.list(op_list));
+      q.push_head(ae_new);
       break;
     }
   }
@@ -55,7 +55,7 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     base.visit_multiplicative_expression(me_in);
     var me = q.pop_head() as MultiplicativeExpression;
 
-    var op_list = new Gee.ArrayList<Expression>();
+    var me_new = new MultiplicativeExpression();
     Literal lfactor = new IntegerLiteral("1");
     foreach(var op in me.operands) {
       if(op is Literal) {
@@ -66,19 +66,19 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
         } else
           lfactor = new FloatLiteral((lfactor.value.to_double() * nvalue).to_string());
       } else
-        op_list.add(op);
+        me_new.operands.add(op);
     }
     if(lfactor.value.to_double() != 1.0)
-      op_list.add(lfactor);
-    switch(op_list.size) {
+      me_new.operands.add(lfactor);
+    switch(me_new.operands.size) {
     case 0:
       q.push_head(new IntegerLiteral("1"));
       break;
     case 1:
-      q.push_head(op_list[0]);
+      q.push_head(me_new.operands[0]);
       break;
     default:
-      q.push_head(new MultiplicativeExpression.list(op_list));
+      q.push_head(me_new);
       break;
     }
   }
