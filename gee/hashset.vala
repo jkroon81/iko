@@ -25,16 +25,31 @@
 using GLib;
 
 /**
- * Hashtable implementation of the Set interface.
+ * Hash table implementation of the {@link Gee.Set} interface.
+ *
+ * This implementation is better fit for highly heterogenous values.
+ * In case of high value hashes redundancy or higher amount of data prefer using
+ * tree implementation like {@link Gee.TreeSet}.
+ *
+ * @see Gee.TreeSet
  */
-public class Gee.HashSet<G> : AbstractCollection<G>, Set<G> {
+public class Gee.HashSet<G> : AbstractSet<G> {
+	/**
+	 * @inheritDoc
+	 */
 	public override int size {
 		get { return _nnodes; }
 	}
 
-	public HashFunc hash_func { construct; get; }
+	/**
+	 * The elements' hash function.
+	 */
+	public HashFunc hash_func { private set; get; }
 
-	public EqualFunc equal_func { construct; get; }
+	/**
+	 * The elements' equality testing function.
+	 */
+	public EqualFunc equal_func { private set; get; }
 
 	private int _array_size;
 	private int _nnodes;
@@ -46,7 +61,19 @@ public class Gee.HashSet<G> : AbstractCollection<G>, Set<G> {
 	private const int MIN_SIZE = 11;
 	private const int MAX_SIZE = 13845163;
 
-	public HashSet (HashFunc hash_func = GLib.direct_hash, EqualFunc equal_func = GLib.direct_equal) {
+	/**
+	 * Constructs a new, empty hash set.
+	 *
+	 * @param hash_func an optional hash function.
+	 * @param equal_func an optional equality testing function.
+	 */
+	public HashSet (HashFunc? hash_func = null, EqualFunc? equal_func = null) {
+		if (hash_func == null) {
+			hash_func = Functions.get_hash_func_for (typeof (G));
+		}
+		if (equal_func == null) {
+			equal_func = Functions.get_equal_func_for (typeof (G));
+		}
 		this.hash_func = hash_func;
 		this.equal_func = equal_func;
 	}
@@ -65,15 +92,24 @@ public class Gee.HashSet<G> : AbstractCollection<G>, Set<G> {
 		return node;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override bool contains (G key) {
 		Node<G>** node = lookup_node (key);
 		return (*node != null);
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override Gee.Iterator<G> iterator () {
 		return new Iterator<G> (this);
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override bool add (G key) {
 		Node<G>** node = lookup_node (key);
 		if (*node != null) {
@@ -88,6 +124,9 @@ public class Gee.HashSet<G> : AbstractCollection<G>, Set<G> {
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override bool remove (G key) {
 		Node<G>** node = lookup_node (key);
 		if (*node != null) {
@@ -106,6 +145,9 @@ public class Gee.HashSet<G> : AbstractCollection<G>, Set<G> {
 		return false;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override void clear () {
 		for (int i = 0; i < _array_size; i++) {
 			Node<G> node = (owned) _nodes[i];
@@ -188,7 +230,7 @@ public class Gee.HashSet<G> : AbstractCollection<G>, Set<G> {
 			return (_node != null);
 		}
 
-		public new G? get () {
+		public new G get () {
 			assert (_stamp == _set._stamp);
 			assert (_node != null);
 			return _node.key;

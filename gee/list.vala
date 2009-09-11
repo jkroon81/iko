@@ -21,7 +21,7 @@
  */
 
 /**
- * Represents a collection of items in a well-defined order.
+ * An ordered collection.
  */
 public interface Gee.List<G> : Collection<G> {
 	/**
@@ -61,8 +61,10 @@ public interface Gee.List<G> : Collection<G> {
 	 * Removes the item at the specified index of this list.
 	 *
 	 * @param index zero-based index of the item to be removed
+	 *
+	 * @return      the removed element
 	 */
-	public abstract void remove_at (int index);
+	public abstract G remove_at (int index);
 
 	/**
 	 * Returns a slice of this list.
@@ -75,18 +77,18 @@ public interface Gee.List<G> : Collection<G> {
 	public abstract List<G>? slice (int start, int stop);
 
 	/**
-	 * Returns the first item of the list or null if list is empty.
+	 * Returns the first item of the list. Fails if the list is empty.
 	 *
 	 * @return      first item in the list
 	 */
-	public abstract G? first ();
+	public abstract G first ();
 
 	/**
-	 * Returns the last item of the list or null if list is empty.
+	 * Returns the last item of the list. Fails if the list is empty.
 	 *
 	 * @return      last item in the list
 	 */
-	public abstract G? last ();
+	public abstract G last ();
 
 	/**
 	 * Inserts items into this list for the input collection at the 
@@ -96,5 +98,17 @@ public interface Gee.List<G> : Collection<G> {
 	 * @param collection collection of items to be inserted
 	 */
 	public abstract void insert_all (int index, Collection<G> collection);
+
+	/**
+	 * Sorts items by comparing with the specified compare function.
+	 *
+	 * @param compare_func compare function to use to compare items
+	 */
+	public abstract void sort (CompareFunc? compare_func = null);
+
+	/**
+	 * Property giving access to the read-only view of this list.
+	 */
+	public abstract new List<G> read_only_view { owned get; }
 }
 

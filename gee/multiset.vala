@@ -1,6 +1,6 @@
-/* set.vala
+/* multiset.vala
  *
- * Copyright (C) 2007  Jürg Billeter
+ * Copyright (C) 2009  Ali Sabil
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,18 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  *
  * Author:
- * 	Jürg Billeter <j@bitron.ch>
+ * 	Ali Sabil <ali.sabil@gmail.com>
  */
 
 /**
- * A collection without duplicate elements.
+ * A MultiSet is a collection allowing duplicates.
  */
-public interface Gee.Set<G> : Collection<G> {
-
+public interface Gee.MultiSet<G> : Collection<G> {
 	/**
-	 * Property giving access to the read-only view of this set.
+	 * Returns the number of occurences of an item in this MultiSet
+	 *
+	 * @param item the item to count occurences of
+	 * @return the number of occurences of the item in this multiset.
 	 */
-	public abstract new Set<G> read_only_view { owned get; }
-
+	public abstract int count (G item);
 }
-

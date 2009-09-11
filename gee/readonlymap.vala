@@ -23,85 +23,114 @@
 using GLib;
 
 /**
- * Represents a read-only collection of key/value pairs.
+ * Read-only view for {@link Gee.Map} collections.
+ *
+ * This class decorates any class which implements the {@link Gee.Map} interface
+ * by making it read only. Any method which normally modify data will throw an
+ * error.
+ *
+ * @see Gee.Map
  */
-public class Gee.ReadOnlyMap<K,V> : Object, Map<K,V> {
+internal class Gee.ReadOnlyMap<K,V> : Object, Map<K,V> {
+
+	/**
+	 * @inheritDoc
+	 */
 	public int size {
 		get { return _map.size; }
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public bool is_empty {
 		get { return _map.is_empty; }
 	}
 
-	public Map<K,V> map {
-		construct { _map = value; }
-	}
-
 	private Map<K,V> _map;
 
-	public ReadOnlyMap (Map<K,V>? map = null) {
-		this.map = map;
+	/**
+	 * Constructs a read-only map that mirrors the content of the specified map.
+	 *
+	 * @param map the map to decorate.
+	 */
+	public ReadOnlyMap (Map<K,V> map) {
+		this._map = map;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public Set<K> get_keys () {
-		if (_map == null) {
-			return new ReadOnlySet<K> ();
-		}
-
 		return _map.get_keys ();
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public Collection<V> get_values () {
-		if (_map == null) {
-			return new ReadOnlyCollection<V> ();
-		}
-
 		return _map.get_values ();
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public bool contains (K key) {
-		if (_map == null) {
-			return false;
-		}
-
 		return _map.contains (key);
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public new V? get (K key) {
-		if (_map == null) {
-			return null;
-		}
-
 		return _map.get (key);
 	}
 
+	/**
+	 * Unimplemented method (read only map).
+	 */
 	public new void set (K key, V value) {
 		assert_not_reached ();
 	}
 
+	/**
+	 * Unimplemented method (read only map).
+	 */
 	public bool remove (K key, out V? value = null) {
 		assert_not_reached ();
 	}
 
+	/**
+	 * Unimplemented method (read only map).
+	 */
 	public void clear () {
 		assert_not_reached ();
 	}
 
+	/**
+	 * Unimplemented method (read only map).
+	 */
 	public void set_all (Map<K,V> map) {
 		assert_not_reached ();
 	}
 
+	/**
+	 * Unimplemented method (read only map).
+	 */
 	public bool remove_all (Map<K,V> map) {
 		assert_not_reached ();
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public bool contains_all (Map<K,V> map) {
-		if (_map == null) {
-			return false;
-		}
-
 		return _map.contains_all (map);
 	}
+
+	public virtual Map<K,V> read_only_view {
+		owned get { return this; }
+	}
+
 }
 

@@ -21,7 +21,7 @@
  */
 
 /**
- * A map is a generic collection of key/value pairs.
+ * An object that maps keys to values.
  */
 public interface Gee.Map<K,V> : GLib.Object {
 	/**
@@ -112,5 +112,10 @@ public interface Gee.Map<K,V> : GLib.Object {
 	 * @param map the map which items will be compared with this map.
 	 */
 	public abstract bool contains_all (Map<K,V> map);
+
+	/**
+	 * Property giving access to the read-only view this map.
+	 */
+	public abstract Map<K,V> read_only_view { owned get; }
 }
 

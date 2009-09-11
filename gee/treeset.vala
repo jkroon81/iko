@@ -23,21 +23,46 @@
 using GLib;
 
 /**
- * Left-leaning red-black tree implementation of the Set interface.
+ * Left-leaning red-black tree implementation of the {@link Gee.Set} interface.
+ *
+ * This implementation is especially well designed for large quantity of
+ * data. The (balanced) tree implementation insure that the set and get
+ * methods are in logarithmic complexity. For a linear implementation see
+ * {@link Gee.HashSet}.
+ *
+ * @see Gee.HashSet
  */
-public class Gee.TreeSet<G> : AbstractCollection<G>, Set<G> {
+public class Gee.TreeSet<G> : AbstractSet<G> {
+	/**
+	 * @inheritDoc
+	 */
 	public override int size {
 		get {return _size;}
 	}
 
-	public CompareFunc compare_func { construct; get; }
+	/**
+	 * The elements' comparator function.
+	 */
+	public CompareFunc compare_func { private set; get; }
 
 	private int _size = 0;
 
-	public TreeSet (CompareFunc compare_func = Gee.direct_compare) {
+	/**
+	 * Constructs a new, empty tree set sorted according to the specified
+	 * comparator function.
+	 *
+	 * @param compare_func an optional elements comparator function.
+	 */
+	public TreeSet (CompareFunc? compare_func = null) {
+		if (compare_func == null) {
+			compare_func = Functions.get_compare_func_for (typeof (G));
+		}
 		this.compare_func = compare_func;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override bool contains (G item) {
 		weak Node<G>? cur = root;
 		while (cur != null) {
@@ -117,6 +142,11 @@ public class Gee.TreeSet<G> : AbstractCollection<G>, Set<G> {
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 *
+	 * If the element already exists in the set it will not be added twice.
+	 */
 	public override bool add (G item) {
 		bool r = add_to_node (ref root, item, null, null);
 		root.color = Node.Color.BLACK;
@@ -199,6 +229,9 @@ public class Gee.TreeSet<G> : AbstractCollection<G>, Set<G> {
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override bool remove (G item) {
 		bool b = remove_from_node (ref root, item);
 		if (root != null) {
@@ -208,12 +241,18 @@ public class Gee.TreeSet<G> : AbstractCollection<G>, Set<G> {
 		return b;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override void clear () {
 		root = null;
 		_size = 0;
 		stamp++;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override Gee.Iterator<G> iterator () {
 		return  new Iterator<G> (this);
 	}
@@ -297,7 +336,7 @@ public class Gee.TreeSet<G> : AbstractCollection<G>, Set<G> {
 			}
 		}
 
-		public new G? get () {
+		public new G get () {
 			assert (stamp == set.stamp);
 			assert (current != null);
 			return current.key;

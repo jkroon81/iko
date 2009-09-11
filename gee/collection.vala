@@ -21,8 +21,7 @@
  */
 
 /**
- * Serves as the base interface for implementing collection classes. Defines
- * size, iteration, and modification methods.
+ * A generic collection of objects.
  */
 public interface Gee.Collection<G> : Iterable<G> {
 	/**
@@ -92,9 +91,10 @@ public interface Gee.Collection<G> : Iterable<G> {
 	public abstract bool contains_all (Collection<G> collection);
 
 	/**
-	 * Removes all items in this collection that are contained in the input 
-	 * collection. In other words all common items of both collections are 
-	 * removed from this collection.
+	 * Removes the subset of items in this collection corresponding to the
+	 * elments in the input collection. If there is several occurrences of
+	 * the same value in this collection they are decremented of the number
+	 * of occurrences in the input collection.
 	 * 
 	 * @param collection the collection which items will be compared with
 	 *                   this collection.
@@ -121,5 +121,10 @@ public interface Gee.Collection<G> : Iterable<G> {
 	 * @return an array containing all of items from this collection
 	 */
 	public abstract G[] to_array();
+
+	/**
+	 * Property giving access to the read-only view of this collection.
+	 */
+	public abstract Collection<G> read_only_view { owned get; }
 }
 

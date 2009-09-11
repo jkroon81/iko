@@ -10,21 +10,29 @@ libgee_la_SOURCES = \
 	abstractcollection.vala \
 	abstractlist.vala \
 	abstractmap.vala \
+	abstractset.vala \
 	arraylist.vala \
 	collection.vala \
+	deque.vala \
 	functions.vala \
 	hashmap.vala \
+	hashmultimap.vala \
+	hashmultiset.vala \
 	hashset.vala \
 	iterable.vala \
 	iterator.vala \
 	linkedlist.vala \
 	list.vala \
 	map.vala \
+	multimap.vala \
+	multiset.vala \
+	queue.vala \
 	readonlycollection.vala \
 	readonlylist.vala \
 	readonlymap.vala \
 	readonlyset.vala \
 	set.vala \
+	timsort.vala \
 	treemap.vala \
 	treeset.vala
 

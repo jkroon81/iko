@@ -20,38 +20,77 @@
  * Author:
  * 	Tomaž Vajngerl <quikee@gmail.com>
  */
- 
- /**
- * Serves as the base class for implementing map classes.
+
+/**
+ * Skeletal implementation of the {@link Gee.Map} interface.
+ *
+ * Contains common code shared by all map implementations.
+ *
+ * @see Gee.Map
+ * @see Gee.TreeMap
+ * @see Gee.HashMap
  */
 public abstract class Gee.AbstractMap<K,V> : Object, Map<K,V> {
 
+	/**
+	 * @inheritDoc
+	 */
 	public abstract int size { get; }
 
+	/**
+	 * @inheritDoc
+	 */
 	public virtual bool is_empty {
 		get { return size == 0; }
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public abstract Set<K> get_keys ();
 
+	/**
+	 * @inheritDoc
+	 */
 	public abstract Collection<V> get_values ();
 
+	/**
+	 * @inheritDoc
+	 */
 	public abstract bool contains (K key);
 
+	/**
+	 * @inheritDoc
+	 */
 	public abstract new V? get (K key);
 
+	/**
+	 * @inheritDoc
+	 */
 	public abstract new void set (K key, V value);
 
+	/**
+	 * @inheritDoc
+	 */
 	public abstract bool remove (K key, out V? value = null);
 
+	/**
+	 * @inheritDoc
+	 */
 	public abstract void clear ();
 
+	/**
+	 * @inheritDoc
+	 */
 	public virtual void set_all (Map<K,V> map) {
 		foreach (K key in map.get_keys ()) {
 			set (key, map.get (key));
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public virtual bool remove_all (Map<K,V> map) {
 		bool changed = false;
 		foreach (K key in map.get_keys ()) {
@@ -60,6 +99,9 @@ public abstract class Gee.AbstractMap<K,V> : Object, Map<K,V> {
 		return changed;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public virtual bool contains_all (Map<K,V> map) {
 		foreach (K key in map.get_keys ()) {
 			if (!contains (key)) {
@@ -68,4 +110,22 @@ public abstract class Gee.AbstractMap<K,V> : Object, Map<K,V> {
 		}
 		return true;
 	}
+
+	private weak Map<K,V> _read_only_view;
+
+	/**
+	 * @inheritDoc
+	 */
+	public virtual Map<K,V> read_only_view {
+		owned get {
+			Map<K,V> instance = _read_only_view;
+			if (_read_only_view == null) {
+				instance = new ReadOnlyMap<K,V> (this);
+				_read_only_view = instance;
+				instance.add_weak_pointer (&_read_only_view);
+			}
+			return instance;
+		}
+	}
+
 }

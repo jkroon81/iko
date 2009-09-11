@@ -1,6 +1,7 @@
-/* set.vala
+/* abstractset.vala
  *
  * Copyright (C) 2007  Jürg Billeter
+ * Copyright (C) 2009  Didier Villevalois
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,18 +18,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  *
  * Author:
- * 	Jürg Billeter <j@bitron.ch>
+ * 	Julien Peeters <contact@julienpeeters.fr>
  */
 
 /**
- * A collection without duplicate elements.
+ * Skeletal implementation of the {@link Gee.Set} interface.
+ *
+ * Contains common code shared by all set implementations.
+ *
+ * @see Gee.TreeSet
+ * @see Gee.HashSet
  */
-public interface Gee.Set<G> : Collection<G> {
+public abstract class Gee.AbstractSet<G> : Gee.AbstractCollection<G>, Set<G> {
+
+	private weak Set<G> _read_only_view;
 
 	/**
-	 * Property giving access to the read-only view of this set.
+	 * @inheritDoc
 	 */
-	public abstract new Set<G> read_only_view { owned get; }
-
+	public virtual new Set<G> read_only_view {
+		owned get {
+			Set<G> instance = _read_only_view;
+			if (_read_only_view == null) {
+				instance = new ReadOnlySet<G> (this);
+				_read_only_view = instance;
+				instance.add_weak_pointer (&_read_only_view);
+			}
+			return instance;
+		}
+	}
 }
-

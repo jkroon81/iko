@@ -23,27 +23,62 @@
 using GLib;
 
 /**
- * Left-leaning red-black tree implementation of the Map interface.
+ * Left-leaning red-black tree implementation of the {@link Gee.Map} interface.
+ *
+ * This implementation is especially well designed for large quantity of
+ * data. The (balanced) tree implementation insure that the set and get 
+ * methods are in logarithmic complexity.
+ *
+ * @see Gee.HashMap
  */
 public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
+	/**
+	 * @inheritDoc
+	 */
 	public override int size {
 		get { return _size; }
 	}
 
-	public CompareFunc key_compare_func { construct; get; }
-	public EqualFunc value_equal_func { construct; get; }
+	/**
+	 * The keys' comparator function.
+	 */
+	public CompareFunc key_compare_func { private set; get; }
+
+	/**
+	 * The values' equality testing function.
+	 */
+	public EqualFunc value_equal_func { private set; get; }
 
 	private int _size = 0;
 
-	public TreeMap (CompareFunc key_compare_func = Gee.direct_compare, EqualFunc value_equal_func = GLib.direct_equal) {
+	/**
+	 * Constructs a new, empty tree map sorted according to the specified
+	 * comparator function.
+	 *
+	 * @param key_compare_func an optional key comparator function.
+	 * @param value_equal_func an optional values equality testing function.
+	 */
+	public TreeMap (CompareFunc? key_compare_func = null, EqualFunc? value_equal_func = null) {
+		if (key_compare_func == null) {
+			key_compare_func = Functions.get_compare_func_for (typeof (K));
+		}
+		if (value_equal_func == null) {
+			value_equal_func = Functions.get_equal_func_for (typeof (V));
+		}
 		this.key_compare_func = key_compare_func;
 		this.value_equal_func = value_equal_func;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override Set<K> get_keys () {
 		return new KeySet<K,V> (this);
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override Collection<V> get_values () {
 		return new ValueCollection<K,V> (this);
 	}
@@ -74,6 +109,9 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		return n == null || n.color == Node.Color.BLACK;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override bool contains (K key) {
 		weak Node<K, V>? cur = root;
 		while (cur != null) {
@@ -89,6 +127,9 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		return false;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override V? get (K key) {
 		weak Node<K, V>? cur = root;
 		while (cur != null) {
@@ -129,6 +170,9 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		fix_up (ref node);
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override void set (K key, V value) {
 		set_to_node (ref root, key, value, null, null);
 		root.color = Node.Color.BLACK;
@@ -136,7 +180,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 
 	private void move_red_left (ref Node<K, V> root) {
 		root.flip ();
-		if (is_red (root.right.left)) {
+		if (root.right != null && is_red (root.right.left)) {
 			rotate_right (ref root.right);
 			rotate_left (ref root);
 			root.flip ();
@@ -145,7 +189,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 
 	private void move_red_right (ref Node<K, V> root) {
 		root.flip ();
-		if (is_red (root.left.left)) {
+		if (root.left != null && is_red (root.left.left)) {
 			rotate_right (ref root.right);
 			root.flip ();
 		}
@@ -187,7 +231,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 			if (is_red (node.left)) {
 				rotate_right (ref node);
 			}
-	
+
 			weak Node<K,V> r = node.right;
 			if (key_compare_func (key, node.key) == 0 && r == null) {
 				value = (owned) node.value;
@@ -195,7 +239,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 				_size--;
 				return true;
 			}
-			if (is_black (r) && is_black (r.left)) {
+			if (r == null || (is_black (r) && is_black (r.left))) {
 				move_red_right (ref node);
 			}
 			if (key_compare_func (key, node.key) == 0) {
@@ -221,6 +265,9 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override bool remove (K key, out V? value = null) {
 		V node_value;
 		bool b = remove_from_node (ref root, key, out node_value);
@@ -236,6 +283,9 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		return b;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public override void clear () {
 		root = null;
 		_size = 0;
@@ -303,8 +353,8 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	private weak Node<K, V>? first;
 	private int stamp = 0;
 
-	private class KeySet<K,V> : AbstractCollection<K>, Set<K> {
-		public TreeMap<K,V> map { construct; get; }
+	private class KeySet<K,V> : AbstractSet<K> {
+		public TreeMap<K,V> map { private set; get; }
 
 		public KeySet (TreeMap<K,V> map) {
 			this.map = map;
@@ -348,9 +398,9 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	}
 
 	private class ValueCollection<K,V> : AbstractCollection<V> {
-		public TreeMap<K,V> map { construct; get; }
+		public TreeMap<K,V> map { private set; get; }
 
-		public ValueCollection (TreeMap map) {
+		public ValueCollection (TreeMap<K,V> map) {
 			this.map = map;
 		}
 
@@ -398,11 +448,20 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	}
 
 	private class KeyIterator<K,V> : Object, Gee.Iterator<K> {
-		public TreeMap<K,V> map { construct; get; }
-		private int stamp;
-		construct {
-			stamp = map.stamp;
+		public TreeMap<K,V> map {
+			private set {
+				_map = value;
+				stamp = _map.stamp;
+			}
+			get {
+				return _map;
+			}
 		}
+
+		private TreeMap<K,V> _map;
+
+		// concurrent modification protection
+		private int stamp;
 
 		public KeyIterator (TreeMap<K,V> map) {
 			this.map = map;
@@ -421,7 +480,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 			}
 		}
 
-		public new K? get () {
+		public new K get () {
 			assert (stamp == map.stamp);
 			assert (current != null);
 			return current.key;
@@ -432,11 +491,20 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	}
 
 	private class ValueIterator<K,V> : Object, Gee.Iterator<V> {
-		public TreeMap<K,V> map { construct; get; }
-		private int stamp;
-		construct {
-			stamp = map.stamp;
+		public TreeMap<K,V> map {
+			private set {
+				_map = value;
+				stamp = _map.stamp;
+			}
+			get {
+				return _map;
+			}
 		}
+
+		private TreeMap<K,V> _map;
+
+		// concurrent modification protection
+		private int stamp;
 
 		public ValueIterator (TreeMap<K,V> map) {
 			this.map = map;
@@ -455,7 +523,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 			}
 		}
 
-		public new V? get () {
+		public new V get () {
 			assert (stamp == map.stamp);
 			assert (current != null);
 			return current.value;
