@@ -5,8 +5,6 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.AST.Generator : Iko.Visitor {
   Namespace root;
   Queue<string> prefix;
@@ -51,7 +49,7 @@ public class Iko.AST.Generator : Iko.Visitor {
     return q.pop_head();
   }
 
-  void generate_instance(Iko.DataType data_type, string name, ArrayList<Iko.Expression> params) {
+  void generate_instance(Iko.DataType data_type, string name, Gee.ArrayList<Iko.Expression> params) {
     if(data_type is Iko.TypeAccess) {
       prefix.push_tail(name);
       var buffer = new StringBuilder();
