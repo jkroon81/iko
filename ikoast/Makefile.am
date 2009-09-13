@@ -35,6 +35,7 @@ libikoast_la_SOURCES = \
 	iko-ast-power-expression.vala \
 	iko-ast-real-type.vala \
 	iko-ast-simple-expression.vala \
+	iko-ast-simplify-powers.vala \
 	iko-ast-simplify-rationals.vala \
 	iko-ast-square-root-method.vala \
 	iko-ast-state.vala \

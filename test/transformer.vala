@@ -33,6 +33,8 @@ public class Transformer.Main {
       stdout.printf("original           : %s\n", writer.generate_string(expr));
       expr = new Iko.AST.LevelOperators().transform(expr);
       stdout.printf("level operators    : %s\n", writer.generate_string(expr));
+      expr = new Iko.AST.SimplifyPowers().transform(expr);
+      stdout.printf("simplify powers    : %s\n", writer.generate_string(expr));
       expr = new Iko.AST.SimplifyRationals().transform(expr);
       stdout.printf("simplify rationals : %s\n", writer.generate_string(expr));
       expr = new Iko.AST.ExpandSymbols().transform(expr);
