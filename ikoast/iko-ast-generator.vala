@@ -98,7 +98,7 @@ public class Iko.AST.Generator : Iko.Visitor {
         new AdditiveExpression.binary(
           generate_expression(be.left),
           new MultiplicativeExpression.binary(
-            new IntegerLiteral("-1"),
+            IntegerLiteral.MINUS_ONE,
             generate_expression(be.right)
           )
         )
@@ -199,7 +199,7 @@ public class Iko.AST.Generator : Iko.Visitor {
   public override void visit_unary_expression(Iko.UnaryExpression ue) {
     switch(ue.op) {
     case Iko.UnaryExpression.Operator.MINUS:
-      q.push_head(new MultiplicativeExpression.binary(new IntegerLiteral("-1"),
+      q.push_head(new MultiplicativeExpression.binary(IntegerLiteral.MINUS_ONE,
                                                       generate_expression(ue.expr)));
       break;
     case Iko.UnaryExpression.Operator.PLUS:

@@ -28,7 +28,7 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     var ae = q.pop_head() as AdditiveExpression;
 
     var ae_new = new AdditiveExpression();
-    Literal lterm = new IntegerLiteral("0");
+    Literal lterm = IntegerLiteral.ZERO;
     foreach(var op in ae.operands) {
       if(op is Literal) {
         var nvalue = (op as Literal).value.to_double();
@@ -40,7 +40,7 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
       ae_new.operands.add(lterm);
     switch(ae_new.operands.size) {
     case 0:
-      q.push_head(new IntegerLiteral("0"));
+      q.push_head(IntegerLiteral.ZERO);
       break;
     case 1:
       q.push_head(ae_new.operands[0]);
@@ -56,12 +56,12 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     var me = q.pop_head() as MultiplicativeExpression;
 
     var me_new = new MultiplicativeExpression();
-    Literal lfactor = new IntegerLiteral("1");
+    Literal lfactor = IntegerLiteral.ONE;
     foreach(var op in me.operands) {
       if(op is Literal) {
         var nvalue = (op as Literal).value.to_double();
         if(nvalue == 0.0) {
-          q.push_head(new IntegerLiteral("0"));
+          q.push_head(IntegerLiteral.ZERO);
           return;
         } else
           lfactor = new FloatLiteral((lfactor.value.to_double() * nvalue).to_string());
@@ -72,7 +72,7 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
       me_new.operands.add(lfactor);
     switch(me_new.operands.size) {
     case 0:
-      q.push_head(new IntegerLiteral("1"));
+      q.push_head(IntegerLiteral.ONE);
       break;
     case 1:
       q.push_head(me_new.operands[0]);
@@ -90,7 +90,7 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     if(pe.exp is Literal) {
       var exp = (pe.exp as Literal).value.to_double();
       if(exp == 0.0)
-        q.push_head(new IntegerLiteral("1"));
+        q.push_head(IntegerLiteral.ONE);
       else if(exp == 1.0)
         q.push_head(pe.bais);
       else

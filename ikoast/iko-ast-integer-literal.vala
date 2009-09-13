@@ -6,6 +6,10 @@
  */
 
 public class Iko.AST.IntegerLiteral : Literal {
+  public static IntegerLiteral ZERO      { owned get { return new IntegerLiteral("0"); } }
+  public static IntegerLiteral ONE       { owned get { return new IntegerLiteral("1"); } }
+  public static IntegerLiteral MINUS_ONE { owned get { return new IntegerLiteral("-1"); } }
+
   public IntegerLiteral(string value) {
     this.value = value;
   }
