@@ -14,8 +14,8 @@ public abstract class Iko.AST.Expression : Node {
   public Expression simplify() {
     var expr = new LevelOperators().transform(this);
     expr = new SimplifyRationals().transform(expr);
-    expr = new ExpandTerms().transform(expr);
-    expr = new CollectTerms().transform(expr);
+    expr = new ExpandSymbols().transform(expr);
+    expr = new CollectSymbols().transform(expr);
     expr = new FoldConstants().transform(expr);
     return expr;
   }

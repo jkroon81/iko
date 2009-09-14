@@ -30,15 +30,17 @@ public class Transformer.Main {
     var writer = new Iko.AST.Writer();
     foreach(var e in system.equations) {
       var expr = e as Iko.AST.Expression;
-      stdout.printf("original            : %s\n", writer.generate_string(expr));
+      stdout.printf("original           : %s\n", writer.generate_string(expr));
       expr = new Iko.AST.LevelOperators().transform(expr);
-      stdout.printf("level operators     : %s\n", writer.generate_string(expr));
+      stdout.printf("level operators    : %s\n", writer.generate_string(expr));
       expr = new Iko.AST.SimplifyRationals().transform(expr);
-      stdout.printf("simplify rationals  : %s\n", writer.generate_string(expr));
-      expr = new Iko.AST.ExpandTerms().transform(expr);
-      stdout.printf("expand terms        : %s\n", writer.generate_string(expr));
-      expr = new Iko.AST.CollectTerms().transform(expr);
-      stdout.printf("collect terms       : %s\n", writer.generate_string(expr));
+      stdout.printf("simplify rationals : %s\n", writer.generate_string(expr));
+      expr = new Iko.AST.ExpandSymbols().transform(expr);
+      stdout.printf("expand symbols     : %s\n", writer.generate_string(expr));
+      expr = new Iko.AST.CollectSymbols().transform(expr);
+      stdout.printf("collect symbols    : %s\n", writer.generate_string(expr));
+      expr = new Iko.AST.FoldConstants().transform(expr);
+      stdout.printf("fold constants     : %s\n", writer.generate_string(expr));
       stdout.printf("\n");
     }
 

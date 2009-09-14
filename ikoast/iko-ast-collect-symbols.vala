@@ -5,5 +5,5 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.AST.CollectTerms : ExpressionTransformer {
+public class Iko.AST.CollectSymbols : ExpressionTransformer {
 }

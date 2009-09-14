@@ -9,7 +9,7 @@ CLEANFILES = \
 libikoast_la_SOURCES = \
 	iko-ast-additive-expression.vala \
 	iko-ast-arithmetic-expression.vala \
-	iko-ast-collect-terms.vala \
+	iko-ast-collect-symbols.vala \
 	iko-ast-constant.vala \
 	iko-ast-data-symbol.vala \
 	iko-ast-data-type.vala \
@@ -17,7 +17,7 @@ libikoast_la_SOURCES = \
 	iko-ast-derivative-solver.vala \
 	iko-ast-division-expression.vala \
 	iko-ast-equality-expression.vala \
-	iko-ast-expand-terms.vala \
+	iko-ast-expand-symbols.vala \
 	iko-ast-expression-transformer.vala \
 	iko-ast-expression.vala \
 	iko-ast-float-literal.vala \

@@ -5,7 +5,7 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.AST.ExpandTerms : ExpressionTransformer {
+public class Iko.AST.ExpandSymbols : ExpressionTransformer {
   public override void visit_multiplicative_expression(MultiplicativeExpression me_in) {
     base.visit_multiplicative_expression(me_in);
     var me = q.pop_head() as MultiplicativeExpression;
