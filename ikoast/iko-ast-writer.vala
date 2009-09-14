@@ -85,6 +85,12 @@ public class Iko.AST.Writer : Visitor {
       write(")");
   }
 
+  public override void visit_equality_expression(EqualityExpression ee) {
+    ee.left.accept(this);
+    write("=");
+    ee.right.accept(this);
+  }
+
   public override void visit_independent_variable(IndependentVariable iv) {
     write(iv.name);
     write(";");
