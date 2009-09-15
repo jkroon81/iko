@@ -6,6 +6,8 @@
  */
 
 public class Iko.AST.ExpandSymbols : ExpressionTransformer {
+  const int MAX_POWER_EXPANSION_FACTORS = 5;
+
   public override void visit_multiplicative_expression(MultiplicativeExpression me_in) {
     base.visit_multiplicative_expression(me_in);
     var me = q.pop_head() as MultiplicativeExpression;
@@ -33,35 +35,32 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
     base.visit_power_expression(pe_in);
     var pe = q.pop_head() as PowerExpression;
 
-    if(pe.exp is Literal) {
-      var exp = (pe.exp as Literal).value.to_double();
-      if(exp == Math.floor(exp)) {
-        if(exp > 0.0) {
-          var me = new MultiplicativeExpression();
-          for(int i = 0; i < Math.floor(exp); i++) {
-            me.operands.add(pe.bais);
-          }
-          q.push_head(transform(me));
-          return;
-        }
-      }
-    }
-    if(pe.exp is AdditiveExpression) {
-      var exp = pe.exp as AdditiveExpression;
-      var me = new MultiplicativeExpression();
-      foreach(var op in exp.operands)
-        me.operands.add(transform(new PowerExpression(pe.bais, op)));
-      q.push_head(me);
-      return;
-    }
     if(pe.bais is MultiplicativeExpression) {
       var bais = pe.bais as MultiplicativeExpression;
       var me = new MultiplicativeExpression();
       foreach(var op in bais.operands)
         me.operands.add(transform(new PowerExpression(op, pe.exp)));
       q.push_head(me);
-      return;
-    }
-    q.push_head(pe);
+    } else if(pe.bais is AdditiveExpression) {
+      if (pe.exp is IntegerLiteral) {
+        var exp = (pe.exp as IntegerLiteral).value.to_int();
+        if(exp <= MAX_POWER_EXPANSION_FACTORS) {
+          var me = new MultiplicativeExpression();
+          for(int i = 0; i < exp; i++) {
+            me.operands.add(pe.bais);
+          }
+          q.push_head(transform(me));
+        } else
+          q.push_head(pe);
+      } else
+        q.push_head(pe);
+    } else if(pe.exp is AdditiveExpression) {
+      var exp = pe.exp as AdditiveExpression;
+      var me = new MultiplicativeExpression();
+      foreach(var op in exp.operands)
+        me.operands.add(transform(new PowerExpression(pe.bais, op)));
+      q.push_head(me);
+    } else
+      q.push_head(pe);
   }
 }
