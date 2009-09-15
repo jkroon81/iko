@@ -1,4 +1,5 @@
 bin_PROGRAMS = \
+	calc \
 	transformer
 
 check_PROGRAMS = \
@@ -16,6 +17,7 @@ TESTS = \
 	test-multiplication \
 	test-power
 
+calc_SOURCES = calc.vala
 test_addition_SOURCES = test-common.vala test-addition.vala
 test_constant_folding_SOURCES = test-common.vala test-constant-folding.vala
 test_multiplication_SOURCES = test-common.vala test-multiplication.vala
