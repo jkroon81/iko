@@ -48,7 +48,6 @@ public class Transformer.Main {
       stdout.printf("collect symbols    : %s\n", writer.generate_string(expr));
       expr = new Iko.AST.FoldConstants().transform(expr);
       stdout.printf("fold constants     : %s\n", writer.generate_string(expr));
-      stdout.printf("\n");
     }
 
     return 0;
