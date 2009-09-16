@@ -18,6 +18,7 @@ public enum Iko.TokenType {
   FLOAT,
   IDENTIFIER,
   INTEGER,
+  INVALID,
   MINUS,
   MODEL,
   NAMESPACE,
@@ -44,6 +45,7 @@ public enum Iko.TokenType {
     case FLOAT:         return "FLOAT";
     case IDENTIFIER:    return "IDENTIFIER";
     case INTEGER:       return "INTEGER";
+    case INVALID:       return "INVALID";
     case MINUS:         return "MINUS";
     case MODEL:         return "MODEL";
     case NAMESPACE:     return "NAMESPACE";

@@ -109,6 +109,7 @@ public class Iko.Scanner : Object {
       case ',': token = TokenType.COMMA;         break;
       case '.': token = TokenType.DOT;           break;
       case '=': token = TokenType.EQ;            break;
+      default : token = TokenType.INVALID;       break;
       case '-': token = TokenType.MINUS;         break;
       case '{': token = TokenType.OPEN_BRACE;    break;
       case '[': token = TokenType.OPEN_BRACKET;  break;
@@ -117,7 +118,6 @@ public class Iko.Scanner : Object {
       case ';': token = TokenType.SEMICOLON;     break;
       case '/': token = TokenType.SLASH;         break;
       case '*': token = TokenType.STAR;          break;
-      default : assert_not_reached();
       }
       current++;
     }
