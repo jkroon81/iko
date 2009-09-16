@@ -32,6 +32,13 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
     q.push_head(new EqualityExpression(transform(ee.left), transform(ee.right)));
   }
 
+  public override void visit_method_call(MethodCall mc) {
+    var mc_new = new MethodCall(mc.method);
+    foreach(var arg in mc.args)
+      mc_new.args.add(transform(arg));
+    q.push_head(mc_new);
+  }
+
   public override void visit_multiplicative_expression(MultiplicativeExpression me) {
     var me_new = new MultiplicativeExpression();
     foreach(var op in me.operands)
