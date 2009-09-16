@@ -18,10 +18,18 @@ public class Ikoc.Main {
 
     var context = new Iko.Context();
     var parser = new Iko.Parser();
-    for(i = 1; i < args.length; i++)
+    for(i = 1; i < args.length; i++) {
       parser.parse_source_file(context, args[i]);
+      if(Iko.Report.n_errors > 0)
+        return -1;
+    }
+
     context.accept(new Iko.TypeResolver());
+    if(Iko.Report.n_errors > 0)
+      return -1;
     context.accept(new Iko.MemberResolver());
+    if(Iko.Report.n_errors > 0)
+      return -1;
     stdout.printf(new Iko.Writer().generate_string(context));
 
     var system = new Iko.AST.System();

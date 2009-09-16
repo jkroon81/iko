@@ -18,8 +18,14 @@ public class Transformer.Main {
     var parser = new Iko.Parser();
     string src = "real A,B,C,D,E,F; model { %s = %s; }".printf(args[1], args[1]);
     parser.parse_source_string(context, src);
+    if(Iko.Report.n_errors > 0)
+      return -1;
     context.accept(new Iko.TypeResolver());
+    if(Iko.Report.n_errors > 0)
+      return -1;
     context.accept(new Iko.MemberResolver());
+    if(Iko.Report.n_errors > 0)
+      return -1;
 
     var system = new Iko.AST.System();
     context.accept(new Iko.AST.Generator(system));
