@@ -7,19 +7,17 @@
 
 public class Transformer.Main {
   public static int main(string[] args) {
-    int i;
+    Environment.set_prgname("transformer");
 
     if(args.length == 1) {
-      stdout.printf("Usage: transformer <filename>\n");
+      stdout.printf("Usage: transformer <expr>\n");
       return 0;
     }
 
-    Environment.set_prgname("transformer");
-
     var context = new Iko.Context();
     var parser = new Iko.Parser();
-    for(i = 1; i < args.length; i++)
-      parser.parse_source_file(context, args[i]);
+    string src = "real A,B,C,D,E,F; model { %s = %s; }".printf(args[1], args[1]);
+    parser.parse_source_string(context, src);
     context.accept(new Iko.TypeResolver());
     context.accept(new Iko.MemberResolver());
 
@@ -27,9 +25,10 @@ public class Transformer.Main {
     context.accept(new Iko.AST.Generator(system));
     context = null;
 
+    assert(system.equations.size == 1);
     var writer = new Iko.AST.Writer();
     foreach(var e in system.equations) {
-      var expr = e as Iko.AST.Expression;
+      var expr = e.left as Iko.AST.Expression;
       stdout.printf("original           : %s\n", writer.generate_string(expr));
       expr = new Iko.AST.LevelOperators().transform(expr);
       stdout.printf("level operators    : %s\n", writer.generate_string(expr));
