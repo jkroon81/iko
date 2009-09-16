@@ -87,19 +87,19 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     base.visit_power_expression(pe_in);
     var pe = q.pop_head() as PowerExpression;
 
-    if(pe.bais is Literal) {
-      var bais = (pe.bais as Literal).value.to_double();
-      if(bais == 1.0) {
-        q.push_head(IntegerLiteral.ONE);
-      } else
-        q.push_head(pe);
-    } else if(pe.exp is Literal) {
+    if(pe.exp is Literal) {
       var exp = (pe.exp as Literal).value.to_double();
       if(exp == 0.0)
         q.push_head(IntegerLiteral.ONE);
       else if(exp == 1.0)
         q.push_head(pe.bais);
-      else
+      else if(pe.bais is Literal) {
+        var bais = (pe.bais as Literal).value.to_double();
+        if(bais == 1.0)
+          q.push_head(IntegerLiteral.ONE);
+        else
+          q.push_head(pe);
+      } else
         q.push_head(pe);
     } else
       q.push_head(pe);
