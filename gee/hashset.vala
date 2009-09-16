@@ -76,9 +76,6 @@ public class Gee.HashSet<G> : AbstractSet<G> {
 		}
 		this.hash_func = hash_func;
 		this.equal_func = equal_func;
-	}
-
-	construct {
 		_array_size = MIN_SIZE;
 		_nodes = new Node<G>[_array_size];
 	}
@@ -130,6 +127,7 @@ public class Gee.HashSet<G> : AbstractSet<G> {
 	public override bool remove (G key) {
 		Node<G>** node = lookup_node (key);
 		if (*node != null) {
+			assert (*node != null);
 			Node<G> next = (owned) (*node)->next;
 
 			(*node)->key = null;
@@ -211,6 +209,7 @@ public class Gee.HashSet<G> : AbstractSet<G> {
 		private HashSet<G> _set;
 		private int _index = -1;
 		private weak Node<G> _node;
+		private weak Node<G> _next;
 
 		// concurrent modification protection
 		private int _stamp = 0;
@@ -220,20 +219,53 @@ public class Gee.HashSet<G> : AbstractSet<G> {
 		}
 
 		public bool next () {
-			if (_node != null) {
-				_node = _node.next;
+			assert (_stamp == _set._stamp);
+			if (!has_next ()) {
+				return false;
 			}
-			while (_node == null && _index + 1 < _set._array_size) {
-				_index++;
-				_node = _set._nodes[_index];
-			}
+			_node = _next;
+			_next = null;
 			return (_node != null);
+		}
+
+		public bool has_next () {
+			assert (_stamp == _set._stamp);
+			if (_next == null) {
+				_next = _node;
+				if (_next != null) {
+					_next = _next.next;
+				}
+				while (_next == null && _index + 1 < _set._array_size) {
+					_index++;
+					_next = _set._nodes[_index];
+				}
+			}
+			return (_next != null);
+		}
+
+		public bool first () {
+			assert (_stamp == _set._stamp);
+			if (_set.size == 0) {
+				return false;
+			}
+			_index = -1;
+			_next = null;
+			return next ();
 		}
 
 		public new G get () {
 			assert (_stamp == _set._stamp);
 			assert (_node != null);
 			return _node.key;
+		}
+
+		public void remove () {
+			assert (_stamp == _set._stamp);
+			assert (_node != null);
+			has_next ();
+			_set.remove (_node.key);
+			_node = null;
+			_stamp = _set._stamp;
 		}
 	}
 }

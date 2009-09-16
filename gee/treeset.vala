@@ -119,6 +119,9 @@ public class Gee.TreeSet<G> : AbstractSet<G> {
 			if (prev == null) {
 				first = node;
 			}
+			if (next == null) {
+				last = node;
+			}
 			_size++;
 			return true;
 		}
@@ -156,7 +159,7 @@ public class Gee.TreeSet<G> : AbstractSet<G> {
 
 	private void move_red_left (ref Node<G> root) {
 		root.flip ();
-		if (is_red (root.right.left)) {
+		if (root.right != null && is_red (root.right.left)) {
 			rotate_right (ref root.right);
 			rotate_left (ref root);
 			root.flip ();
@@ -165,17 +168,33 @@ public class Gee.TreeSet<G> : AbstractSet<G> {
 
 	private void move_red_right (ref Node<G> root) {
 		root.flip ();
-		if (is_red (root.left.left)) {
+		if (root.left != null && is_red (root.left.left)) {
 			rotate_right (ref root.right);
 			root.flip ();
 		}
 	}
 
+	private void fix_removal (ref Node<G> node, out G? key = null) {
+		Node<G> n = (owned) node;
+		if (&key != null)
+			key = (owned) n.key;
+		if (n.prev != null) {
+			n.prev.next = n.next;
+		} else {
+			first = n.next;
+		}
+		if (n.next != null) {
+			n.next.prev = n.prev;
+		} else {
+			last = n.prev;
+		}
+		node = null;
+		_size--;
+	}
+
 	private void remove_minimal (ref Node<G> node, out G key) {
 		if (node.left == null) {
-			Node<G> n = (owned) node;
-			key = (owned) n.key;
-			node = null;
+			fix_removal (ref node, out key);
 			return;
 		}
 
@@ -209,17 +228,15 @@ public class Gee.TreeSet<G> : AbstractSet<G> {
 
 			weak Node<G> r = node.right;
 			if (compare_func (item, node.key) == 0 && r == null) {
-				node = null;
-				_size--;
+				fix_removal (ref node, null);
 				return true;
 			}
-			if (is_black (r) && is_black (r.left)) {
+			if (r == null || (is_black (r) && is_black (r.left))) {
 				move_red_right (ref node);
 			}
 			if (compare_func (item, node.key) == 0) {
 				remove_minimal (ref node.right, out node.key);
 				fix_up (ref node);
-				_size--;
 				return true;
 			} else {
 				bool re = remove_from_node (ref node.right, item);
@@ -254,7 +271,14 @@ public class Gee.TreeSet<G> : AbstractSet<G> {
 	 * @inheritDoc
 	 */
 	public override Gee.Iterator<G> iterator () {
-		return  new Iterator<G> (this);
+		return new Iterator<G> (this);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public BidirIterator<G> bidir_iterator () {
+		return new Iterator<G> (this);
 	}
 
 	[Compact]
@@ -285,15 +309,6 @@ public class Gee.TreeSet<G> : AbstractSet<G> {
 			}
 		}
 
-		~Node () {
-			if (prev != null) {
-				prev.next = this.next;
-			}
-			if (next != null) {
-				next.prev = this.prev;
-			}
-		}
-
 		public void flip () {
 			color.flip ();
 			if (left != null) {
@@ -312,41 +327,134 @@ public class Gee.TreeSet<G> : AbstractSet<G> {
 		public weak Node<G>? next;
 	}
 
-	private class Iterator<G> : Object, Gee.Iterator<G> {
-		public new TreeSet<G> set {construct; get;}
-		private int stamp;
-		construct {
-			stamp = set.stamp;
+	private class Iterator<G> : Object, Gee.Iterator<G>, BidirIterator<G> {
+		public new TreeSet<G> set {
+			private set {
+				_set = value;
+				stamp = _set.stamp;
+			}
 		}
+
+		private TreeSet<G> _set;
+
+		// concurrent modification protection
+		private int stamp;
 
 		public Iterator (TreeSet<G> set) {
 			this.set = set;
 		}
 
 		public bool next () {
+			assert (stamp == _set.stamp);
 			if (current != null) {
 				current = current.next;
-				return current != null;
-			} else if (!run){
-				run = true;
-				current = set.first;
-				return current != null;
 			} else {
+				switch (state) {
+				case Iterator.State.BEFORE_THE_BEGIN:
+					current = _set.first;
+					break;
+				case Iterator.State.NORMAL: // After remove
+					current = _next;
+					_next = null;
+					_prev = null;
+					break;
+				case Iterator.State.PAST_THE_END:
+					break;
+				default:
+					assert_not_reached ();
+				}
+			}
+			state = current != null ? Iterator.State.NORMAL : Iterator.State.PAST_THE_END;
+			return current != null;
+		}
+
+		public bool has_next () {
+			assert (stamp == _set.stamp);
+			if (_set.size == 0) {
 				return false;
 			}
+			return (current == null && state == Iterator.State.BEFORE_THE_BEGIN) ||
+			       (current == null && state == Iterator.State.NORMAL && _next != null) ||
+			       (current != null && current.next != null);
+		}
+
+		public bool first () {
+			assert (stamp == _set.stamp);
+			current = _set.first;
+			_next = null;
+			_prev = null;
+			return current != null; // on false it is null anyway
+		}
+
+		public bool previous () {
+			assert (stamp == _set.stamp);
+			if (current != null) {
+				current = current.prev;
+			} else {
+				switch (state) {
+				case Iterator.State.BEFORE_THE_BEGIN:
+					break;
+				case Iterator.State.NORMAL: // After remove
+					current = _prev;
+					_next = null;
+					_prev = null;
+					break;
+				case Iterator.State.PAST_THE_END:
+					current = _set.last;
+					break;
+				default:
+					assert_not_reached ();
+				}
+			}
+			state = current != null ? Iterator.State.NORMAL : Iterator.State.BEFORE_THE_BEGIN;
+			return current != null;
+		}
+
+		public bool has_previous () {
+			assert (stamp == _set.stamp);
+			return (current == null && state == Iterator.State.PAST_THE_END) ||
+			       (current == null && state == Iterator.State.NORMAL && _prev != null) ||
+			       (current != null && current.prev != null);
+		}
+
+		public bool last () {
+			assert (stamp == _set.stamp);
+			current = _set.last;
+			_next = null;
+			_prev = null;
+			return current != null; // on false it is null anyway
 		}
 
 		public new G get () {
-			assert (stamp == set.stamp);
+			assert (stamp == _set.stamp);
 			assert (current != null);
 			return current.key;
 		}
 
+		public void remove () {
+			assert (stamp == _set.stamp);
+			assert (current != null);
+			_next = current.next;
+			_prev = current.prev;
+			_set.remove (get ());
+			stamp++;
+			current = null;
+			assert (stamp == _set.stamp);
+		}
+
 		private weak Node<G>? current;
-		private bool run = false;
+		private weak Node<G>? _next;
+		private weak Node<G>? _prev;
+		private enum State {
+			BEFORE_THE_BEGIN,
+			NORMAL,
+			PAST_THE_END
+		}
+		private Iterator.State state = Iterator.State.BEFORE_THE_BEGIN;
 	}
 
-	private Node<G>? root;
-	private weak Node<G>? first;
+	private Node<G>? root = null;
+	private weak Node<G>? first = null;
+	private weak Node<G>? last = null;
 	private int stamp = 0;
 }

@@ -13,6 +13,7 @@ libgee_la_SOURCES = \
 	abstractqueue.vala \
 	abstractset.vala \
 	arraylist.vala \
+	bidiriterator.vala \
 	collection.vala \
 	deque.vala \
 	functions.vala \
@@ -23,6 +24,7 @@ libgee_la_SOURCES = \
 	iterable.vala \
 	iterator.vala \
 	linkedlist.vala \
+	listiterator.vala \
 	list.vala \
 	map.vala \
 	multimap.vala \
@@ -36,7 +38,8 @@ libgee_la_SOURCES = \
 	set.vala \
 	timsort.vala \
 	treemap.vala \
-	treeset.vala
+	treeset.vala \
+	updatablekeyiterator.vala
 
 libgee_la_VALAFLAGS = \
 	--library=gee \

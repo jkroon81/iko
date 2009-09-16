@@ -70,7 +70,7 @@ internal class Gee.ReadOnlyCollection<G> : Object, Iterable<G>, Collection<G> {
 	 * @inheritDoc
 	 */
 	public Gee.Iterator<G> iterator () {
-		return _collection.iterator ();
+		return new Iterator<G> (_collection.iterator ());
 	}
 
 	/**
@@ -136,13 +136,31 @@ internal class Gee.ReadOnlyCollection<G> : Object, Iterable<G>, Collection<G> {
 		return _collection.to_array ();
 	}
 
-	private class Iterator<G> : Object, Gee.Iterator<G> {
-		public bool next () {
-			return false;
+	protected class Iterator<G> : Object, Gee.Iterator<G> {
+		protected Gee.Iterator<G> _iter;
+
+		public Iterator (Gee.Iterator<G> iterator) {
+			_iter = iterator;
 		}
 
-		public new G? get () {
-			return null;
+		public bool next () {
+			return _iter.next ();
+		}
+
+		public bool has_next () {
+			return _iter.has_next ();
+		}
+
+		public bool first () {
+			return _iter.first ();
+		}
+
+		public new G get () {
+			return _iter.get ();
+		}
+
+		public void remove () {
+			assert_not_reached ();
 		}
 	}
 

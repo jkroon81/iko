@@ -26,7 +26,7 @@ using GLib;
  * Left-leaning red-black tree implementation of the {@link Gee.Map} interface.
  *
  * This implementation is especially well designed for large quantity of
- * data. The (balanced) tree implementation insure that the set and get 
+ * data. The (balanced) tree implementation insure that the set and get
  * methods are in logarithmic complexity.
  *
  * @see Gee.HashMap
@@ -151,12 +151,15 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 			if (prev == null) {
 				first = node;
 			}
+			if (next == null) {
+				last = node;
+			}
 			_size++;
 		}
 
 		if (is_red (node.left) && is_red (node.right)) {
 			node.flip ();
-		}		
+		}
 
 		int cmp = key_compare_func (key, node.key);
 		if (cmp == 0) {
@@ -195,12 +198,29 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 	}
 
+	private void fix_removal (ref Node<K,V> node, out K? key = null, out V? value) {
+		Node<K,V> n = (owned) node;
+		if (&key != null)
+			key = (owned) n.key;
+		if (&value != null)
+			value = (owned) n.value;
+		if (n.prev != null) {
+			n.prev.next = n.next;
+		} else {
+			first = n.next;
+		}
+		if (n.next != null) {
+			n.next.prev = n.prev;
+		} else {
+			last = n.next;
+		}
+		node = null;
+		_size--;
+	}
+
 	private void remove_minimal (ref Node<K,V> node, out K key, out V value) {
 		if (node.left == null) {
-			Node<K,V> n = (owned) node;
-			key = (owned) n.key;
-			value = (owned) n.value;
-			node = null;
+			fix_removal (ref node, out key, out value);
 			return;
 		}
 
@@ -234,9 +254,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 
 			weak Node<K,V> r = node.right;
 			if (key_compare_func (key, node.key) == 0 && r == null) {
-				value = (owned) node.value;
-				node = null;
-				_size--;
+				fix_removal (ref node, null, out value);
 				return true;
 			}
 			if (r == null || (is_black (r) && is_black (r.left))) {
@@ -246,7 +264,6 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 				value = (owned) node.value;
 				remove_minimal (ref node.right, out node.key, out node.value);
 				fix_up (ref node);
-				_size--;
 				return true;
 			} else {
 				bool re = remove_from_node (ref node.right, key, out value);
@@ -321,15 +338,6 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 			}
 		}
 
-		~Node () {
-			if (prev != null) {
-				prev.next = this.next;
-			}
-			if (next != null) {
-				next.prev = this.prev;
-			}
-		}
-
 		public void flip () {
 			color.flip ();
 			if (left != null) {
@@ -349,8 +357,9 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		public weak Node<K, V>? next;
 	}
 
-	private Node<K, V>? root;
-	private weak Node<K, V>? first;
+	private Node<K, V>? root = null;
+	private weak Node<K, V>? first = null;
+	private weak Node<K, V>? last = null;
 	private int stamp = 0;
 
 	private class KeySet<K,V> : AbstractSet<K> {
@@ -447,14 +456,11 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 	}
 
-	private class KeyIterator<K,V> : Object, Gee.Iterator<K> {
+	private class KeyIterator<K,V> : Object, Gee.Iterator<K>, BidirIterator<K> {
 		public TreeMap<K,V> map {
 			private set {
 				_map = value;
 				stamp = _map.stamp;
-			}
-			get {
-				return _map;
 			}
 		}
 
@@ -468,36 +474,75 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 
 		public bool next () {
+			assert (stamp == _map.stamp);
 			if (current != null) {
 				current = current.next;
-				return current != null;
-			} else if (!run){
+			} else if (state == KeyIterator.State.BEFORE_THE_BEGIN) {
 				run = true;
-				current = map.first;
-				return current != null;
-			} else {
-				return false;
+				current = _map.first;
 			}
+			return current != null;
+		}
+
+		public bool has_next () {
+			assert (stamp == _map.stamp);
+			return (current == null && state == KeyIterator.State.BEFORE_THE_BEGIN) ||
+			       (current != null && current.next != null);
+		}
+
+		public bool first () {
+			assert (stamp == _map.stamp);
+			current = _map.first;
+			return current != null; // on false it is null anyway
+		}
+
+		public bool previous () {
+			assert (stamp == _map.stamp);
+			if (current != null) {
+				current = current.prev;
+			} else if (state == KeyIterator.State.PAST_THE_END) {
+				current = _map.last;
+			}
+			state = KeyIterator.State.BEFORE_THE_BEGIN;
+			return current != null;
+		}
+
+		public bool has_previous () {
+			assert (stamp == _map.stamp);
+			return (current == null && state == KeyIterator.State.PAST_THE_END) ||
+			       (current != null && current.prev != null);
+		}
+
+		public bool last () {
+			assert (stamp == _map.stamp);
+			current = _map.last;
+			return current != null; // on false it is null anyway
 		}
 
 		public new K get () {
-			assert (stamp == map.stamp);
+			assert (stamp == _map.stamp);
 			assert (current != null);
 			return current.key;
 		}
 
+		public void remove () {
+			assert_not_reached ();
+		}
+
 		private weak Node<K, V>? current;
+		private enum State {
+			BEFORE_THE_BEGIN,
+			PAST_THE_END
+		}
+		private KeyIterator.State state = KeyIterator.State.BEFORE_THE_BEGIN;
 		private bool run = false;
 	}
 
-	private class ValueIterator<K,V> : Object, Gee.Iterator<V> {
+	private class ValueIterator<K,V> : Object, Gee.Iterator<V>, Gee.BidirIterator<V> {
 		public TreeMap<K,V> map {
 			private set {
 				_map = value;
 				stamp = _map.stamp;
-			}
-			get {
-				return _map;
 			}
 		}
 
@@ -511,25 +556,67 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 
 		public bool next () {
+			assert (stamp == _map.stamp);
 			if (current != null) {
 				current = current.next;
-				return current != null;
-			} else if (!run) {
+			} else if (state == ValueIterator.State.BEFORE_THE_BEGIN) {
 				run = true;
-				current = map.first;
-				return current != null;
-			} else {
-				return false;
+				current = _map.first;
 			}
+			return current != null;
+		}
+
+		public bool has_next () {
+			assert (stamp == _map.stamp);
+			return (current == null && state == ValueIterator.State.BEFORE_THE_BEGIN) ||
+			       (current != null && current.next != null);
+		}
+
+		public bool first () {
+			assert (stamp == _map.stamp);
+			current = _map.first;
+			return current != null; // on false it is null anyway
+		}
+
+		public bool previous () {
+			assert (stamp == _map.stamp);
+			if (current != null) {
+				current = current.prev;
+			} else if (state == ValueIterator.State.PAST_THE_END) {
+				current = _map.last;
+			}
+			state = ValueIterator.State.BEFORE_THE_BEGIN;
+			return current != null;
+		}
+
+		public bool has_previous () {
+			assert (stamp == _map.stamp);
+			return (current == null && state == ValueIterator.State.PAST_THE_END) ||
+			       (current != null && current.prev != null);
+		}
+
+		public bool last () {
+			assert (stamp == _map.stamp);
+			current = _map.last;
+			return current != null; // on false it is null anyway
 		}
 
 		public new V get () {
-			assert (stamp == map.stamp);
+			assert (stamp == _map.stamp);
 			assert (current != null);
 			return current.value;
 		}
 
+		public void remove () {
+			assert_not_reached ();
+		}
+
 		private weak Node<K, V>? current;
+		private enum State {
+			BEFORE_THE_BEGIN,
+			PAST_THE_END
+		}
+		private ValueIterator.State state = ValueIterator.State.BEFORE_THE_BEGIN;
 		private bool run = false;
 	}
 }

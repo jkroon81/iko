@@ -107,6 +107,10 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 		return new ValueCollection<K,V> (this);
 	}
 
+	internal Gee.UpdatableKeyIterator<K,V> updatable_key_iterator () {
+		return new UpdatableKeyIterator<K,V> (this);
+	}
+
 	private Node<K,V>** lookup_node (K key) {
 		uint hash_value = key_hash_func (key);
 		Node<K,V>** node = &_nodes[hash_value % _array_size];
@@ -281,43 +285,6 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 
 	}
 
-	private class KeyIterator<K,V> : Object, Iterator<K> {
-		public HashMap<K,V> map {
-			private set {
-				_map = value;
-				_stamp = _map._stamp;
-			}
-		}
-
-		private HashMap<K,V> _map;
-		private int _index = -1;
-		private weak Node<K,V> _node;
-
-		// concurrent modification protection
-		private int _stamp;
-
-		public KeyIterator (HashMap map) {
-			this.map = map;
-		}
-
-		public bool next () {
-			if (_node != null) {
-				_node = _node.next;
-			}
-			while (_node == null && _index + 1 < _map._array_size) {
-				_index++;
-				_node = _map._nodes[_index];
-			}
-			return (_node != null);
-		}
-
-		public new K get () {
-			assert (_stamp == _map._stamp);
-			assert (_node != null);
-			return _node.key;
-		}
-	}
-
 	private class ValueCollection<K,V> : AbstractCollection<V> {
 		public HashMap<K,V> map { private set; get; }
 
@@ -368,7 +335,7 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 	}
 
-	private class ValueIterator<K,V> : Object, Iterator<V> {
+	private abstract class NodeIterator<K,V> : Object {
 		public HashMap<K,V> map {
 			private set {
 				_map = value;
@@ -376,32 +343,117 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 			}
 		}
 
-		private HashMap<V,K> _map;
+		protected HashMap<K,V> _map;
 		private int _index = -1;
-		private weak Node<K,V> _node;
+		protected weak Node<K,V> _node;
+		protected weak Node<K,V> _next;
 
 		// concurrent modification protection
-		private int _stamp;
+		protected int _stamp;
 
-		public ValueIterator (HashMap map) {
+		public NodeIterator (HashMap map) {
 			this.map = map;
 		}
 
 		public bool next () {
-			if (_node != null) {
-				_node = _node.next;
+			assert (_stamp == _map._stamp);
+			if (!has_next ()) {
+				return false;
 			}
-			while (_node == null && _index + 1 < _map._array_size) {
-				_index++;
-				_node = _map._nodes[_index];
-			}
+			_node = _next;
+			_next = null;
 			return (_node != null);
+		}
+
+		public bool has_next () {
+			assert (_stamp == _map._stamp);
+			if (_next == null) {
+				_next = _node;
+				if (_next != null) {
+					_next = _next.next;
+				}
+				while (_next == null && _index + 1 < _map._array_size) {
+					_index++;
+					_next = _map._nodes[_index];
+				}
+			}
+			return (_next != null);
+		}
+
+		public bool first () {
+			assert (_stamp == _map._stamp);
+			if (_map.size == 0) {
+				return false;
+			}
+			_index = -1;
+			_next = null;
+			return next ();
+		}
+	}
+
+	private class KeyIterator<K,V> : NodeIterator<K,V>, Iterator<K> {
+		public KeyIterator (HashMap map) {
+			base (map);
+		}
+
+		public new K get () {
+			assert (_stamp == _map._stamp);
+			assert (_node != null);
+			return _node.key;
+		}
+
+		public void remove () {
+			assert_not_reached ();
+		}
+	}
+
+	private class UpdatableKeyIterator<K,V> : NodeIterator<K,V>, Iterator<K>, Gee.UpdatableKeyIterator<K,V> {
+		public UpdatableKeyIterator (HashMap map) {
+			base (map);
+		}
+
+		public new K get () {
+			assert (_stamp == _map._stamp);
+			assert (_node != null);
+			return _node.key;
+		}
+
+		public void remove () {
+			assert (_stamp == _map._stamp);
+			assert (_node != null);
+			has_next ();
+			_map.remove (_node.key);
+			_node = null;
+			_stamp = _map._stamp;
+		}
+
+		public V get_value () {
+			assert (_stamp == _map._stamp);
+			assert (_node != null);
+			return _node.value;
+		}
+
+		public void set_value (V value) {
+			assert (_stamp == _map._stamp);
+			assert (_node != null);
+			_map.set (_node.key, value);
+			_stamp = _map._stamp;
+		}
+	}
+
+	private class ValueIterator<K,V> : NodeIterator<K,V>, Iterator<K> {
+		public ValueIterator (HashMap map) {
+			base (map);
 		}
 
 		public new V get () {
 			assert (_stamp == _map._stamp);
 			assert (_node != null);
 			return _node.value;
+		}
+
+		public void remove () {
+			assert_not_reached ();
 		}
 	}
 }

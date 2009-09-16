@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2005  Novell, Inc
  * Copyright (C) 2005  David Waite
  * Copyright (C) 2007-2008  Jürg Billeter
+ * Copyright (C) 2009  Didier Villevalois
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,7 @@
  *
  * Author:
  * 	Jürg Billeter <j@bitron.ch>
+ * 	Didier 'Ptitjes Villevalois <ptitjes@free.fr>
  */
 
 using GLib;
@@ -70,6 +72,13 @@ public class Gee.ArrayList<G> : AbstractList<G> {
 	 * @inheritDoc
 	 */
 	public override Gee.Iterator<G> iterator () {
+		return new Iterator<G> (this);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public override ListIterator<G> list_iterator () {
 		return new Iterator<G> (this);
 	}
 
@@ -237,7 +246,7 @@ public class Gee.ArrayList<G> : AbstractList<G> {
 		_items.resize (value);
 	}
 
-	private class Iterator<G> : Object, Gee.Iterator<G> {
+	private class Iterator<G> : Object, Gee.Iterator<G>, BidirIterator<G>, ListIterator<G> {
 		public ArrayList<G> list {
 			construct {
 				_list = value;
@@ -247,6 +256,7 @@ public class Gee.ArrayList<G> : AbstractList<G> {
 
 		private ArrayList<G> _list;
 		private int _index = -1;
+		private bool _removed = false;
 
 		// concurrent modification protection
 		private int _stamp = 0;
@@ -257,17 +267,102 @@ public class Gee.ArrayList<G> : AbstractList<G> {
 
 		public bool next () {
 			assert (_stamp == _list._stamp);
-			if (_index < _list._size) {
+			if (_index + 1 < _list._size) {
 				_index++;
+				_removed = false;
+				return true;
 			}
-			return (_index < _list._size);
+			return false;
+		}
+
+		public bool has_next () {
+			assert (_stamp == _list._stamp);
+			return (_index + 1 < _list._size);
+		}
+
+		public bool first () {
+			assert (_stamp == _list._stamp);
+			if (_list.size == 0) {
+				return false;
+			}
+			_index = 0;
+			_removed = false;
+			return true;
 		}
 
 		public new G get () {
 			assert (_stamp == _list._stamp);
 			assert (_index >= 0);
 			assert (_index < _list._size);
-			return _list.get (_index);
+			assert (! _removed);
+			return _list._items[_index];
+		}
+
+		public void remove () {
+			assert (_stamp == _list._stamp);
+			assert (_index >= 0);
+			assert (_index < _list._size);
+			assert (! _removed);
+			_list.remove_at (_index);
+			_index--;
+			_removed = true;
+			_stamp = _list._stamp;
+		}
+
+		public bool previous () {
+			assert (_stamp == _list._stamp);
+			if (_index > 0) {
+				_index--;
+				return true;
+			}
+			return false;
+		}
+
+		public bool has_previous () {
+			assert (_stamp == _list._stamp);
+			return (_index - 1 >= 0);
+		}
+
+		public bool last () {
+			assert (_stamp == _list._stamp);
+			if (_list.size == 0) {
+				return false;
+			}
+			_index = _list._size - 1;
+			return true;
+		}
+
+		public new void set (G item) {
+			assert (_stamp == _list._stamp);
+			assert (_index >= 0);
+			assert (_index < _list._size);
+			_list._items[_index] = item;
+			_stamp = ++_list._stamp;
+		}
+
+		public void insert (G item) {
+			assert (_stamp == _list._stamp);
+			assert (_index >= 0);
+			assert (_index < _list._size);
+			_list.insert (_index, item);
+			_index++;
+			_stamp = _list._stamp;
+		}
+
+		public void add (G item) {
+			assert (_stamp == _list._stamp);
+			assert (_index >= 0);
+			assert (_index < _list._size);
+			_list.insert (_index + 1, item);
+			_index++;
+			_stamp = _list._stamp;
+		}
+
+		public int index () {
+			assert (_stamp == _list._stamp);
+			assert (_index >= 0);
+			assert (_index < _list._size);
+			return _index;
 		}
 	}
 }
