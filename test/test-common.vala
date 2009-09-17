@@ -25,9 +25,8 @@ namespace TestCommon {
     context = null;
 
     assert(system.equations.size == 1);
-    var writer = new Iko.AST.Writer();
-    var left_gen = writer.generate_string(system.equations[0].left.simplify());
-    var right_gen = writer.generate_string(system.equations[0].right.simplify());
+    var left_gen = system.equations[0].left.simplify().to_string();
+    var right_gen = system.equations[0].right.simplify().to_string();
     if(left_gen != right_gen) {
       stdout.printf(RED + "FAIL" + RESET);
       retval = 1;

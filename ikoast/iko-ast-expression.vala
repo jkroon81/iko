@@ -21,4 +21,8 @@ public abstract class Iko.AST.Expression : Node {
     expr = new FoldConstants().transform(expr);
     return expr;
   }
+
+  public string to_string() {
+    return new Writer().generate_string(this);
+  }
 }
