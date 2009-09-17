@@ -8,6 +8,21 @@
 public class Iko.AST.ExpandSymbols : ExpressionTransformer {
   const int MAX_POWER_EXPANSION_FACTORS = 5;
 
+  public override void visit_division_expression(DivisionExpression de_in) {
+    base.visit_division_expression(de_in);
+    var de = q.pop_head() as DivisionExpression;
+
+    if(de.num is AdditiveExpression) {
+      var num = de.num as AdditiveExpression;
+      var ae = new AdditiveExpression();
+      foreach(var op in num.operands) {
+        ae.operands.add(new DivisionExpression(op, de.den));
+      }
+      q.push_head(ae);
+    } else
+      q.push_head(de);
+  }
+
   public override void visit_multiplicative_expression(MultiplicativeExpression me_in) {
     base.visit_multiplicative_expression(me_in);
     var me = q.pop_head() as MultiplicativeExpression;
