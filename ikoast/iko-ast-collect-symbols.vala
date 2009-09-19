@@ -5,8 +5,6 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.AST.CollectSymbols : ExpressionTransformer {
   bool equals(Expression e1, Expression e2) {
     if(e1 is SymbolAccess && e2 is SymbolAccess)
