@@ -23,6 +23,7 @@ public abstract class Iko.AST.Visitor : Object {
   public virtual void visit_method(Method m) {}
   public virtual void visit_method_call(MethodCall mc) {}
   public virtual void visit_multiplicative_expression(MultiplicativeExpression me) {}
+  public virtual void visit_negative_expression(NegativeExpression ne) {}
   public virtual void visit_power_expression(PowerExpression pe) {}
   public virtual void visit_real_type(RealType r) {}
   public virtual void visit_simple_expression(SimpleExpression se) {}

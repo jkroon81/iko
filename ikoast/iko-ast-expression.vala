@@ -13,6 +13,7 @@ public abstract class Iko.AST.Expression : Node {
 
   public Expression simplify() {
     var expr = this;
+    expr = new TransformNegatives().transform(expr);
     expr = new SimplifyPowers().transform(expr);
     expr = new SimplifyRationals().transform(expr);
     expr = new ExpandSymbols().transform(expr);

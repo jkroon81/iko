@@ -130,6 +130,15 @@ public class Iko.AST.Writer : Visitor {
     }
   }
 
+  public override void visit_negative_expression(NegativeExpression ne) {
+    write("-");
+    if(ne.expr is AdditiveExpression)
+      write("(");
+    ne.expr.accept(this);
+    if(ne.expr is AdditiveExpression)
+      write(")");
+  }
+
   public override void visit_power_expression(PowerExpression pe) {
     if(!(pe.bais is SimpleExpression))
       write("(");

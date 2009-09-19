@@ -46,6 +46,10 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
     q.push_head(me_new);
   }
 
+  public override void visit_negative_expression(NegativeExpression ne) {
+    q.push_head(new NegativeExpression(transform(ne.expr)));
+  }
+
   public override void visit_power_expression(PowerExpression pe) {
     q.push_head(new PowerExpression(transform(pe.bais), transform(pe.exp)));
   }
