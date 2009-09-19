@@ -48,11 +48,9 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
         Expression den_bais, den_exp;
         powerize(den.operands[j], out den_bais, out den_exp);
         if(equals(num_bais, den_bais)) {
-          var exp = new AdditiveExpression();
-          exp.operands.add(num_exp);
           var inv = new MultiplicativeExpression.binary(IntegerLiteral.MINUS_ONE, den_exp);
-          exp.operands.add(inv);
-          num.operands[i] = new PowerExpression(num_bais, exp);
+          num_exp = new AdditiveExpression.binary(num_exp, inv);
+          num.operands[i] = new PowerExpression(num_bais, num_exp);
           den.operands.remove_at(j);
           j--;
         }
