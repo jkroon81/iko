@@ -47,17 +47,34 @@ public abstract class Gee.AbstractMap<K,V> : Object, Map<K,V> {
 	/**
 	 * @inheritDoc
 	 */
-	public abstract Set<K> get_keys ();
+	public abstract Set<K> keys { owned get; }
 
 	/**
 	 * @inheritDoc
 	 */
-	public abstract Collection<V> get_values ();
+	public abstract Collection<V> values { owned get; }
 
 	/**
 	 * @inheritDoc
 	 */
-	public abstract bool contains (K key);
+	public abstract Set<Map.Entry<K,V>> entries { owned get; }
+
+	/**
+	 * @inheritDoc
+	 */
+	public abstract bool has_key (K key);
+
+	/**
+	 * @inheritDoc
+	 */
+	public bool contains (K key) {
+		return has_key (key);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public abstract bool has (K key, V value);
 
 	/**
 	 * @inheritDoc
@@ -72,7 +89,19 @@ public abstract class Gee.AbstractMap<K,V> : Object, Map<K,V> {
 	/**
 	 * @inheritDoc
 	 */
-	public abstract bool remove (K key, out V? value = null);
+	public abstract bool unset (K key, out V? value = null);
+
+	/**
+	 * @inheritDoc
+	 */
+	public bool remove (K key, out V? value = null) {
+		V removed_value;
+		bool result = unset (key, out removed_value);
+		if (&value != null) {
+			value = removed_value;
+		}
+		return result;
+	}
 
 	/**
 	 * @inheritDoc
@@ -83,17 +112,17 @@ public abstract class Gee.AbstractMap<K,V> : Object, Map<K,V> {
 	 * @inheritDoc
 	 */
 	public virtual void set_all (Map<K,V> map) {
-		foreach (K key in map.get_keys ()) {
-			set (key, map.get (key));
+		foreach (Map.Entry<K,V> entry in map.entries) {
+			set (entry.key, entry.value);
 		}
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public virtual bool remove_all (Map<K,V> map) {
+	public virtual bool unset_all (Map<K,V> map) {
 		bool changed = false;
-		foreach (K key in map.get_keys ()) {
+		foreach (K key in map.keys) {
 			changed = changed | remove (key);
 		}
 		return changed;
@@ -102,13 +131,27 @@ public abstract class Gee.AbstractMap<K,V> : Object, Map<K,V> {
 	/**
 	 * @inheritDoc
 	 */
-	public virtual bool contains_all (Map<K,V> map) {
-		foreach (K key in map.get_keys ()) {
-			if (!contains (key)) {
+	public bool remove_all (Map<K,V> map) {
+		return unset_all (map);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public virtual bool has_all (Map<K,V> map) {
+		foreach (Map.Entry<K,V> entry in map.entries) {
+			if (!has (entry.key, entry.value)) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public bool contains_all (Map<K,V> map) {
+		return has_all (map);
 	}
 
 	private weak Map<K,V> _read_only_view;

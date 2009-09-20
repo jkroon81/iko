@@ -15,6 +15,7 @@ libgee_la_SOURCES = \
 	arraylist.vala \
 	bidiriterator.vala \
 	collection.vala \
+	comparable.vala \
 	deque.vala \
 	functions.vala \
 	hashmap.vala \

@@ -42,6 +42,51 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public override Set<K> keys {
+		owned get {
+			Set<K> keys = _keys;
+			if (_keys == null) {
+				keys = new KeySet<K,V> (this);
+				_keys = keys;
+				keys.add_weak_pointer (&_keys);
+			}
+			return keys;
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public override Collection<V> values {
+		owned get {
+			Collection<K> values = _values;
+			if (_values == null) {
+				values = new ValueCollection<K,V> (this);
+				_values = values;
+				values.add_weak_pointer (&_values);
+			}
+			return values;
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public override Set<Map.Entry<K,V>> entries {
+		owned get {
+			Set<Map.Entry<K,V>> entries = _entries;
+			if (_entries == null) {
+				entries = new EntrySet<K,V> (this);
+				_entries = entries;
+				entries.add_weak_pointer (&_entries);
+			}
+			return entries;
+		}
+	}
+
+	/**
 	 * The keys' hash function.
 	 */
 	public HashFunc key_hash_func { private set; get; }
@@ -59,6 +104,10 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 	private int _array_size;
 	private int _nnodes;
 	private Node<K,V>[] _nodes;
+
+	private weak Set<K> _keys;
+	private weak Collection<V> _values;
+	private weak Set<Map.Entry<K,V>> _entries;
 
 	// concurrent modification protection
 	private int _stamp = 0;
@@ -86,25 +135,9 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 		this.key_hash_func = key_hash_func;
 		this.key_equal_func = key_equal_func;
 		this.value_equal_func = value_equal_func;
-	}
 
-	construct {
 		_array_size = MIN_SIZE;
 		_nodes = new Node<K,V>[_array_size];
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public override Set<K> get_keys () {
-		return new KeySet<K,V> (this);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public override Collection<V> get_values () {
-		return new ValueCollection<K,V> (this);
 	}
 
 	internal Gee.UpdatableKeyIterator<K,V> updatable_key_iterator () {
@@ -123,9 +156,17 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 	/**
 	 * @inheritDoc
 	 */
-	public override bool contains (K key) {
+	public override bool has_key (K key) {
 		Node<K,V>** node = lookup_node (key);
 		return (*node != null);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public override bool has (K key, V value) {
+		Node<K,V>** node = lookup_node (key);
+		return (*node != null && value_equal_func ((*node)->value, value));
 	}
 
 	/**
@@ -159,7 +200,7 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 	/**
 	 * @inheritDoc
 	 */
-	public override bool remove (K key, out V? value = null) {
+	public override bool unset (K key, out V? value = null) {
 		Node<K,V>** node = lookup_node (key);
 		if (*node != null) {
 			Node<K,V> next = (owned) (*node)->next;
@@ -232,27 +273,54 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 		public V value;
 		public Node<K,V> next;
 		public uint key_hash;
+		public unowned Map.Entry<K,V>? entry;
 
 		public Node (owned K k, owned V v, uint hash) {
 			key = (owned) k;
 			value = (owned) v;
 			key_hash = hash;
+			 entry = null;
+		}
+	}
+
+	private class Entry<K,V> : Map.Entry<K,V> {
+		private unowned Node<K,V> _node;
+
+		public static Map.Entry<K,V> entry_for<K,V> (Node<K,V> node) {
+			Map.Entry<K,V> result = node.entry;
+			if (node.entry == null) {
+				result = new Entry<K,V> (node);
+				node.entry = result;
+				result.add_weak_pointer (&node.entry);
+			}
+			return result;
+		}
+
+		public Entry (Node<K,V> node) {
+			_node = node;
+		}
+
+		public override K key { get { return _node.key; } }
+
+		public override V value {
+			get { return _node.value; }
+			set { _node.value = value; }
 		}
 	}
 
 	private class KeySet<K,V> : AbstractSet<K> {
-		public HashMap<K,V> map { private set; get; }
+		private HashMap<K,V> _map;
 
 		public KeySet (HashMap map) {
-			this.map = map;
+			_map = map;
 		}
 
 		public override Iterator<K> iterator () {
-			return new KeyIterator<K,V> (map);
+			return new KeyIterator<K,V> (_map);
 		}
 
 		public override int size {
-			get { return map.size; }
+			get { return _map.size; }
 		}
 
 		public override bool add (K key) {
@@ -286,18 +354,18 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 	}
 
 	private class ValueCollection<K,V> : AbstractCollection<V> {
-		public HashMap<K,V> map { private set; get; }
+		private HashMap<K,V> _map;
 
 		public ValueCollection (HashMap map) {
-			this.map = map;
+			_map = map;
 		}
 
 		public override Iterator<V> iterator () {
-			return new ValueIterator<K,V> (map);
+			return new ValueIterator<K,V> (_map);
 		}
 
 		public override int size {
-			get { return map.size; }
+			get { return _map.size; }
 		}
 
 		public override bool add (V value) {
@@ -315,7 +383,7 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 		public override bool contains (V value) {
 			Iterator<V> it = iterator ();
 			while (it.next ()) {
-				if (map.value_equal_func (it.get (), value)) {
+				if (_map.value_equal_func (it.get (), value)) {
 					return true;
 				}
 			}
@@ -335,14 +403,51 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 	}
 
-	private abstract class NodeIterator<K,V> : Object {
-		public HashMap<K,V> map {
-			private set {
-				_map = value;
-				_stamp = _map._stamp;
-			}
+	private class EntrySet<K,V> : AbstractSet<Map.Entry<K, V>> {
+		private HashMap<K,V> _map;
+
+		public EntrySet (HashMap<K,V> map) {
+			_map = map;
 		}
 
+		public override Iterator<Map.Entry<K, V>> iterator () {
+			return new EntryIterator<K,V> (_map);
+		}
+
+		public override int size {
+			get { return _map.size; }
+		}
+
+		public override bool add (Map.Entry<K, V> entry) {
+			assert_not_reached ();
+		}
+
+		public override void clear () {
+			assert_not_reached ();
+		}
+
+		public override bool remove (Map.Entry<K, V> entry) {
+			assert_not_reached ();
+		}
+
+		public override bool contains (Map.Entry<K, V> entry) {
+			return _map.has (entry.key, entry.value);
+		}
+
+		public override bool add_all (Collection<Map.Entry<K, V>> entries) {
+			assert_not_reached ();
+		}
+
+		public override bool remove_all (Collection<Map.Entry<K, V>> entries) {
+			assert_not_reached ();
+		}
+
+		public override bool retain_all (Collection<Map.Entry<K, V>> entries) {
+			assert_not_reached ();
+		}
+	}
+
+	private abstract class NodeIterator<K,V> : Object {
 		protected HashMap<K,V> _map;
 		private int _index = -1;
 		protected weak Node<K,V> _node;
@@ -352,7 +457,8 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 		protected int _stamp;
 
 		public NodeIterator (HashMap map) {
-			this.map = map;
+			_map = map;
+			_stamp = _map._stamp;
 		}
 
 		public bool next () {
@@ -450,6 +556,22 @@ public class Gee.HashMap<K,V> : Gee.AbstractMap<K,V> {
 			assert (_stamp == _map._stamp);
 			assert (_node != null);
 			return _node.value;
+		}
+
+		public void remove () {
+			assert_not_reached ();
+		}
+	}
+
+	private class EntryIterator<K,V> : NodeIterator<K,V>, Iterator<Map.Entry<K,V>> {
+		public EntryIterator (HashMap map) {
+			base (map);
+		}
+
+		public new Map.Entry<K,V> get () {
+			assert (_stamp == _map._stamp);
+			assert (_node != null);
+			return Entry<K,V>.entry_for<K,V> (_node);
 		}
 
 		public void remove () {

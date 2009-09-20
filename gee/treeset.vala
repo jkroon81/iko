@@ -108,7 +108,7 @@ public class Gee.TreeSet<G> : AbstractSet<G> {
 		if (is_black (node.left) && is_red (node.right)) {
 			rotate_left (ref node);
 		}
-		if (is_red (node.left) && is_black (node.right)) {
+		if (is_red (node.left) && is_red (node.left.left)) {
 			rotate_right (ref node);
 		}
 	}
@@ -328,20 +328,14 @@ public class Gee.TreeSet<G> : AbstractSet<G> {
 	}
 
 	private class Iterator<G> : Object, Gee.Iterator<G>, BidirIterator<G> {
-		public new TreeSet<G> set {
-			private set {
-				_set = value;
-				stamp = _set.stamp;
-			}
-		}
-
 		private TreeSet<G> _set;
 
 		// concurrent modification protection
 		private int stamp;
 
 		public Iterator (TreeSet<G> set) {
-			this.set = set;
+			_set = set;
+			stamp = _set.stamp;
 		}
 
 		public bool next () {

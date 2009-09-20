@@ -40,6 +40,51 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public override Set<K> keys {
+		owned get {
+			Set<K> keys = _keys;
+			if (_keys == null) {
+				keys = new KeySet<K,V> (this);
+				_keys = keys;
+				keys.add_weak_pointer (&_keys);
+			}
+			return keys;
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public override Collection<V> values {
+		owned get {
+			Collection<K> values = _values;
+			if (_values == null) {
+				values = new ValueCollection<K,V> (this);
+				_values = values;
+				values.add_weak_pointer (&_values);
+			}
+			return values;
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public override Set<Map.Entry<K,V>> entries {
+		owned get {
+			Set<Map.Entry<K,V>> entries = _entries;
+			if (_entries == null) {
+				entries = new EntrySet<K,V> (this);
+				_entries = entries;
+				entries.add_weak_pointer (&_entries);
+			}
+			return entries;
+		}
+	}
+
+	/**
 	 * The keys' comparator function.
 	 */
 	public CompareFunc key_compare_func { private set; get; }
@@ -50,6 +95,10 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	public EqualFunc value_equal_func { private set; get; }
 
 	private int _size = 0;
+
+	private weak Set<K> _keys;
+	private weak Collection<V> _values;
+	private weak Set<Map.Entry<K,V>> _entries;
 
 	/**
 	 * Constructs a new, empty tree map sorted according to the specified
@@ -67,20 +116,6 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 		this.key_compare_func = key_compare_func;
 		this.value_equal_func = value_equal_func;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public override Set<K> get_keys () {
-		return new KeySet<K,V> (this);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public override Collection<V> get_values () {
-		return new ValueCollection<K,V> (this);
 	}
 
 	private void rotate_right (ref Node<K, V> root) {
@@ -112,7 +147,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	/**
 	 * @inheritDoc
 	 */
-	public override bool contains (K key) {
+	public override bool has_key (K key) {
 		weak Node<K, V>? cur = root;
 		while (cur != null) {
 			int res = key_compare_func (key, cur.key);
@@ -125,6 +160,14 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public override bool has (K key, V value) {
+		V? own_value = get (key);
+		return (own_value != null && value_equal_func (own_value, value));
 	}
 
 	/**
@@ -277,7 +320,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		if (is_black (node.left) && is_red (node.right)) {
 			rotate_left (ref node);
 		}
-		if (is_red (node.left) && is_black (node.right)) {
+		if (is_red (node.left) && is_red (node.left.left)) {
 			rotate_right (ref node);
 		}
 	}
@@ -285,7 +328,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	/**
 	 * @inheritDoc
 	 */
-	public override bool remove (K key, out V? value = null) {
+	public override bool unset (K key, out V? value = null) {
 		V node_value;
 		bool b = remove_from_node (ref root, key, out node_value);
 
@@ -355,6 +398,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		public Node<K, V>? right;
 		public weak Node<K, V>? prev;
 		public weak Node<K, V>? next;
+		public unowned Map.Entry<K,V>? entry;
 	}
 
 	private Node<K, V>? root = null;
@@ -362,19 +406,44 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	private weak Node<K, V>? last = null;
 	private int stamp = 0;
 
+	private class Entry<K,V> : Map.Entry<K,V> {
+		private unowned Node<K,V> _node;
+
+		public static Map.Entry<K,V> entry_for<K,V> (Node<K,V> node) {
+			Map.Entry<K,V> result = node.entry;
+			if (node.entry == null) {
+				result = new Entry<K,V> (node);
+				node.entry = result;
+				result.add_weak_pointer (&node.entry);
+			}
+			return result;
+		}
+
+		public Entry (Node<K,V> node) {
+			_node = node;
+		}
+
+		public override K key { get { return _node.key; } }
+
+		public override V value {
+			get { return _node.value; }
+			set { _node.value = value; }
+		}
+	}
+
 	private class KeySet<K,V> : AbstractSet<K> {
-		public TreeMap<K,V> map { private set; get; }
+		private TreeMap<K,V> _map;
 
 		public KeySet (TreeMap<K,V> map) {
-			this.map = map;
+			_map = map;
 		}
 
 		public override Iterator<K> iterator () {
-			return new KeyIterator<K,V> (map);
+			return new KeyIterator<K,V> (_map);
 		}
 
 		public override int size {
-			get { return map.size; }
+			get { return _map.size; }
 		}
 
 		public override bool add (K key) {
@@ -390,7 +459,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 
 		public override bool contains (K key) {
-			return map.contains (key);
+			return _map.contains (key);
 		}
 
 		public override bool add_all (Collection<K> collection) {
@@ -407,18 +476,18 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	}
 
 	private class ValueCollection<K,V> : AbstractCollection<V> {
-		public TreeMap<K,V> map { private set; get; }
+		private TreeMap<K,V> _map;
 
 		public ValueCollection (TreeMap<K,V> map) {
-			this.map = map;
+			_map = map;
 		}
 
 		public override Iterator<V> iterator () {
-			return new ValueIterator<K,V> (map);
+			return new ValueIterator<K,V> (_map);
 		}
 
 		public override int size {
-			get { return map.size; }
+			get { return _map.size; }
 		}
 
 		public override bool add (V key) {
@@ -436,7 +505,7 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		public override bool contains (V key) {
 			Iterator<V> it = iterator ();
 			while (it.next ()) {
-				if (map.value_equal_func (key, it.get ())) {
+				if (_map.value_equal_func (key, it.get ())) {
 					return true;
 				}
 			}
@@ -456,21 +525,59 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 		}
 	}
 
-	private class KeyIterator<K,V> : Object, Gee.Iterator<K>, BidirIterator<K> {
-		public TreeMap<K,V> map {
-			private set {
-				_map = value;
-				stamp = _map.stamp;
-			}
+	private class EntrySet<K,V> : AbstractSet<Map.Entry<K, V>> {
+		private TreeMap<K,V> _map;
+
+		public EntrySet (TreeMap<K,V> map) {
+			_map = map;
 		}
 
+		public override Iterator<Map.Entry<K, V>> iterator () {
+			return new EntryIterator<K,V> (_map);
+		}
+
+		public override int size {
+			get { return _map.size; }
+		}
+
+		public override bool add (Map.Entry<K, V> entry) {
+			assert_not_reached ();
+		}
+
+		public override void clear () {
+			assert_not_reached ();
+		}
+
+		public override bool remove (Map.Entry<K, V> entry) {
+			assert_not_reached ();
+		}
+
+		public override bool contains (Map.Entry<K, V> entry) {
+			return _map.has (entry.key, entry.value);
+		}
+
+		public override bool add_all (Collection<Map.Entry<K, V>> entries) {
+			assert_not_reached ();
+		}
+
+		public override bool remove_all (Collection<Map.Entry<K, V>> entries) {
+			assert_not_reached ();
+		}
+
+		public override bool retain_all (Collection<Map.Entry<K, V>> entries) {
+			assert_not_reached ();
+		}
+	}
+
+	private class KeyIterator<K,V> : Object, Gee.Iterator<K>, BidirIterator<K> {
 		private TreeMap<K,V> _map;
 
 		// concurrent modification protection
 		private int stamp;
 
 		public KeyIterator (TreeMap<K,V> map) {
-			this.map = map;
+			_map = map;
+			stamp = _map.stamp;
 		}
 
 		public bool next () {
@@ -539,20 +646,14 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 	}
 
 	private class ValueIterator<K,V> : Object, Gee.Iterator<V>, Gee.BidirIterator<V> {
-		public TreeMap<K,V> map {
-			private set {
-				_map = value;
-				stamp = _map.stamp;
-			}
-		}
-
 		private TreeMap<K,V> _map;
 
 		// concurrent modification protection
 		private int stamp;
 
 		public ValueIterator (TreeMap<K,V> map) {
-			this.map = map;
+			_map = map;
+			stamp = _map.stamp;
 		}
 
 		public bool next () {
@@ -617,6 +718,82 @@ public class Gee.TreeMap<K,V> : Gee.AbstractMap<K,V> {
 			PAST_THE_END
 		}
 		private ValueIterator.State state = ValueIterator.State.BEFORE_THE_BEGIN;
+		private bool run = false;
+	}
+
+	private class EntryIterator<K,V> : Object, Gee.Iterator<Map.Entry<K,V>>, Gee.BidirIterator<Map.Entry<K,V>> {
+		private TreeMap<K,V> _map;
+
+		// concurrent modification protection
+		private int stamp;
+
+		public EntryIterator (TreeMap<K,V> map) {
+			_map = map;
+			stamp = _map.stamp;
+		}
+
+		public bool next () {
+			assert (stamp == _map.stamp);
+			if (current != null) {
+				current = current.next;
+			} else if (state == EntryIterator.State.BEFORE_THE_BEGIN) {
+				run = true;
+				current = _map.first;
+			}
+			return current != null;
+		}
+
+		public bool has_next () {
+			assert (stamp == _map.stamp);
+			return (current == null && state == EntryIterator.State.BEFORE_THE_BEGIN) ||
+			       (current != null && current.next != null);
+		}
+
+		public bool first () {
+			assert (stamp == _map.stamp);
+			current = _map.first;
+			return current != null; // on false it is null anyway
+		}
+
+		public bool previous () {
+			assert (stamp == _map.stamp);
+			if (current != null) {
+				current = current.prev;
+			} else if (state == EntryIterator.State.PAST_THE_END) {
+				current = _map.last;
+			}
+			state = EntryIterator.State.BEFORE_THE_BEGIN;
+			return current != null;
+		}
+
+		public bool has_previous () {
+			assert (stamp == _map.stamp);
+			return (current == null && state == EntryIterator.State.PAST_THE_END) ||
+			       (current != null && current.prev != null);
+		}
+
+		public bool last () {
+			assert (stamp == _map.stamp);
+			current = _map.last;
+			return current != null; // on false it is null anyway
+		}
+
+		public new Map.Entry<K,V> get () {
+			assert (stamp == _map.stamp);
+			assert (current != null);
+			return Entry<K,V>.entry_for<K,V> (current);
+		}
+
+		public void remove () {
+			assert_not_reached ();
+		}
+
+		private weak Node<K, V>? current;
+		private enum State {
+			BEFORE_THE_BEGIN,
+			PAST_THE_END
+		}
+		private EntryIterator.State state = EntryIterator.State.BEFORE_THE_BEGIN;
 		private bool run = false;
 	}
 }
