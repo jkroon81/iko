@@ -5,10 +5,14 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public abstract class Iko.AST.Expression : Node {
+public abstract class Iko.AST.Expression : Node, Gee.Comparable<Expression> {
   public override void accept(Visitor v) {
     base.accept(v);
     v.visit_expression(this);
+  }
+
+  public int compare_to(Expression expr) {
+    return strcmp(to_string(), expr.to_string());
   }
 
   public Expression simplify() {
