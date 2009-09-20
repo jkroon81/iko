@@ -10,15 +10,12 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     base.visit_division_expression(de_in);
     var de = q.pop_head() as DivisionExpression;
 
-    if(de.den is Literal) {
+    if(de.den.compare_to(IntegerLiteral.ONE) == 0)
+      q.push_head(de.num);
+    else if(de.num is Literal && de.den is Literal) {
+      var num = (de.num as Literal).value.to_double();
       var den = (de.den as Literal).value.to_double();
-      if(den == 1.0)
-        q.push_head(de.num);
-      else if(de.num is Literal) {
-        var num = (de.num as Literal).value.to_double();
-        q.push_head(new FloatLiteral((num / den).to_string()));
-      } else
-        q.push_head(de);
+      q.push_head(new FloatLiteral((num / den).to_string()));
     } else
       q.push_head(de);
   }
@@ -31,12 +28,13 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     Literal lterm = IntegerLiteral.ZERO;
     foreach(var op in ae.operands) {
       if(op is Literal) {
-        var nvalue = (op as Literal).value.to_double();
-        lterm = new FloatLiteral((lterm.value.to_double() + nvalue).to_string());
+        var t1 = lterm.value.to_double();
+        var t2 = (op as Literal).value.to_double();
+        lterm = new FloatLiteral((t1 + t2).to_string());
       } else
         ae_new.operands.add(op);
     }
-    if(lterm.value.to_double() != 0.0)
+    if(lterm.compare_to(IntegerLiteral.ZERO) != 0)
       ae_new.operands.add(lterm);
     switch(ae_new.operands.size) {
     case 0:
@@ -58,17 +56,18 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     var me_new = new MultiplicativeExpression();
     Literal lfactor = IntegerLiteral.ONE;
     foreach(var op in me.operands) {
+      if(op.compare_to(IntegerLiteral.ZERO) == 0) {
+        q.push_head(IntegerLiteral.ZERO);
+        return;
+      }
       if(op is Literal) {
-        var nvalue = (op as Literal).value.to_double();
-        if(nvalue == 0.0) {
-          q.push_head(IntegerLiteral.ZERO);
-          return;
-        } else
-          lfactor = new FloatLiteral((lfactor.value.to_double() * nvalue).to_string());
+        var f1 = lfactor.value.to_double();
+        var f2 = (op as Literal).value.to_double();
+        lfactor = new FloatLiteral((f1 * f2).to_string());
       } else
         me_new.operands.add(op);
     }
-    if(lfactor.value.to_double() != 1.0)
+    if(lfactor.compare_to(IntegerLiteral.ONE) != 0)
       me_new.operands.add(lfactor);
     switch(me_new.operands.size) {
     case 0:
@@ -87,21 +86,22 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
     base.visit_power_expression(pe_in);
     var pe = q.pop_head() as PowerExpression;
 
-    if(pe.exp is Literal) {
+    if(pe.bais.compare_to(IntegerLiteral.ONE) == 0)
+      q.push_head(IntegerLiteral.ONE);
+    else if(pe.bais.compare_to(IntegerLiteral.MINUS_ONE) == 0 && pe.exp is Literal) {
       var exp = (pe.exp as Literal).value.to_double();
-      if(exp == 0.0)
-        q.push_head(IntegerLiteral.ONE);
-      else if(exp == 1.0)
-        q.push_head(pe.bais);
-      else if(pe.bais is Literal) {
-        var bais = (pe.bais as Literal).value.to_double();
-        if(bais == 1.0)
+      if(exp == Math.floor(exp)) {
+        if(exp / 2.0 == Math.floor(exp / 2.0))
           q.push_head(IntegerLiteral.ONE);
         else
-          q.push_head(pe);
+          q.push_head(IntegerLiteral.MINUS_ONE);
       } else
         q.push_head(pe);
-    } else
+    } else if(pe.exp.compare_to(IntegerLiteral.ZERO) == 0)
+      q.push_head(IntegerLiteral.ONE);
+    else if(pe.exp.compare_to(IntegerLiteral.ONE) == 0)
+      q.push_head(pe.bais);
+    else
       q.push_head(pe);
   }
 }
