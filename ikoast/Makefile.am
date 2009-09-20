@@ -53,7 +53,7 @@ libikoast_la_VALAFLAGS = \
 	--vapidir=$(top_builddir)/iko \
 	--pkg=gee \
 	--pkg=iko \
-	-C -H ikoast.h
+	-H ikoast.h
 
 libikoast_la_CFLAGS = \
 	@GOBJECT_CFLAGS@ \

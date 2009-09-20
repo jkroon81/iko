@@ -14,8 +14,7 @@ ikoc_VALAFLAGS = \
 	--pkg=gee \
 	--pkg=iko \
 	--pkg=ikoast \
-	--pkg=ikovalacode \
-	-C
+	--pkg=ikovalacode
 
 ikoc_CFLAGS = \
 	@GOBJECT_CFLAGS@ \

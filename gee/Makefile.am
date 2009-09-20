@@ -43,7 +43,7 @@ libgee_la_SOURCES = \
 
 libgee_la_VALAFLAGS = \
 	--library=gee \
-	-C -H gee.h
+	-H gee.h
 
 libgee_la_CFLAGS = \
 	@GOBJECT_CFLAGS@

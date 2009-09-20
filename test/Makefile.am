@@ -16,22 +16,26 @@ TESTS = \
 	test-multiplication \
 	test-power
 
+XFAIL_TESTS = \
+	test-addition \
+	test-multiplication \
+	test-power
+
 test_addition_SOURCES = test-common.vala test-addition.vala
 test_constant_folding_SOURCES = test-common.vala test-constant-folding.vala
 test_multiplication_SOURCES = test-common.vala test-multiplication.vala
 test_power_SOURCES = test-common.vala test-power.vala
 transformer_SOURCES = transformer.vala
 
-VALAFLAGS = \
+AM_VALAFLAGS = \
 	--vapidir=$(top_builddir)/gee \
 	--vapidir=$(top_builddir)/iko \
 	--vapidir=$(top_builddir)/ikoast \
 	--pkg=gee \
 	--pkg=iko \
-	--pkg=ikoast \
-	-C
+	--pkg=ikoast
 
-CFLAGS = \
+AM_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
 	-I$(top_srcdir)/gee \
 	-I$(top_srcdir)/iko \

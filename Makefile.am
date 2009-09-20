@@ -5,6 +5,7 @@ EXTRA_DIST = \
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/aclocal.m4 \
+	$(srcdir)/build/compile \
 	$(srcdir)/build/config.guess \
 	$(srcdir)/build/config.sub \
 	$(srcdir)/build/depcomp \

@@ -17,7 +17,7 @@ libikovalacode_la_VALAFLAGS = \
 	--pkg=gee \
 	--pkg=iko \
 	--pkg=ikoast \
-	-C -H ikovalacode.h
+	-H ikovalacode.h
 
 libikovalacode_la_CFLAGS = \
 	@GOBJECT_CFLAGS@ \

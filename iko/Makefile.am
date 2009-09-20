@@ -58,7 +58,7 @@ libiko_la_VALAFLAGS = \
 	--library=iko \
 	--vapidir=$(top_srcdir)/gee \
 	--pkg=gee \
-	-C -H iko.h
+	-H iko.h
 
 libiko_la_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
