@@ -6,13 +6,6 @@
  */
 
 public class Iko.AST.CollectSymbols : ExpressionTransformer {
-  bool equals(Expression e1, Expression e2) {
-    if(e1 is SymbolAccess && e2 is SymbolAccess)
-      return (e1 as SymbolAccess).symbol == (e2 as SymbolAccess).symbol;
-    else
-      return false;
-  }
-
   MultiplicativeExpression factorize(Expression e) {
     if(e is MultiplicativeExpression)
       return e as MultiplicativeExpression;
@@ -45,7 +38,7 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
       for(int j = 0; j < den.operands.size; j++) {
         Expression den_bais, den_exp;
         powerize(den.operands[j], out den_bais, out den_exp);
-        if(equals(num_bais, den_bais)) {
+        if(num_bais.compare_to(den_bais) == 0) {
           var inv = new MultiplicativeExpression.binary(IntegerLiteral.MINUS_ONE, den_exp);
           num_exp = new AdditiveExpression.binary(num_exp, inv);
           num.operands[i] = new PowerExpression(num_bais, num_exp);
@@ -72,7 +65,7 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
       for(int j = i + 1; j < me.operands.size; j++) {
         Expression bais_2, exp_2;
         powerize(me.operands[j], out bais_2, out exp_2);
-        if(equals(bais_1, bais_2)) {
+        if(bais_1.compare_to(bais_2) == 0) {
           exp_1 = new AdditiveExpression.binary(exp_1, exp_2);
           me.operands.remove_at(j);
           j--;
