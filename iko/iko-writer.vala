@@ -126,11 +126,11 @@ public class Iko.Writer : Visitor {
       write("static ");
     f.data_type.accept(this);
     write(" %s".printf(f.name));
-    if(f.params.size > 0) {
+    if(f.params != null) {
       write("[");
-      for(int i = 0; i < f.params.size; i++) {
-        f.params[i].accept(this);
-        if(i != f.params.size - 1)
+      for(unowned SList<Expression> node = f.params; node != null; node = node.next) {
+        node.data.accept(this);
+        if(node.next != null)
           write(",");
       }
       write("]");
@@ -157,10 +157,10 @@ public class Iko.Writer : Visitor {
       write("static ");
     m.data_type.accept(this);
     write(" %s(".printf(m.name));
-    for(int i = 0; i < m.params.size; i++) {
-      m.params[i].data_type.accept(this);
-      write(" %s".printf(m.params[i].name));
-      if(i != m.params.size - 1)
+    for(unowned SList<Parameter> node = m.params; node != null; node = node.next) {
+      node.data.data_type.accept(this);
+      write(" %s".printf(node.data.name));
+      if(node.next != null)
         write(",");
     }
     write(");");
@@ -169,9 +169,9 @@ public class Iko.Writer : Visitor {
   public override void visit_method_call(MethodCall mc) {
     mc.method.accept(this);
     write("(");
-    for(int i = 0; i < mc.args.size; i++) {
-      mc.args[i].accept(this);
-      if(i != mc.args.size - 1)
+    for(unowned SList<Expression> node = mc.args; node != null; node = node.next) {
+      node.data.accept(this);
+      if(node.next != null)
         write(",");
     }
     write(")");

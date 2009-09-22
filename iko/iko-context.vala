@@ -5,8 +5,6 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.Context : Node {
   public Namespace root { get; private set; }
 

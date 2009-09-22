@@ -5,17 +5,11 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.Block : Node {
-  public ArrayList<Statement> statements { get; private set; }
+  public SList<Statement> statements;
 
   public Block(SourceReference? src) {
     this.src = src;
-  }
-
-  construct {
-    statements = new ArrayList<Statement>();
   }
 
   public override void accept(Visitor v) {

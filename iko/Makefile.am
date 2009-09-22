@@ -56,15 +56,11 @@ libiko_la_SOURCES = \
 
 libiko_la_VALAFLAGS = \
 	--library=iko \
-	--vapidir=$(top_srcdir)/gee \
-	--pkg=gee \
 	-H iko.h
 
 libiko_la_CFLAGS = \
-	@GOBJECT_CFLAGS@ \
-	-I$(top_srcdir)/gee
+	@GOBJECT_CFLAGS@
 
 libiko_la_LIBADD = \
-	@GOBJECT_LIBS@ \
-	$(top_builddir)/gee/libgee.la
+	@GOBJECT_LIBS@
 

@@ -5,20 +5,14 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.Method : Member {
-  public ArrayList<Parameter> params { get; private set; }
+  public SList<Parameter> params;
 
   public Method(SourceReference? src, Member.Binding binding, DataType data_type, string name) {
     this.src       = src;
     this.binding   = binding;
     this.data_type = data_type;
     this.name      = name;
-  }
-
-  construct {
-    params = new ArrayList<Parameter>();
   }
 
   public override void accept(Visitor v) {
@@ -36,7 +30,7 @@ public class Iko.Method : Member {
     if(scope.lookup(p.name) != null)
       Report.error(p.src, "'%s' is already defined in '%s'".printf(p.name, name));
     else {
-      params.add(p);
+      params.prepend(p);
       scope.add(p);
     }
   }

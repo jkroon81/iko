@@ -99,7 +99,8 @@ public class Iko.Parser : Object {
     expect(TokenType.OPEN_BRACE);
     var block = new Block(get_src(begin));
     while(!accept(TokenType.CLOSE_BRACE))
-      block.statements.add(parse_statement());
+      block.statements.prepend(parse_statement());
+    block.statements.reverse();
     return block;
   }
 
@@ -308,8 +309,9 @@ public class Iko.Parser : Object {
     var field = new Field(get_src(begin), binding, data_type, id);
     if(accept(TokenType.OPEN_BRACKET)) {
       do {
-        field.params.add(parse_member_expression());
+        field.params.prepend(parse_member_expression());
       } while(accept(TokenType.COMMA));
+      field.params.reverse();
       expect(TokenType.CLOSE_BRACKET);
     }
     return field;
@@ -379,8 +381,9 @@ public class Iko.Parser : Object {
         next();
         var method_call = new MethodCall(get_src(begin), inner);
         do {
-          method_call.args.add(parse_expression());
+          method_call.args.prepend(parse_expression());
         } while(accept(TokenType.COMMA));
+        method_call.args.reverse();
         expect(TokenType.CLOSE_PARENS);
         expr = method_call;
         break;
@@ -405,6 +408,7 @@ public class Iko.Parser : Object {
       do {
         method.add_parameter(parse_parameter());
       } while(accept(TokenType.COMMA));
+      method.params.reverse();
     expect(TokenType.CLOSE_PARENS);
     return method;
   }

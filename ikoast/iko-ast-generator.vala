@@ -49,7 +49,7 @@ public class Iko.AST.Generator : Iko.Visitor {
     return q.pop_head();
   }
 
-  void generate_instance(Iko.DataType data_type, string name, Gee.ArrayList<Iko.Expression> params) {
+  void generate_instance(Iko.DataType data_type, string name, SList<Iko.Expression> params) {
     if(data_type is Iko.TypeAccess) {
       prefix.push_tail(name);
       var buffer = new StringBuilder();
@@ -57,7 +57,7 @@ public class Iko.AST.Generator : Iko.Visitor {
         buffer.append(n);
       var type_symbol = (data_type as Iko.TypeAccess).type_symbol;
       if(type_symbol is Iko.RealType) {
-        if(params.size > 0) {
+        if(params != null) {
           var s = new State(buffer.str, real_type);
           foreach(var p in params)
             s.params.add(system.map.lookup(expression_to_string(p)) as IndependentVariable);

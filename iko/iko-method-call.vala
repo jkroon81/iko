@@ -5,10 +5,8 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.MethodCall : Expression {
-  public ArrayList<Expression> args { get; private set; }
+  public SList<Expression> args;
 
   public Expression method { get; construct; }
 
@@ -17,10 +15,6 @@ public class Iko.MethodCall : Expression {
   public MethodCall(SourceReference? src, Expression method) {
     this.src    = src;
     this.method = method;
-  }
-
-  construct {
-    args = new ArrayList<Expression>();
   }
 
   public override void accept(Visitor v) {

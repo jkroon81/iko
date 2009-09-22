@@ -5,23 +5,15 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.Class : TypeSymbol {
-  public Model?                model   { get; private set; }
-  public ArrayList<Field>      fields  { get; private set; }
-  public ArrayList<Method>     methods { get; private set; }
-  public ArrayList<TypeSymbol> types   { get; private set; }
+  public Model?            model { get; private set; }
+  public SList<Field>      fields;
+  public SList<Method>     methods;
+  public SList<TypeSymbol> types;
 
   public Class(SourceReference? src, string name) {
     this.src  = src;
     this.name = name;
-  }
-
-  construct {
-    fields  = new ArrayList<Field>();
-    methods = new ArrayList<Method>();
-    types   = new ArrayList<TypeSymbol>();
   }
 
   public override void accept(Visitor v) {
@@ -45,7 +37,7 @@ public class Iko.Class : TypeSymbol {
     if(scope.lookup(f.name) != null)
       Report.error(f.src, "'%s' is already defined in '%s'".printf(f.name, name));
     else {
-      fields.add(f);
+      fields.prepend(f);
       scope.add(f);
     }
   }
@@ -54,7 +46,7 @@ public class Iko.Class : TypeSymbol {
     if(scope.lookup(m.name) != null)
       Report.error(m.src, "'%s' is already defined in '%s'".printf(m.name, name));
     else {
-      methods.add(m);
+      methods.prepend(m);
       scope.add(m);
     }
   }
@@ -70,7 +62,7 @@ public class Iko.Class : TypeSymbol {
     if(scope.lookup(t.name) != null)
       Report.error(t.src, "'%s' is already defined in '%s'".printf(t.name, name));
     else {
-      types.add(t);
+      types.prepend(t);
       scope.add(t);
     }
   }
