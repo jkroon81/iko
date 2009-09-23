@@ -30,7 +30,7 @@ int main(string[] args) {
   context.accept(new Iko.AST.Generator(system));
   context = null;
 
-  assert(system.equations.size == 1);
+  assert(system.equations.length() == 1);
   foreach(var e in system.equations) {
     var expr = e.left;
     stdout.printf("original            : %s\n", expr.to_string());

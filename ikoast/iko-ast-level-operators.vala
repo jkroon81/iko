@@ -13,10 +13,12 @@ public class Iko.AST.LevelOperators : ExpressionTransformer {
     var ae_new = new AdditiveExpression();
     foreach(var op in ae.operands) {
       if(op is AdditiveExpression)
-        ae_new.operands.add_all((op as AdditiveExpression).operands);
+        foreach(var sub_op in (op as AdditiveExpression).operands)
+          ae_new.operands.prepend(sub_op);
       else
-        ae_new.operands.add(op);
+        ae_new.operands.prepend(op);
     }
+    ae_new.operands.reverse();
     q.push_head(ae_new);
   }
 
@@ -27,10 +29,12 @@ public class Iko.AST.LevelOperators : ExpressionTransformer {
     var me_new = new MultiplicativeExpression();
     foreach(var op in me.operands) {
       if(op is MultiplicativeExpression)
-        me_new.operands.add_all((op as MultiplicativeExpression).operands);
+        foreach(var sub_op in (op as MultiplicativeExpression).operands)
+          me_new.operands.prepend(sub_op);
       else
-        me_new.operands.add(op);
+        me_new.operands.prepend(op);
     }
+    me_new.operands.reverse();
     q.push_head(me_new);
   }
 }

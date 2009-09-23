@@ -20,7 +20,8 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
   public override void visit_additive_expression(AdditiveExpression ae) {
     var ae_new = new AdditiveExpression();
     foreach(var op in ae.operands)
-      ae_new.operands.add(transform(op));
+      ae_new.operands.prepend(transform(op));
+    ae_new.operands.reverse();
     q.push_head(ae_new);
   }
 
@@ -35,14 +36,16 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
   public override void visit_method_call(MethodCall mc) {
     var mc_new = new MethodCall(mc.method);
     foreach(var arg in mc.args)
-      mc_new.args.add(transform(arg));
+      mc_new.args.prepend(transform(arg));
+    mc_new.args.reverse();
     q.push_head(mc_new);
   }
 
   public override void visit_multiplicative_expression(MultiplicativeExpression me) {
     var me_new = new MultiplicativeExpression();
     foreach(var op in me.operands)
-      me_new.operands.add(transform(op));
+      me_new.operands.prepend(transform(op));
+    me_new.operands.reverse();
     q.push_head(me_new);
   }
 

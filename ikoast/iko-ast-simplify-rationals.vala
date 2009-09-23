@@ -26,13 +26,13 @@ public class Iko.AST.SimplifyRationals : ExpressionTransformer {
     base.visit_multiplicative_expression(me_in);
     var me = q.pop_head() as MultiplicativeExpression;
 
-    for(var i = 0; i < me.operands.size; i++) {
-      var op = me.operands[i];
+    for(unowned SList<Expression> node = me.operands; node != null; node = node.next) {
+      var op = node.data;
       if(op is DivisionExpression) {
         var de = op as DivisionExpression;
         var num = new MultiplicativeExpression.list(me.operands);
         num.operands.remove(op);
-        num.operands.add(de.num);
+        num.operands.append(de.num);
         q.push_head(new DivisionExpression(num, de.den));
         return;
       }

@@ -16,8 +16,9 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
       var num = de.num as AdditiveExpression;
       var ae = new AdditiveExpression();
       foreach(var op in num.operands) {
-        ae.operands.add(new DivisionExpression(op, de.den));
+        ae.operands.prepend(new DivisionExpression(op, de.den));
       }
+      ae.operands.reverse();
       q.push_head(ae);
     } else
       q.push_head(de);
@@ -34,15 +35,16 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
         me.operands.remove(ae_sub);
         foreach(var f1 in ae_sub.operands) {
           var t = new MultiplicativeExpression.list(me.operands);
-          t.operands.add(f1);
-          ae.operands.add(transform(t));
+          t.operands.append(f1);
+          ae.operands.prepend(transform(t));
         }
         break;
       }
     }
-    if(ae.operands.size > 0)
+    if(ae.operands != null) {
+      ae.operands.reverse();
       q.push_head(ae);
-    else
+    } else
       q.push_head(me);
   }
 
@@ -54,7 +56,8 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
       var bais = pe.bais as MultiplicativeExpression;
       var me = new MultiplicativeExpression();
       foreach(var op in bais.operands)
-        me.operands.add(transform(new PowerExpression(op, pe.exp)));
+        me.operands.prepend(transform(new PowerExpression(op, pe.exp)));
+      me.operands.reverse();
       q.push_head(me);
     } else if(pe.bais is AdditiveExpression) {
       if (pe.exp is IntegerLiteral) {
@@ -62,8 +65,9 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
         if(exp <= MAX_POWER_EXPANSION_FACTORS) {
           var me = new MultiplicativeExpression();
           for(int i = 0; i < exp; i++) {
-            me.operands.add(pe.bais);
+            me.operands.prepend(pe.bais);
           }
+          me.operands.reverse();
           q.push_head(transform(me));
         } else
           q.push_head(pe);
@@ -73,7 +77,8 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
       var exp = pe.exp as AdditiveExpression;
       var me = new MultiplicativeExpression();
       foreach(var op in exp.operands)
-        me.operands.add(transform(new PowerExpression(pe.bais, op)));
+        me.operands.prepend(transform(new PowerExpression(pe.bais, op)));
+      me.operands.reverse();
       q.push_head(me);
     } else
       q.push_head(pe);

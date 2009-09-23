@@ -11,7 +11,7 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
       return e as MultiplicativeExpression;
     else {
       var me = new MultiplicativeExpression();
-      me.operands.add(e);
+      me.operands.prepend(e);
       return me;
     }
   }
@@ -32,25 +32,24 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
 
     var num = factorize(de.num);
     var den = factorize(de.den);
-    for(int i = 0; i < num.operands.size; i++) {
+    for(unowned SList<Expression> node_1 = num.operands; node_1 != null; node_1 = node_1.next) {
       Expression num_bais, num_exp;
-      powerize(num.operands[i], out num_bais, out num_exp);
-      for(int j = 0; j < den.operands.size; j++) {
+      powerize(node_1.data, out num_bais, out num_exp);
+      for(unowned SList<Expression> node_2 = den.operands; node_2 != null; node_2 = node_2.next) {
         Expression den_bais, den_exp;
-        powerize(den.operands[j], out den_bais, out den_exp);
+        powerize(node_2.data, out den_bais, out den_exp);
         if(num_bais.compare_to(den_bais) == 0) {
           var inv = new MultiplicativeExpression.binary(IntegerLiteral.MINUS_ONE, den_exp);
           num_exp = new AdditiveExpression.binary(num_exp, inv);
-          num.operands[i] = new PowerExpression(num_bais, num_exp);
-          den.operands.remove_at(j);
-          j--;
+          node_1.data = new PowerExpression(num_bais, num_exp);
+          den.operands.remove_link(node_2);
         }
       }
     }
-    if(num.operands.size == 0)
-      num.operands.add(IntegerLiteral.ONE);
-    if(den.operands.size == 0)
-      den.operands.add(IntegerLiteral.ONE);
+    if(num.operands == null)
+      num.operands.prepend(IntegerLiteral.ONE);
+    if(den.operands == null)
+      den.operands.prepend(IntegerLiteral.ONE);
     q.push_head(new DivisionExpression(num, den));
   }
 
@@ -59,20 +58,20 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
     var me = q.pop_head() as MultiplicativeExpression;
 
     var me_new = new MultiplicativeExpression();
-    for(int i = 0; i < me.operands.size; i++) {
+    for(unowned SList<Expression> node_1 = me.operands; node_1 != null; node_1 = node_1.next) {
       Expression bais_1, exp_1;
-      powerize(me.operands[i], out bais_1, out exp_1);
-      for(int j = i + 1; j < me.operands.size; j++) {
+      powerize(node_1.data, out bais_1, out exp_1);
+      for(unowned SList<Expression> node_2 = node_1.next; node_2 != null; node_2 = node_2.next) {
         Expression bais_2, exp_2;
-        powerize(me.operands[j], out bais_2, out exp_2);
+        powerize(node_2.data, out bais_2, out exp_2);
         if(bais_1.compare_to(bais_2) == 0) {
           exp_1 = new AdditiveExpression.binary(exp_1, exp_2);
-          me.operands.remove_at(j);
-          j--;
+          me.operands.remove_link(node_2);
         }
       }
-      me_new.operands.add(new PowerExpression(bais_1, exp_1));
+      me_new.operands.prepend(new PowerExpression(bais_1, exp_1));
     }
+    me_new.operands.reverse();
     q.push_head(me_new);
   }
 }

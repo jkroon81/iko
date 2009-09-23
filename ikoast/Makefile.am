@@ -49,18 +49,14 @@ libikoast_la_SOURCES = \
 
 libikoast_la_VALAFLAGS = \
 	--library=ikoast \
-	--vapidir=$(top_builddir)/gee \
 	--vapidir=$(top_builddir)/iko \
-	--pkg=gee \
 	--pkg=iko \
 	-H ikoast.h
 
 libikoast_la_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
-	-I$(top_srcdir)/gee \
 	-I$(top_srcdir)/iko
 
 libikoast_la_LIBADD = \
-	$(top_builddir)/gee/libgee.la \
 	$(top_builddir)/iko/libiko.la
 

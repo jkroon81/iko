@@ -60,7 +60,8 @@ public class Iko.AST.Generator : Iko.Visitor {
         if(params != null) {
           var s = new State(buffer.str, real_type);
           foreach(var p in params)
-            s.params.add(system.map.lookup(expression_to_string(p)) as IndependentVariable);
+            s.params.prepend(system.map.lookup(expression_to_string(p)) as IndependentVariable);
+          s.params.reverse();
           system.add_state(s);
         } else {
           var iv = new IndependentVariable(buffer.str, real_type);
@@ -168,7 +169,8 @@ public class Iko.AST.Generator : Iko.Visitor {
   public override void visit_method_call(Iko.MethodCall mc) {
     var expr = new MethodCall(generate_expression(mc.method));
     foreach(var a in mc.args)
-      expr.args.add(generate_expression(a));
+      expr.args.prepend(generate_expression(a));
+    expr.args.reverse();
     q.push_head(expr);
   }
 

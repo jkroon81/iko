@@ -5,10 +5,8 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.AST.State : DataSymbol {
-  public ArrayList<IndependentVariable> params { get; private set;}
+  public SList<IndependentVariable> params;
 
   public HashTable<IndependentVariable, Expression> der { get; private set; }
 
@@ -18,7 +16,6 @@ public class Iko.AST.State : DataSymbol {
   }
 
   construct {
-    params = new ArrayList<IndependentVariable>();
     der    = new HashTable<IndependentVariable, Expression>(direct_hash, direct_equal);
   }
 

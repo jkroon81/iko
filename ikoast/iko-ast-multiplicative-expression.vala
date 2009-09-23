@@ -5,22 +5,18 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.AST.MultiplicativeExpression : ArithmeticExpression {
-  public ArrayList<Expression> operands { get; private set; }
-
-  construct {
-    operands = new ArrayList<Expression>();
-  }
+  public SList<Expression> operands;
 
   public MultiplicativeExpression.binary(Expression left, Expression right) {
-    operands.add(left);
-    operands.add(right);
+    operands.prepend(right);
+    operands.prepend(left);
   }
 
-  public MultiplicativeExpression.list(ArrayList<Expression> op_list) {
-    operands.add_all(op_list);
+  public MultiplicativeExpression.list(SList<Expression> op_list) {
+    foreach(var op in op_list)
+      operands.prepend(op);
+    operands.reverse();
   }
 
   public override void accept(Visitor v) {

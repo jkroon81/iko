@@ -32,18 +32,19 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
         var t2 = (op as Literal).value.to_double();
         lterm = new FloatLiteral((t1 + t2).to_string());
       } else
-        ae_new.operands.add(op);
+        ae_new.operands.prepend(op);
     }
     if(lterm.compare_to(IntegerLiteral.ZERO) != 0)
-      ae_new.operands.add(lterm);
-    switch(ae_new.operands.size) {
+      ae_new.operands.prepend(lterm);
+    switch(ae_new.operands.length()) {
     case 0:
       q.push_head(IntegerLiteral.ZERO);
       break;
     case 1:
-      q.push_head(ae_new.operands[0]);
+      q.push_head(ae_new.operands.nth_data(0));
       break;
     default:
+      ae_new.operands.reverse();
       q.push_head(ae_new);
       break;
     }
@@ -65,18 +66,19 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
         var f2 = (op as Literal).value.to_double();
         lfactor = new FloatLiteral((f1 * f2).to_string());
       } else
-        me_new.operands.add(op);
+        me_new.operands.prepend(op);
     }
     if(lfactor.compare_to(IntegerLiteral.ONE) != 0)
-      me_new.operands.add(lfactor);
-    switch(me_new.operands.size) {
+      me_new.operands.prepend(lfactor);
+    switch(me_new.operands.length()) {
     case 0:
       q.push_head(IntegerLiteral.ONE);
       break;
     case 1:
-      q.push_head(me_new.operands[0]);
+      q.push_head(me_new.operands.nth_data(0));
       break;
     default:
+      me_new.operands.reverse();
       q.push_head(me_new);
       break;
     }

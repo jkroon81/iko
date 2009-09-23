@@ -5,22 +5,15 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.AST.System : Node {
-  public ArrayList<Constant>            constants { get; private set; }
-  public ArrayList<EqualityExpression>  equations { get; private set; }
-  public ArrayList<IndependentVariable> ivars     { get; private set; }
-  public ArrayList<Method>              methods   { get; private set; }
-  public ArrayList<State>               states    { get; private set; }
-  public HashTable<string, Symbol>      map       { get; private set; }
+  public SList<Constant>            constants;
+  public SList<EqualityExpression>  equations;
+  public SList<IndependentVariable> ivars;
+  public SList<Method>              methods;
+  public SList<State>               states;
+  public HashTable<string, Symbol>  map { get; private set; }
 
   construct {
-    constants = new ArrayList<Constant>();
-    equations = new ArrayList<EqualityExpression>();
-    ivars = new ArrayList<IndependentVariable>();
-    methods = new ArrayList<Method>();
-    states = new ArrayList<State>();
     map = new HashTable<string, Symbol>(str_hash, str_equal);
     add_method(new DerivativeMethod());
     add_method(new SquareRootMethod());
@@ -46,26 +39,26 @@ public class Iko.AST.System : Node {
   }
 
   public void add_constant(Constant c) {
-    constants.add(c);
+    constants.prepend(c);
     map.insert(c.name, c);
   }
 
   public void add_equation(EqualityExpression eq) {
-    equations.add(eq);
+    equations.prepend(eq);
   }
 
   public void add_independent_variable(IndependentVariable iv) {
-    ivars.add(iv);
+    ivars.prepend(iv);
     map.insert(iv.name, iv);
   }
 
   public void add_method(Method m) {
-    methods.add(m);
+    methods.prepend(m);
     map.insert(m.name, m);
   }
 
   public void add_state(State s) {
-    states.add(s);
+    states.prepend(s);
     map.insert(s.name, s);
   }
 }

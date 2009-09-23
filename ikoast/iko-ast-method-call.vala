@@ -5,19 +5,13 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using Gee;
-
 public class Iko.AST.MethodCall : SimpleExpression {
-  public ArrayList<Expression> args { get; private set; }
+  public SList<Expression> args;
 
   public Expression method { get; construct; }
 
   public MethodCall(Expression method) {
     this.method = method;
-  }
-
-  construct {
-    args = new ArrayList<Expression>();
   }
 
   public override void accept(Visitor v) {

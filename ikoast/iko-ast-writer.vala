@@ -55,9 +55,9 @@ public class Iko.AST.Writer : Visitor {
   }
 
   public override void visit_additive_expression(AdditiveExpression ae) {
-    for(int i = 0; i < ae.operands.size; i++) {
-      ae.operands[i].accept(this);
-      if(i != ae.operands.size - 1)
+    for(unowned SList<Expression> node = ae.operands; node != null; node = node.next) {
+      node.data.accept(this);
+      if(node.next != null)
         write("+");
     }
   }
@@ -110,22 +110,22 @@ public class Iko.AST.Writer : Visitor {
   public override void visit_method_call(MethodCall mc) {
     mc.method.accept(this);
     write("(");
-    for(int i = 0; i < mc.args.size; i++) {
-      mc.args[i].accept(this);
-      if(i != mc.args.size - 1)
+    for(unowned SList<Expression> node = mc.args; node != null; node = node.next) {
+      node.data.accept(this);
+      if(node.next != null)
         write(",");
     }
     write(")");
   }
 
   public override void visit_multiplicative_expression(MultiplicativeExpression me) {
-    for(int i = 0; i < me.operands.size; i++) {
-      if(me.operands[i] is AdditiveExpression)
+    for(unowned SList<Expression> node = me.operands; node != null; node = node.next) {
+      if(node.data is AdditiveExpression)
         write("(");
-      me.operands[i].accept(this);
-      if(me.operands[i] is AdditiveExpression)
+      node.data.accept(this);
+      if(node.data is AdditiveExpression)
         write(")");
-      if(i != me.operands.size - 1)
+      if(node.next != null)
         write("*");
     }
   }
@@ -177,31 +177,31 @@ public class Iko.AST.Writer : Visitor {
 
   public override void visit_system(System s) {
     write("system {");
-    if(s.constants.size > 0) {
+    if(s.constants.length() > 0) {
       write("constant {");
       foreach(var c in s.constants)
         c.accept(this);
       write("}");
     }
-    if(s.ivars.size > 0) {
+    if(s.ivars.length() > 0) {
       write("independent variable {");
       foreach(var iv in s.ivars)
         iv.accept(this);
       write("}");
     }
-    if(s.states.size > 0) {
+    if(s.states.length() > 0) {
       write("state {");
       foreach(var st in s.states)
         st.accept(this);
       write("}");
     }
-    if(s.methods.size > 0) {
+    if(s.methods.length() > 0) {
       write("methods {");
       foreach(var m in s.methods)
         m.accept(this);
       write("}");
     }
-    if(s.equations.size > 0) {
+    if(s.equations.length() > 0) {
       write("equation {");
       foreach(var eq in s.equations) {
         eq.accept(this);
