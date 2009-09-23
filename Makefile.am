@@ -14,7 +14,6 @@ MAINTAINERCLEANFILES = \
 	$(srcdir)/build/missing
 
 SUBDIRS = \
-	gee \
 	iko \
 	ikoast \
 	ikovalacode \
