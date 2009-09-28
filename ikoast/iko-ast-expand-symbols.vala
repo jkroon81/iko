@@ -15,9 +15,8 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
     if(de.num is AdditiveExpression) {
       var num = de.num as AdditiveExpression;
       var ae = new AdditiveExpression();
-      foreach(var op in num.operands) {
+      foreach(var op in num.operands)
         ae.operands.prepend(new DivisionExpression(op, de.den));
-      }
       ae.operands.reverse();
       q.push_head(ae);
     } else
@@ -64,10 +63,8 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
         var exp = (pe.exp as IntegerLiteral).value.to_int();
         if(exp <= MAX_POWER_EXPANSION_FACTORS) {
           var me = new MultiplicativeExpression();
-          for(int i = 0; i < exp; i++) {
+          for(int i = 0; i < exp; i++)
             me.operands.prepend(pe.bais);
-          }
-          me.operands.reverse();
           q.push_head(transform(me));
         } else
           q.push_head(pe);

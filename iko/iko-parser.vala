@@ -311,7 +311,6 @@ public class Iko.Parser : Object {
       do {
         field.params.prepend(parse_member_expression());
       } while(accept(TokenType.COMMA));
-      field.params.reverse();
       expect(TokenType.CLOSE_BRACKET);
     }
     return field;
