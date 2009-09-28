@@ -17,8 +17,6 @@ TESTS = \
 	test-power
 
 XFAIL_TESTS = \
-	test-addition \
-	test-multiplication \
 	test-power
 
 test_addition_SOURCES = test-common.vala test-addition.vala
