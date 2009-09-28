@@ -16,6 +16,22 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
     }
   }
 
+  bool is_pure_literal(Expression expr) {
+    if(expr is Literal)
+      return true;
+    else if(expr is PowerExpression) {
+      var pe = expr as PowerExpression;
+      return is_pure_literal(pe.bais) && is_pure_literal(pe.exp);
+    } else if(expr is AdditiveExpression) {
+      var ae = expr as AdditiveExpression;
+      foreach(var op in ae.operands)
+        if(!is_pure_literal(op))
+          return false;
+      return true;
+    } else
+      return false;
+  }
+
   void powerize(Expression e, out Expression bais, out Expression exp) {
     if(e is PowerExpression) {
       bais = (e as PowerExpression).bais;
@@ -26,51 +42,164 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
     }
   }
 
+  void separate(Expression expr, out Expression bais, out Expression factor) {
+    if(expr is MultiplicativeExpression) {
+      var me = expr as MultiplicativeExpression;
+      var f = new MultiplicativeExpression();
+      var b = new MultiplicativeExpression();
+      foreach(var op in me.operands)
+        if(is_pure_literal(op))
+          f.operands.prepend(op);
+        else
+          b.operands.prepend(op);
+      f.operands.reverse();
+      b.operands.reverse();
+      factor = trim(f);
+      bais = trim(b);
+    } else {
+      bais = expr;
+      factor = IntegerLiteral.ONE;
+    }
+  }
+
+  Expression trim(MultiplicativeExpression me) {
+    switch(me.operands.length()) {
+    case 0:
+      return IntegerLiteral.ONE;
+    case 1:
+      return me.operands.nth_data(0);
+    default:
+      return me;
+    }
+  }
+
+  static int key_compare_func(void *a, void *b) {
+    return (a as Expression).compare_to(b as Expression);
+  }
+
+  public override void visit_additive_expression(AdditiveExpression ae_in) {
+    base.visit_additive_expression(ae_in);
+    var ae = q.pop_head() as AdditiveExpression;
+
+    var tree = new Tree<Expression,Expression>(key_compare_func);
+    foreach(var op in ae.operands) {
+      Expression factor;
+      Expression bais;
+      separate(op, out bais, out factor);
+      if(tree.lookup(bais) != null) {
+        var f = tree.lookup(bais);
+        if(f is AdditiveExpression)
+          (f as AdditiveExpression).operands.append(factor);
+        else {
+          f = new AdditiveExpression.binary(f, factor);
+          tree.insert(bais, f);
+        }
+      } else
+        tree.insert(bais, factor);
+    }
+    var ae_new = new AdditiveExpression();
+    tree.foreach(
+      (k, v) => {
+        var key = k as Expression;
+        var val = v as Expression;
+        if(val.compare_to(IntegerLiteral.ONE) == 0)
+          ae_new.operands.prepend(key);
+        else
+          ae_new.operands.prepend(new MultiplicativeExpression.binary(val, key));
+      }
+    );
+    ae_new.operands.reverse();
+    q.push_head(ae_new);
+  }
+
   public override void visit_division_expression(DivisionExpression de_in) {
     base.visit_division_expression(de_in);
     var de = q.pop_head() as DivisionExpression;
 
     var num = factorize(de.num);
     var den = factorize(de.den);
-    for(unowned SList<Expression> node_1 = num.operands; node_1 != null; node_1 = node_1.next) {
-      Expression num_bais, num_exp;
-      powerize(node_1.data, out num_bais, out num_exp);
-      for(unowned SList<Expression> node_2 = den.operands; node_2 != null; node_2 = node_2.next) {
-        Expression den_bais, den_exp;
-        powerize(node_2.data, out den_bais, out den_exp);
-        if(num_bais.compare_to(den_bais) == 0) {
-          var inv = new MultiplicativeExpression.binary(IntegerLiteral.MINUS_ONE, den_exp);
-          num_exp = new AdditiveExpression.binary(num_exp, inv);
-          node_1.data = new PowerExpression(num_bais, num_exp);
-          den.operands.remove_link(node_2);
-        }
-      }
+    var tree_num = new Tree<Expression,Expression>(key_compare_func);
+    foreach(var op in num.operands) {
+      Expression bais;
+      Expression exp;
+      powerize(op, out bais, out exp);
+      tree_num.insert(bais, exp);
     }
-    if(num.operands == null)
-      num.operands.prepend(IntegerLiteral.ONE);
-    if(den.operands == null)
-      den.operands.prepend(IntegerLiteral.ONE);
-    q.push_head(new DivisionExpression(num, den));
+    var tree_den = new Tree<Expression,Expression>(key_compare_func);
+    foreach(var op in den.operands) {
+      Expression bais;
+      Expression exp;
+      powerize(op, out bais, out exp);
+      if(tree_num.lookup(bais) != null) {
+        var exp_inv = new MultiplicativeExpression.binary(IntegerLiteral.MINUS_ONE, exp);
+        var e = tree_num.lookup(bais);
+        if(e is AdditiveExpression)
+          (e as AdditiveExpression).operands.append(exp_inv);
+        else {
+          exp = new AdditiveExpression.binary(e, exp_inv);
+          tree_num.insert(bais, exp);
+        }
+      } else
+        tree_den.insert(bais, exp);
+    }
+    var num_new = new MultiplicativeExpression();
+    var den_new = new MultiplicativeExpression();
+    tree_num.foreach(
+      (k, v) => {
+        var key = k as Expression;
+        var val = v as Expression;
+        if(val.compare_to(IntegerLiteral.ONE) == 0)
+          num_new.operands.prepend(key);
+        else
+          num_new.operands.prepend(new PowerExpression(key, val));
+      }
+    );
+    num_new.operands.reverse();
+    tree_den.foreach(
+      (k, v) => {
+        var key = k as Expression;
+        var val = v as Expression;
+        if(val.compare_to(IntegerLiteral.ONE) == 0)
+          den_new.operands.prepend(key);
+        else
+          den_new.operands.prepend(new PowerExpression(key, val));
+      }
+    );
+    den_new.operands.reverse();
+    q.push_head(new DivisionExpression(trim(num_new), trim(den_new)));
   }
 
   public override void visit_multiplicative_expression(MultiplicativeExpression me_in) {
     base.visit_multiplicative_expression(me_in);
     var me = q.pop_head() as MultiplicativeExpression;
 
-    var me_new = new MultiplicativeExpression();
-    for(unowned SList<Expression> node_1 = me.operands; node_1 != null; node_1 = node_1.next) {
-      Expression bais_1, exp_1;
-      powerize(node_1.data, out bais_1, out exp_1);
-      for(unowned SList<Expression> node_2 = node_1.next; node_2 != null; node_2 = node_2.next) {
-        Expression bais_2, exp_2;
-        powerize(node_2.data, out bais_2, out exp_2);
-        if(bais_1.compare_to(bais_2) == 0) {
-          exp_1 = new AdditiveExpression.binary(exp_1, exp_2);
-          me.operands.remove_link(node_2);
+    var tree = new Tree<Expression,Expression>(key_compare_func);
+    foreach(var op in me.operands) {
+      Expression bais;
+      Expression exp;
+      powerize(op, out bais, out exp);
+      if(tree.lookup(bais) != null) {
+        var e = tree.lookup(bais);
+        if(e is AdditiveExpression)
+          (e as AdditiveExpression).operands.append(exp);
+        else {
+          e = new AdditiveExpression.binary(e, exp);
+          tree.insert(bais, e);
         }
-      }
-      me_new.operands.prepend(new PowerExpression(bais_1, exp_1));
+      } else
+        tree.insert(bais, exp);
     }
+    var me_new = new MultiplicativeExpression();
+    tree.foreach(
+      (k, v) => {
+        var key = k as Expression;
+        var val = v as Expression;
+        if(val.compare_to(IntegerLiteral.ONE) == 0)
+          me_new.operands.prepend(key);
+        else
+          me_new.operands.prepend(new PowerExpression(key, val));
+      }
+    );
     me_new.operands.reverse();
     q.push_head(me_new);
   }
