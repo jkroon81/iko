@@ -128,6 +128,16 @@ public class Iko.Parser : Object {
     expect(TokenType.OPEN_BRACE);
     parse_declarations(cl);
     expect(TokenType.CLOSE_BRACE);
+    if(result is Class) {
+      (result as Class).fields.reverse();
+      (result as Class).methods.reverse();
+      (result as Class).types.reverse();
+    } else {
+      (result as Namespace).fields.reverse();
+      (result as Namespace).methods.reverse();
+      (result as Namespace).namespaces.reverse();
+      (result as Namespace).types.reverse();
+    }
     return result;
   }
 
@@ -434,6 +444,10 @@ public class Iko.Parser : Object {
     expect(TokenType.OPEN_BRACE);
     parse_declarations(ns);
     expect(TokenType.CLOSE_BRACE);
+    result.fields.reverse();
+    result.methods.reverse();
+    result.namespaces.reverse();
+    result.types.reverse();
     return result;
   }
 
