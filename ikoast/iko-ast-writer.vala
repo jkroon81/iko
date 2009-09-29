@@ -57,7 +57,7 @@ public class Iko.AST.Writer : Visitor {
   public override void visit_additive_expression(AdditiveExpression ae) {
     for(unowned SList<Expression> node = ae.operands; node != null; node = node.next) {
       node.data.accept(this);
-      if(node.next != null)
+      if(node.next != null && !(node.next.data is NegativeExpression))
         write("+");
     }
   }
