@@ -20,6 +20,7 @@ public abstract class Iko.AST.Visitor : Object {
   public virtual void visit_independent_variable(IndependentVariable iv) {}
   public virtual void visit_integer_literal(IntegerLiteral il) {}
   public virtual void visit_literal(Literal l) {}
+  public virtual void visit_matrix_expression(MatrixExpression me) {}
   public virtual void visit_method(Method m) {}
   public virtual void visit_method_call(MethodCall mc) {}
   public virtual void visit_multiplicative_expression(MultiplicativeExpression me) {}

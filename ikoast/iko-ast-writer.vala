@@ -100,6 +100,21 @@ public class Iko.AST.Writer : Visitor {
     write(l.value);
   }
 
+  public override void visit_matrix_expression(MatrixExpression me) {
+    var m = me.matrix;
+    write("[");
+    for(int i = 0; i < m.n_rows; i++) {
+      for(int j = 0; j < m.n_columns; j++) {
+        m.get(i, j).accept(this);
+        if(j != m.n_columns - 1)
+          write(",");
+      }
+      if(i != m.n_rows - 1)
+        write(":");
+    }
+    write("]");
+  }
+
   public override void visit_method(Method m) {
     write(m.data_type.name);
     write(" ");
