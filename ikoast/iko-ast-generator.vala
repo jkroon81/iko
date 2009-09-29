@@ -141,6 +141,11 @@ public class Iko.AST.Generator : Iko.Visitor {
   public override void visit_context(Context c) {
     root = c.root;
     c.accept_children(this);
+    system.constants.reverse();
+    system.equations.reverse();
+    system.ivars.reverse();
+    system.methods.reverse();
+    system.states.reverse();
     root = null;
   }
 
