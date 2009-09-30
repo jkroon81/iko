@@ -24,6 +24,7 @@ public abstract class Iko.AST.Expression : Node {
     expr = new LevelOperators().transform(expr);
     expr = new CollectSymbols().transform(expr);
     expr = new FoldConstants().transform(expr);
+    expr = new AddNegatives().transform(expr);
     return expr;
   }
 

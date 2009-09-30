@@ -48,6 +48,8 @@ int main(string[] args) {
     stdout.printf("collect symbols    : %s\n", expr.to_string());
     expr = new Iko.AST.FoldConstants().transform(expr);
     stdout.printf("fold constants     : %s\n", expr.to_string());
+    expr = new Iko.AST.AddNegatives().transform(expr);
+    stdout.printf("add negatives      : %s\n", expr.to_string());
   }
 
   return 0;
