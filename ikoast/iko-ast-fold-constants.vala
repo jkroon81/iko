@@ -68,6 +68,7 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
       } else
         me_new.operands.prepend(op);
     }
+    me_new.operands.reverse();
     if(lfactor.compare_to(IntegerLiteral.ONE) != 0)
       me_new.operands.prepend(lfactor);
     switch(me_new.operands.length()) {
@@ -78,7 +79,6 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
       q.push_head(me_new.operands.nth_data(0));
       break;
     default:
-      me_new.operands.reverse();
       q.push_head(me_new);
       break;
     }
