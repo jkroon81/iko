@@ -81,7 +81,7 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
     base.visit_additive_expression(ae_in);
     var ae = q.pop_head() as AdditiveExpression;
 
-    var tree = new Tree<Expression,Expression>(key_compare_func);
+    var tree = new Tree<Expression,Expression>((CompareFunc)key_compare_func);
     foreach(var op in ae.operands) {
       Expression factor;
       Expression bais;
@@ -118,14 +118,14 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
 
     var num = factorize(de.num);
     var den = factorize(de.den);
-    var tree_num = new Tree<Expression,Expression>(key_compare_func);
+    var tree_num = new Tree<Expression,Expression>((CompareFunc)key_compare_func);
     foreach(var op in num.operands) {
       Expression bais;
       Expression exp;
       powerize(op, out bais, out exp);
       tree_num.insert(bais, exp);
     }
-    var tree_den = new Tree<Expression,Expression>(key_compare_func);
+    var tree_den = new Tree<Expression,Expression>((CompareFunc)key_compare_func);
     foreach(var op in den.operands) {
       Expression bais;
       Expression exp;
@@ -173,7 +173,7 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
     base.visit_multiplicative_expression(me_in);
     var me = q.pop_head() as MultiplicativeExpression;
 
-    var tree = new Tree<Expression,Expression>(key_compare_func);
+    var tree = new Tree<Expression,Expression>((CompareFunc)key_compare_func);
     foreach(var op in me.operands) {
       Expression bais;
       Expression exp;
