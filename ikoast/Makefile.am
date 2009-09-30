@@ -35,6 +35,7 @@ libikoast_la_SOURCES = \
 	iko-ast-node.vala \
 	iko-ast-power-expression.vala \
 	iko-ast-real-type.vala \
+	iko-ast-remove-negatives.vala \
 	iko-ast-simple-expression.vala \
 	iko-ast-simplify-powers.vala \
 	iko-ast-simplify-rationals.vala \
@@ -43,7 +44,6 @@ libikoast_la_SOURCES = \
 	iko-ast-symbol-access.vala \
 	iko-ast-symbol.vala \
 	iko-ast-system.vala \
-	iko-ast-transform-negatives.vala \
 	iko-ast-visitor.vala \
 	iko-ast-writer.vala
 
