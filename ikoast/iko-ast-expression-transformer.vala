@@ -54,7 +54,7 @@ public abstract class Iko.AST.ExpressionTransformer : Visitor {
   }
 
   public override void visit_power_expression(PowerExpression pe) {
-    q.push_head(new PowerExpression(transform(pe.bais), transform(pe.exp)));
+    q.push_head(new PowerExpression(transform(pe.radix), transform(pe.exp)));
   }
 
   public override void visit_simple_expression(SimpleExpression se) {

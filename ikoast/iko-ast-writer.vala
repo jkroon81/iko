@@ -140,10 +140,10 @@ public class Iko.AST.Writer : Visitor {
   }
 
   public override void visit_power_expression(PowerExpression pe) {
-    if(!(pe.bais is SimpleExpression))
+    if(!(pe.radix is SimpleExpression))
       write("(");
-    pe.bais.accept(this);
-    if(!(pe.bais is SimpleExpression))
+    pe.radix.accept(this);
+    if(!(pe.radix is SimpleExpression))
       write(")");
     write("^");
     if(!(pe.exp is SimpleExpression))

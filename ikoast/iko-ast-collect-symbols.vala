@@ -21,7 +21,7 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
       return true;
     else if(expr is PowerExpression) {
       var pe = expr as PowerExpression;
-      return is_pure_literal(pe.bais) && is_pure_literal(pe.exp);
+      return is_pure_literal(pe.radix) && is_pure_literal(pe.exp);
     } else if(expr is AdditiveExpression) {
       var ae = expr as AdditiveExpression;
       foreach(var op in ae.operands)
@@ -32,12 +32,12 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
       return false;
   }
 
-  void powerize(Expression e, out Expression bais, out Expression exp) {
+  void powerize(Expression e, out Expression radix, out Expression exp) {
     if(e is PowerExpression) {
-      bais = (e as PowerExpression).bais;
+      radix = (e as PowerExpression).radix;
       exp = (e as PowerExpression).exp;
     } else {
-      bais = e;
+      radix = e;
       exp = IntegerLiteral.ONE;
     }
   }
@@ -120,27 +120,27 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
     var den = factorize(de.den);
     var tree_num = new Tree<Expression,Expression>((CompareFunc)key_compare_func);
     foreach(var op in num.operands) {
-      Expression bais;
+      Expression radix;
       Expression exp;
-      powerize(op, out bais, out exp);
-      tree_num.insert(bais, exp);
+      powerize(op, out radix, out exp);
+      tree_num.insert(radix, exp);
     }
     var tree_den = new Tree<Expression,Expression>((CompareFunc)key_compare_func);
     foreach(var op in den.operands) {
-      Expression bais;
+      Expression radix;
       Expression exp;
-      powerize(op, out bais, out exp);
-      if(tree_num.lookup(bais) != null) {
+      powerize(op, out radix, out exp);
+      if(tree_num.lookup(radix) != null) {
         var exp_inv = new MultiplicativeExpression.binary(IntegerLiteral.MINUS_ONE, exp);
-        var e = tree_num.lookup(bais);
+        var e = tree_num.lookup(radix);
         if(e is AdditiveExpression)
           (e as AdditiveExpression).operands.append(exp_inv);
         else {
           exp = new AdditiveExpression.binary(e, exp_inv);
-          tree_num.insert(bais, exp);
+          tree_num.insert(radix, exp);
         }
       } else
-        tree_den.insert(bais, exp);
+        tree_den.insert(radix, exp);
     }
     var num_new = new MultiplicativeExpression();
     var den_new = new MultiplicativeExpression();
@@ -175,19 +175,19 @@ public class Iko.AST.CollectSymbols : ExpressionTransformer {
 
     var tree = new Tree<Expression,Expression>((CompareFunc)key_compare_func);
     foreach(var op in me.operands) {
-      Expression bais;
+      Expression radix;
       Expression exp;
-      powerize(op, out bais, out exp);
-      if(tree.lookup(bais) != null) {
-        var e = tree.lookup(bais);
+      powerize(op, out radix, out exp);
+      if(tree.lookup(radix) != null) {
+        var e = tree.lookup(radix);
         if(e is AdditiveExpression)
           (e as AdditiveExpression).operands.append(exp);
         else {
           e = new AdditiveExpression.binary(e, exp);
-          tree.insert(bais, e);
+          tree.insert(radix, e);
         }
       } else
-        tree.insert(bais, exp);
+        tree.insert(radix, exp);
     }
     var me_new = new MultiplicativeExpression();
     tree.foreach(

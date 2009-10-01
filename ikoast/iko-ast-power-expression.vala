@@ -6,12 +6,12 @@
  */
 
 public class Iko.AST.PowerExpression : ArithmeticExpression {
-  public Expression bais { get; construct; }
-  public Expression exp  { get; construct; }
+  public Expression radix { get; construct; }
+  public Expression exp   { get; construct; }
 
-  public PowerExpression(Expression bais, Expression exp) {
-    this.bais = bais;
-    this.exp  = exp;
+  public PowerExpression(Expression radix, Expression exp) {
+    this.radix = radix;
+    this.exp   = exp;
   }
 
   public override void accept(Visitor v) {
@@ -21,7 +21,7 @@ public class Iko.AST.PowerExpression : ArithmeticExpression {
 
   public override void accept_children(Visitor v) {
     base.accept_children(v);
-    bais.accept(v);
+    radix.accept(v);
     exp.accept(v);
   }
 }

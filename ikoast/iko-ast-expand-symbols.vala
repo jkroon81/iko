@@ -51,20 +51,20 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
     base.visit_power_expression(pe_in);
     var pe = q.pop_head() as PowerExpression;
 
-    if(pe.bais is MultiplicativeExpression) {
-      var bais = pe.bais as MultiplicativeExpression;
+    if(pe.radix is MultiplicativeExpression) {
+      var radix = pe.radix as MultiplicativeExpression;
       var me = new MultiplicativeExpression();
-      foreach(var op in bais.operands)
+      foreach(var op in radix.operands)
         me.operands.prepend(transform(new PowerExpression(op, pe.exp)));
       me.operands.reverse();
       q.push_head(me);
-    } else if(pe.bais is AdditiveExpression) {
+    } else if(pe.radix is AdditiveExpression) {
       if (pe.exp is IntegerLiteral) {
         var exp = (pe.exp as IntegerLiteral).value.to_int();
         if(exp <= MAX_POWER_EXPANSION_FACTORS) {
           var me = new MultiplicativeExpression();
           for(int i = 0; i < exp; i++)
-            me.operands.prepend(pe.bais);
+            me.operands.prepend(pe.radix);
           q.push_head(transform(me));
         } else
           q.push_head(pe);
@@ -74,7 +74,7 @@ public class Iko.AST.ExpandSymbols : ExpressionTransformer {
       var exp = pe.exp as AdditiveExpression;
       var me = new MultiplicativeExpression();
       foreach(var op in exp.operands)
-        me.operands.prepend(transform(new PowerExpression(pe.bais, op)));
+        me.operands.prepend(transform(new PowerExpression(pe.radix, op)));
       me.operands.reverse();
       q.push_head(me);
     } else
