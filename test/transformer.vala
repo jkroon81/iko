@@ -31,26 +31,25 @@ int main(string[] args) {
   context = null;
 
   assert(system.equations.length() == 1);
-  foreach(var e in system.equations) {
-    var expr = e.left;
-    stdout.printf("original           : %s\n", expr.to_string());
-    expr = new Iko.AST.RemoveNegatives().transform(expr);
-    stdout.printf("remove negatives   : %s\n", expr.to_string());
-    expr = new Iko.AST.SimplifyPowers().transform(expr);
-    stdout.printf("simplify powers    : %s\n", expr.to_string());
-    expr = new Iko.AST.SimplifyRationals().transform(expr);
-    stdout.printf("simplify rationals : %s\n", expr.to_string());
-    expr = new Iko.AST.ExpandSymbols().transform(expr);
-    stdout.printf("expand symbols     : %s\n", expr.to_string());
-    expr = new Iko.AST.LevelOperators().transform(expr);
-    stdout.printf("level operators    : %s\n", expr.to_string());
-    expr = new Iko.AST.CollectSymbols().transform(expr);
-    stdout.printf("collect symbols    : %s\n", expr.to_string());
-    expr = new Iko.AST.FoldConstants().transform(expr);
-    stdout.printf("fold constants     : %s\n", expr.to_string());
-    expr = new Iko.AST.AddNegatives().transform(expr);
-    stdout.printf("add negatives      : %s\n", expr.to_string());
-  }
+
+  var expr = system.equations.nth_data(0).left;
+  stdout.printf("original           : %s\n", expr.to_string());
+  expr = new Iko.AST.RemoveNegatives().transform(expr);
+  stdout.printf("remove negatives   : %s\n", expr.to_string());
+  expr = new Iko.AST.SimplifyPowers().transform(expr);
+  stdout.printf("simplify powers    : %s\n", expr.to_string());
+  expr = new Iko.AST.SimplifyRationals().transform(expr);
+  stdout.printf("simplify rationals : %s\n", expr.to_string());
+  expr = new Iko.AST.ExpandSymbols().transform(expr);
+  stdout.printf("expand symbols     : %s\n", expr.to_string());
+  expr = new Iko.AST.LevelOperators().transform(expr);
+  stdout.printf("level operators    : %s\n", expr.to_string());
+  expr = new Iko.AST.CollectSymbols().transform(expr);
+  stdout.printf("collect symbols    : %s\n", expr.to_string());
+  expr = new Iko.AST.FoldConstants().transform(expr);
+  stdout.printf("fold constants     : %s\n", expr.to_string());
+  expr = new Iko.AST.AddNegatives().transform(expr);
+  stdout.printf("add negatives      : %s\n", expr.to_string());
 
   return 0;
 }
