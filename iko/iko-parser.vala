@@ -118,18 +118,6 @@ public class Iko.Parser : Object {
     expect(TokenType.OPEN_BRACE);
     parse_declarations(cl);
     expect(TokenType.CLOSE_BRACE);
-    if(result is Class) {
-      (result as Class).equations.reverse();
-      (result as Class).fields.reverse();
-      (result as Class).methods.reverse();
-      (result as Class).types.reverse();
-    } else {
-      (result as Namespace).equations.reverse();
-      (result as Namespace).fields.reverse();
-      (result as Namespace).methods.reverse();
-      (result as Namespace).namespaces.reverse();
-      (result as Namespace).types.reverse();
-    }
     return result;
   }
 
@@ -185,11 +173,39 @@ public class Iko.Parser : Object {
   }
 
   void parse_declarations(Symbol parent) throws ParseError {
+    if(parent is Class) {
+      var cl = parent as Class;
+      cl.equations.reverse();
+      cl.fields.reverse();
+      cl.methods.reverse();
+      cl.types.reverse();
+    } else {
+      var ns = parent as Namespace;
+      ns.equations.reverse();
+      ns.fields.reverse();
+      ns.methods.reverse();
+      ns.namespaces.reverse();
+      ns.types.reverse();
+    }
     while(current() != TokenType.CLOSE_BRACE && current() != TokenType.EOF) {
       if(parent is Namespace)
         parse_namespace_member((Namespace)parent);
       else if(parent is Class)
         parse_class_member((Class)parent);
+    }
+    if(parent is Class) {
+      var cl = parent as Class;
+      cl.equations.reverse();
+      cl.fields.reverse();
+      cl.methods.reverse();
+      cl.types.reverse();
+    } else {
+      var ns = parent as Namespace;
+      ns.equations.reverse();
+      ns.fields.reverse();
+      ns.methods.reverse();
+      ns.namespaces.reverse();
+      ns.types.reverse();
     }
   }
 
@@ -428,11 +444,6 @@ public class Iko.Parser : Object {
     expect(TokenType.OPEN_BRACE);
     parse_declarations(ns);
     expect(TokenType.CLOSE_BRACE);
-    result.equations.reverse();
-    result.fields.reverse();
-    result.methods.reverse();
-    result.namespaces.reverse();
-    result.types.reverse();
     return result;
   }
 
