@@ -140,10 +140,8 @@ public class Iko.Parser : Object {
       var sym = parse_class_declaration();
       if(sym is TypeSymbol)
         cl.add_type(sym as TypeSymbol);
-      else if(sym is Namespace)
-        throw new ParseError.SYNTAX("%s:class can not contain namespace".printf(get_src(begin).to_string()));
       else
-        assert_not_reached();
+        throw new ParseError.SYNTAX("%s:expected class member".printf(get_src(begin).to_string()));
       break;
     default:
       try {
@@ -352,7 +350,7 @@ public class Iko.Parser : Object {
     case TokenType.SEMICOLON:
       return parse_field_declaration(begin, binding, data_type, id);
     default:
-      assert_not_reached();
+      throw new ParseError.SYNTAX("%s:expected member declaration".printf(get_src(begin).to_string()));
     }
   }
 
@@ -448,7 +446,7 @@ public class Iko.Parser : Object {
       else if(sym is Namespace)
         ns.add_namespace(sym as Namespace);
       else
-        assert_not_reached();
+        throw new ParseError.SYNTAX("%s:expected namespace member", get_src(begin).to_string());
       break;
     case TokenType.NAMESPACE:
       ns.add_namespace(parse_namespace_declaration());
