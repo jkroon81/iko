@@ -12,17 +12,16 @@ public class Iko.MemberResolver : Visitor {
     Member member = null;
 
     if(m.member is UnresolvedMember) {
-      var id = (m.member as UnresolvedMember).id;
       if(m.inner != null) {
         m.inner.accept(this);
-        var sym = m.inner.data_type.scope.lookup(id);
+        var sym = m.inner.data_type.scope.lookup(m.member.name);
         if(sym is Member)
           member = sym as Member;
       } else {
         Symbol s = current_symbol;
 
         while(s != null) {
-          var sym = s.scope.lookup(id);
+          var sym = s.scope.lookup(m.member.name);
           if(sym is Member) {
             member = sym as Member;
             break;
@@ -31,7 +30,7 @@ public class Iko.MemberResolver : Visitor {
         }
       }
       if(member == null)
-        Report.error("%s:unresolved member '%s'".printf(m.member.src.to_string(), id));
+        Report.error("%s:unresolved member '%s'".printf(m.member.src.to_string(), m.member.name));
       else
         m.member = member;
     }

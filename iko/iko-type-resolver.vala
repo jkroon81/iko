@@ -20,17 +20,16 @@ public class Iko.TypeResolver : Visitor {
     TypeSymbol type_symbol = null;
 
     if(t.type_symbol is UnresolvedType) {
-      var id = (t.type_symbol as UnresolvedType).id;
       if(t.inner != null) {
         t.inner.accept(this);
-        var sym = t.inner.scope.lookup(id);
+        var sym = t.inner.scope.lookup(t.type_symbol.name);
         if(sym is TypeSymbol)
           type_symbol = sym as TypeSymbol;
       } else {
         Symbol s = current_symbol;
 
         while(s != null) {
-          var sym = s.scope.lookup(id);
+          var sym = s.scope.lookup(t.type_symbol.name);
           if(sym is TypeSymbol) {
             type_symbol = sym as TypeSymbol;
             break;
@@ -39,7 +38,7 @@ public class Iko.TypeResolver : Visitor {
         }
       }
       if(type_symbol == null)
-        Report.error("%s:unresolved type '%s'".printf(t.type_symbol.src.to_string(), id));
+        Report.error("%s:unresolved type '%s'".printf(t.type_symbol.src.to_string(), t.type_symbol.name));
       else
         t.type_symbol = type_symbol;
     }

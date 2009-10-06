@@ -6,11 +6,9 @@
  */
 
 public class Iko.UnresolvedMember : Member {
-  public string id { get; construct; }
-
-  public UnresolvedMember(SourceReference? src, string id) {
-    this.src = src;
-    this.id  = id;
+  public UnresolvedMember(SourceReference? src, string name) {
+    this.src  = src;
+    this.name = name;
   }
 
   public override void accept(Visitor v) {
