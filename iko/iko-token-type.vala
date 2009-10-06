@@ -20,7 +20,6 @@ public enum Iko.TokenType {
   INTEGER,
   INVALID,
   MINUS,
-  MODEL,
   NAMESPACE,
   OPEN_BRACE,
   OPEN_BRACKET,
@@ -47,7 +46,6 @@ public enum Iko.TokenType {
     case INTEGER:       return "INTEGER";
     case INVALID:       return "INVALID";
     case MINUS:         return "MINUS";
-    case MODEL:         return "MODEL";
     case NAMESPACE:     return "NAMESPACE";
     case OPEN_BRACE:    return "{";
     case OPEN_BRACKET:  return "[";

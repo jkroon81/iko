@@ -26,9 +26,9 @@ public class Iko.Method : Member {
       p.accept(v);
   }
 
-  public void add_parameter(Parameter p) {
+  public void add_parameter(Parameter p) throws ParseError {
     if(scope.lookup(p.name) != null)
-      Report.error(p.src, "'%s' is already defined in '%s'".printf(p.name, name));
+      throw new ParseError.SYNTAX("%s:'%s' is already defined in '%s'".printf(p.src.to_string(), p.name, name));
     else {
       params.prepend(p);
       scope.add(p);

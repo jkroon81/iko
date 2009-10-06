@@ -22,8 +22,7 @@ public class Iko.Parser : Object {
   }
 
   void syntax_error(SourceLocation begin, string message) throws ParseError {
-    Report.error(get_src(begin), "syntax error, " + message);
-    throw new ParseError.SYNTAX(message);
+    throw new ParseError.SYNTAX("%s:syntax error, %s".printf(get_src(begin).to_string(), message));
   }
 
   void next() {
@@ -94,14 +93,9 @@ public class Iko.Parser : Object {
     }
   }
 
-  Block parse_block() throws ParseError {
-    var begin = get_location();
-    expect(TokenType.OPEN_BRACE);
-    var block = new Block(get_src(begin));
-    while(!accept(TokenType.CLOSE_BRACE))
-      block.statements.prepend(parse_statement());
-    block.statements.reverse();
-    return block;
+  void rollback(SourceLocation location) {
+    while(!tokens[index].begin.matches(location))
+      prev();
   }
 
   Symbol parse_class_declaration() throws ParseError {
@@ -129,10 +123,12 @@ public class Iko.Parser : Object {
     parse_declarations(cl);
     expect(TokenType.CLOSE_BRACE);
     if(result is Class) {
+      (result as Class).equations.reverse();
       (result as Class).fields.reverse();
       (result as Class).methods.reverse();
       (result as Class).types.reverse();
     } else {
+      (result as Namespace).equations.reverse();
       (result as Namespace).fields.reverse();
       (result as Namespace).methods.reverse();
       (result as Namespace).namespaces.reverse();
@@ -153,25 +149,27 @@ public class Iko.Parser : Object {
       else
         assert_not_reached();
       break;
-    case TokenType.MODEL:
-      cl.add_model(parse_model_declaration());
-      break;
     default:
-      var binding = Member.Binding.INSTANCE;
-      if(accept(TokenType.STATIC))
-        binding = Member.Binding.STATIC;
-      var data_type = parse_data_type();
-      do {
-        var id = parse_identifier();
-        var node = parse_member_declaration(begin, binding, data_type, id);
-        if(node is Field)
-          cl.add_field((Field)node);
-        else if(node is Method)
-          cl.add_method((Method)node);
-        else
-          syntax_error(begin, "expected class member");
-      } while(accept(TokenType.COMMA));
-      expect(TokenType.SEMICOLON);
+      try {
+        var binding = Member.Binding.INSTANCE;
+        if(accept(TokenType.STATIC))
+          binding = Member.Binding.STATIC;
+        var data_type = parse_data_type();
+        do {
+          var id = parse_identifier();
+          var node = parse_member_declaration(begin, binding, data_type, id);
+          if(node is Field)
+            cl.add_field((Field)node);
+          else if(node is Method)
+            cl.add_method((Method)node);
+          else
+            syntax_error(begin, "expected class member");
+        } while(accept(TokenType.COMMA));
+        expect(TokenType.SEMICOLON);
+      } catch(ParseError e) {
+        rollback(begin);
+        cl.equations.prepend(parse_equation());
+      }
       break;
     }
   }
@@ -422,13 +420,6 @@ public class Iko.Parser : Object {
     return method;
   }
 
-  Model parse_model_declaration() throws ParseError {
-    var begin = get_location();
-    expect(TokenType.MODEL);
-    var block = parse_block();
-    return new Model(get_src(begin), block);
-  }
-
   Namespace parse_namespace_declaration() throws ParseError {
     var begin = get_location();
     expect(TokenType.NAMESPACE);
@@ -444,6 +435,7 @@ public class Iko.Parser : Object {
     expect(TokenType.OPEN_BRACE);
     parse_declarations(ns);
     expect(TokenType.CLOSE_BRACE);
+    result.equations.reverse();
     result.fields.reverse();
     result.methods.reverse();
     result.namespaces.reverse();
@@ -452,6 +444,7 @@ public class Iko.Parser : Object {
   }
 
   void parse_namespace_member(Namespace ns) throws ParseError {
+    var begin = get_location();
     switch(current()) {
     case TokenType.CLASS:
       var sym = parse_class_declaration();
@@ -462,27 +455,28 @@ public class Iko.Parser : Object {
       else
         assert_not_reached();
       break;
-    case TokenType.MODEL:
-      ns.add_model(parse_model_declaration());
-      break;
     case TokenType.NAMESPACE:
       ns.add_namespace(parse_namespace_declaration());
       break;
     default:
-      var begin = get_location();
-      var binding = Member.Binding.STATIC;
-      var data_type = parse_data_type();
-      do {
-        var id = parse_identifier();
-        var node = parse_member_declaration(begin, binding, data_type, id);
-        if(node is Field)
-          ns.add_field((Field)node);
-        else if(node is Method)
-          ns.add_method((Method)node);
-        else
-          syntax_error(begin, "expected namespace member");
-      } while(accept(TokenType.COMMA));
-      expect(TokenType.SEMICOLON);
+      try {
+        var binding = Member.Binding.STATIC;
+        var data_type = parse_data_type();
+        do {
+          var id = parse_identifier();
+          var node = parse_member_declaration(begin, binding, data_type, id);
+          if(node is Field)
+            ns.add_field((Field)node);
+          else if(node is Method)
+            ns.add_method((Method)node);
+          else
+            syntax_error(begin, "expected namespace member");
+        } while(accept(TokenType.COMMA));
+        expect(TokenType.SEMICOLON);
+      } catch(ParseError e) {
+        rollback(begin);
+        ns.equations.prepend(parse_equation());
+      }
       break;
     }
   }
@@ -504,10 +498,10 @@ public class Iko.Parser : Object {
       try {
         parse_declarations(context.root);
       } catch (ParseError e) {
-        // Error already reported
+        Report.error(e.message);
       }
     } catch(FileError e) {
-      Report.error(null, "error opening file '%s'".printf(filename));
+      Report.error("error opening file '%s'".printf(filename));
     }
   }
 
@@ -520,12 +514,8 @@ public class Iko.Parser : Object {
     try {
       parse_declarations(context.root);
     } catch (ParseError e) {
-      // Error already reported
+      Report.error(e.message);
     }
-  }
-
-  Statement parse_statement() throws ParseError {
-    return parse_equation();
   }
 
   UnresolvedMember parse_unresolved_member() throws ParseError {

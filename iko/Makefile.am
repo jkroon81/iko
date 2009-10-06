@@ -29,7 +29,6 @@ libiko_la_SOURCES = \
 	iko-member-resolver.vala \
 	iko-method.vala \
 	iko-method-call.vala \
-	iko-model.vala \
 	iko-namespace.vala \
 	iko-node.vala \
 	iko-parameter.vala \

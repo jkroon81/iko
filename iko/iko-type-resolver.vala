@@ -39,7 +39,7 @@ public class Iko.TypeResolver : Visitor {
         }
       }
       if(type_symbol == null)
-        Report.error(t.type_symbol.src, "unresolved type '%s'".printf(id));
+        Report.error("%s:unresolved type '%s'".printf(t.type_symbol.src.to_string(), id));
       else
         t.type_symbol = type_symbol;
     }

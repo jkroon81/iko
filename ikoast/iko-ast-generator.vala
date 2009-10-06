@@ -133,8 +133,8 @@ public class Iko.AST.Generator : Iko.Visitor {
       f.accept(this);
     foreach(var m in c.methods)
       m.accept(this);
-    if(c.model != null)
-      c.model.accept(this);
+    foreach(var e in c.equations)
+      e.accept(this);
     prefix.pop_tail();
   }
 
@@ -179,10 +179,6 @@ public class Iko.AST.Generator : Iko.Visitor {
     q.push_head(expr);
   }
 
-  public override void visit_model(Model m) {
-    m.accept_children(this);
-  }
-
   public override void visit_namespace(Namespace ns) {
     if(ns != root)
       prefix.push_tail(ns.name + ".");
@@ -194,8 +190,8 @@ public class Iko.AST.Generator : Iko.Visitor {
       f.accept(this);
     foreach(var m in ns.methods)
       m.accept(this);
-    if(ns.model != null)
-      ns.model.accept(this);
+    foreach(var e in ns.equations)
+      e.accept(this);
     if(ns != root)
       prefix.pop_tail();
   }

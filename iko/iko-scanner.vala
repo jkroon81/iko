@@ -45,7 +45,6 @@ public class Iko.Scanner : Object {
     switch(len) {
     case 5:
            if(matches(begin, "class")) return TokenType.CLASS;
-      else if(matches(begin, "model")) return TokenType.MODEL;
       break;
     case 6:
            if(matches(begin, "static")) return TokenType.STATIC;

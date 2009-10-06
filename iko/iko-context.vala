@@ -10,11 +10,15 @@ public class Iko.Context : Node {
 
   construct {
     root = new Namespace(null, "Root");
-    root.add_type(new FloatType());
-    root.add_type(new IntegerType());
-    root.add_type(new RealType());
-    root.add_method(new DerivativeMethod());
-    root.add_method(new SquareRootMethod());
+    try {
+      root.add_type(new FloatType());
+      root.add_type(new IntegerType());
+      root.add_type(new RealType());
+      root.add_method(new DerivativeMethod());
+      root.add_method(new SquareRootMethod());
+    } catch(ParseError e) {
+      assert_not_reached();
+    }
   }
 
   public override void accept(Visitor v) {

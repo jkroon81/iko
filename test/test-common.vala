@@ -15,7 +15,7 @@ namespace TestCommon {
 
     var context = new Iko.Context();
     var parser = new Iko.Parser();
-    string src = "real A,B,C,D,E,F; model { %s = %s; }".printf(left, right);
+    string src = "real A,B,C,D,E,F; %s = %s;".printf(left, right);
     parser.parse_source_string(context, src);
     context.accept(new Iko.TypeResolver());
     context.accept(new Iko.MemberResolver());

@@ -27,7 +27,6 @@ public abstract class Iko.Visitor : Object {
   public virtual void visit_member_access(MemberAccess member) {}
   public virtual void visit_method(Method method) {}
   public virtual void visit_method_call(MethodCall method) {}
-  public virtual void visit_model(Model m) {}
   public virtual void visit_namespace(Namespace nspace) {}
   public virtual void visit_node(Node n) {}
   public virtual void visit_parameter(Parameter param) {}

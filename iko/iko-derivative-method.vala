@@ -15,8 +15,12 @@ public class Iko.DerivativeMethod : Method {
 
   construct {
     var real_type = new TypeAccess(null, null, new UnresolvedType(null, "real"));
-    add_parameter(new Parameter(null, real_type, "symbol"));
-    add_parameter(new Parameter(null, real_type, "param"));
+    try {
+      add_parameter(new Parameter(null, real_type, "symbol"));
+      add_parameter(new Parameter(null, real_type, "param"));
+    } catch(ParseError e) {
+      assert_not_reached();
+    }
   }
 
   public override void accept(Visitor v) {

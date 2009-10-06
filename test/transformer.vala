@@ -15,7 +15,7 @@ int main(string[] args) {
 
   var context = new Iko.Context();
   var parser = new Iko.Parser();
-  string src = "real A,B,C,D,E,F; model { %s = %s; }".printf(args[1], args[1]);
+  string src = "real A,B,C,D,E,F; %s = 0;".printf(args[1]);
   parser.parse_source_string(context, src);
   if(Iko.Report.n_errors > 0)
     return -1;

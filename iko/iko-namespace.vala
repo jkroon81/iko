@@ -6,7 +6,7 @@
  */
 
 public class Iko.Namespace : Symbol {
-  public Model?            model { get; private set; }
+  public SList<Equation>   equations;
   public SList<Field>      fields;
   public SList<Method>     methods;
   public SList<Namespace>  namespaces;
@@ -24,8 +24,8 @@ public class Iko.Namespace : Symbol {
 
   public override void accept_children(Visitor v) {
     base.accept_children(v);
-    if(model != null)
-      model.accept(v);
+    foreach(var e in equations)
+      e.accept(v);
     foreach(var f in fields)
       f.accept(v);
     foreach(var m in methods)
@@ -36,32 +36,25 @@ public class Iko.Namespace : Symbol {
       t.accept(v);
   }
 
-  public void add_field(Field f) {
+  public void add_field(Field f) throws ParseError {
     if(scope.lookup(f.name) != null)
-      Report.error(f.src, "'%s' is already defined in '%s'".printf(f.name, name));
+      throw new ParseError.SYNTAX("%s:'%s' is already defined in '%s'".printf(f.src.to_string(), f.name, name));
     else {
       fields.prepend(f);
       scope.add(f);
     }
   }
 
-  public void add_method(Method m) {
+  public void add_method(Method m) throws ParseError {
     if(scope.lookup(m.name) != null)
-      Report.error(m.src, "'%s' is already defined in '%s'".printf(m.name, name));
+      throw new ParseError.SYNTAX("%s:'%s' is already defined in '%s'".printf(m.src.to_string(), m.name, name));
     else {
       methods.prepend(m);
       scope.add(m);
     }
   }
 
-  public void add_model(Model model) {
-    if(this.model != null)
-      Report.error(model.src, "model already defined");
-    else
-      this.model = model;
-  }
-
-  public void add_namespace(Namespace ns) {
+  public void add_namespace(Namespace ns) throws ParseError {
     if(scope.lookup(ns.name) != null) {
       if(scope.lookup(ns.name) is Namespace) {
         var old_ns = (Namespace) scope.lookup(ns.name);
@@ -70,16 +63,16 @@ public class Iko.Namespace : Symbol {
         foreach(var type in ns.types)
           old_ns.add_type(type);
       } else
-        Report.error(ns.src, "'%s' is already defined in '%s'".printf(ns.name, name));
+        throw new ParseError.SYNTAX("%s:'%s' is already defined in '%s'".printf(ns.src.to_string(), ns.name, name));
     } else {
       namespaces.prepend(ns);
       scope.add(ns);
     }
   }
 
-  public void add_type(TypeSymbol t) {
+  public void add_type(TypeSymbol t) throws ParseError {
     if(scope.lookup(t.name) != null)
-      Report.error(t.src, "'%s' is already defined in '%s'".printf(t.name, name));
+      throw new ParseError.SYNTAX("%s:'%s' is already defined in '%s'".printf(t.src.to_string(), t.name, name));
     else {
       types.prepend(t);
       scope.add(t);

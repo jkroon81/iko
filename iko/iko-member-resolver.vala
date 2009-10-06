@@ -31,7 +31,7 @@ public class Iko.MemberResolver : Visitor {
         }
       }
       if(member == null)
-        Report.error(m.member.src, "unresolved member '%s'".printf(id));
+        Report.error("%s:unresolved member '%s'".printf(m.member.src.to_string(), id));
       else
         m.member = member;
     }

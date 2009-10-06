@@ -101,10 +101,10 @@ public class Iko.Writer : Visitor {
       t.accept(this);
     foreach(var f in c.fields)
       f.accept(this);
-    if(c.model != null)
-      c.model.accept(this);
     foreach(var m in c.methods)
       m.accept(this);
+    foreach(var e in c.equations)
+      e.accept(this);
     write("}");
   }
 
@@ -177,11 +177,6 @@ public class Iko.Writer : Visitor {
     write(")");
   }
 
-  public override void visit_model(Model m) {
-    write("model ");
-    m.accept_children(this);
-  }
-
   public override void visit_namespace(Namespace ns) {
     if(ns != root)
       write("namespace %s {".printf(ns.name));
@@ -193,8 +188,8 @@ public class Iko.Writer : Visitor {
       m.accept(this);
     foreach(var f in ns.fields)
       f.accept(this);
-    if(ns.model != null)
-      ns.model.accept(this);
+    foreach(var e in ns.equations)
+      e.accept(this);
     if(ns != root)
       write("}");
   }
