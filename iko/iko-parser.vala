@@ -21,10 +21,6 @@ public class Iko.Parser : Object {
     tokens = new TokenInfo[TOKEN_BUFFER_SIZE];
   }
 
-  void syntax_error(SourceLocation begin, string message) throws ParseError {
-    throw new ParseError.SYNTAX("%s:syntax error, %s".printf(get_src(begin).to_string(), message));
-  }
-
   void next() {
     index = (index + 1) % TOKEN_BUFFER_SIZE;
     size--;
@@ -56,9 +52,9 @@ public class Iko.Parser : Object {
     if(accept(token))
       return;
     else
-      syntax_error(get_location(),
-                   "expected '%s' not '%s'".printf(token.to_string(),
-                                                   current().to_string()));
+      throw new ParseError.SYNTAX("%s:expected '%s' not '%s'".printf(get_src(get_location()).to_string(),
+                                                                     token.to_string(),
+                                                                     current().to_string()));
   }
 
   SourceLocation get_location() {
@@ -145,7 +141,7 @@ public class Iko.Parser : Object {
       if(sym is TypeSymbol)
         cl.add_type(sym as TypeSymbol);
       else if(sym is Namespace)
-        syntax_error(begin, "class can not contain namespace");
+        throw new ParseError.SYNTAX("%s:class can not contain namespace".printf(get_src(begin).to_string()));
       else
         assert_not_reached();
       break;
@@ -163,7 +159,7 @@ public class Iko.Parser : Object {
           else if(node is Method)
             cl.add_method((Method)node);
           else
-            syntax_error(begin, "expected class member");
+            throw new ParseError.SYNTAX("%s:expected class member".printf(get_src(begin).to_string()));
         } while(accept(TokenType.COMMA));
         expect(TokenType.SEMICOLON);
       } catch(ParseError e) {
@@ -291,8 +287,7 @@ public class Iko.Parser : Object {
     case TokenType.INTEGER:     expr = parse_literal_integer();          break;
     case TokenType.OPEN_PARENS: expr = parse_expression_parenthesized(); break;
     default:
-      syntax_error(begin, "expected expression");
-      break;
+      throw new ParseError.SYNTAX("%s:expected expression".printf(get_src(begin).to_string()));
     }
     return expr;
   }
@@ -470,7 +465,7 @@ public class Iko.Parser : Object {
           else if(node is Method)
             ns.add_method((Method)node);
           else
-            syntax_error(begin, "expected namespace member");
+            throw new ParseError.SYNTAX("%s:expected namespace member", get_src(begin).to_string());
         } while(accept(TokenType.COMMA));
         expect(TokenType.SEMICOLON);
       } catch(ParseError e) {
