@@ -123,10 +123,6 @@ public class Iko.AST.Generator : Iko.Visitor {
     }
   }
 
-  public override void visit_block(Block b) {
-    b.accept_children(this);
-  }
-
   public override void visit_class(Class c) {
     if(!c.visible)
       return;

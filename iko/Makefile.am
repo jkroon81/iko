@@ -10,7 +10,6 @@ libiko_la_SOURCES = \
 	iko-array-access.vala \
 	iko-array-type.vala \
 	iko-binary-expression.vala \
-	iko-block.vala \
 	iko-class.vala \
 	iko-context.vala \
 	iko-data-symbol.vala \
@@ -40,7 +39,6 @@ libiko_la_SOURCES = \
 	iko-source-location.vala \
 	iko-source-reference.vala \
 	iko-square-root-method.vala \
-	iko-statement.vala \
 	iko-symbol.vala \
 	iko-token-info.vala \
 	iko-token-type.vala \

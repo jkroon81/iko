@@ -87,12 +87,6 @@ public class Iko.Writer : Visitor {
       be.right.accept(this);
   }
 
-  public override void visit_block(Block b) {
-    write("{");
-    b.accept_children(this);
-    write("}");
-  }
-
   public override void visit_class(Class c) {
     if(!c.visible)
       return;

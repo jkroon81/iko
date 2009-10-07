@@ -5,7 +5,7 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.Equation : Statement {
+public class Iko.Equation : Node {
   public Expression left  { get; construct; }
   public Expression right { get; construct; }
 
