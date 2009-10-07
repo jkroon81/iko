@@ -26,8 +26,7 @@ int main(string[] args) {
   if(Iko.Report.n_errors > 0)
     return -1;
 
-  var system = new Iko.AST.System();
-  context.accept(new Iko.AST.Generator(system));
+  var system = new Iko.AST.Generator().generate_system(context);
   context = null;
 
   assert(system.equations.length() == 1);

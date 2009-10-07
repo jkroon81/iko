@@ -31,9 +31,9 @@ int main(string[] args) {
     return -1;
   stdout.printf(new Iko.Writer().generate_string(context));
 
-  var system = new Iko.AST.System();
-  context.accept(new Iko.AST.Generator(system));
+  var system = new Iko.AST.Generator().generate_system(context);
   context = null;
+
   system.accept(new Iko.AST.DerivativeSolver());
   stdout.printf(new Iko.AST.Writer().generate_string(system));
 

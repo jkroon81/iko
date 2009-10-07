@@ -11,11 +11,9 @@ public class Iko.AST.Generator : Iko.Visitor {
   Queue<Expression> q;
   FloatType float_type;
   RealType real_type;
+  System system;
 
-  public System system { private get; construct; }
-
-  public Generator(System system) {
-    this.system = system;
+  construct {
     prefix = new Queue<string>();
     q = new Queue<Expression>();
     float_type = new FloatType();
@@ -82,6 +80,12 @@ public class Iko.AST.Generator : Iko.Visitor {
                           params);
     } else
       assert_not_reached();
+  }
+
+  public System generate_system(Context context) {
+    system = new System();
+    context.accept(this);
+    return system;
   }
 
   public override void visit_array_access(ArrayAccess aa) {

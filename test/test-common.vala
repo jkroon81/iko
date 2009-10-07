@@ -20,8 +20,7 @@ namespace TestCommon {
     context.accept(new Iko.TypeResolver());
     context.accept(new Iko.MemberResolver());
 
-    var system = new Iko.AST.System();
-    context.accept(new Iko.AST.Generator(system));
+    var system = new Iko.AST.Generator().generate_system(context);
     context = null;
 
     assert(system.equations.length() == 1);

@@ -30,8 +30,7 @@ int main(string[] args) {
       parser.parse_source_string(context, line);
       context.accept(new Iko.TypeResolver());
       context.accept(new Iko.MemberResolver());
-      system = new Iko.AST.System();
-      context.accept(new Iko.AST.Generator(system));
+      system = new Iko.AST.Generator().generate_system(context);
       break;
     }
   }
