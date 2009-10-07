@@ -92,8 +92,8 @@ public class Iko.AST.FoldConstants : ExpressionTransformer {
       q.push_head(IntegerLiteral.ONE);
     else if(pe.radix.compare_to(IntegerLiteral.MINUS_ONE) == 0 && pe.exp is Literal) {
       var exp = (pe.exp as Literal).value.to_double();
-      if(exp == Math.floor(exp)) {
-        if(exp / 2.0 == Math.floor(exp / 2.0))
+      if(exp == GLib.Math.floor(exp)) {
+        if(exp / 2.0 == GLib.Math.floor(exp / 2.0))
           q.push_head(IntegerLiteral.ONE);
         else
           q.push_head(IntegerLiteral.MINUS_ONE);

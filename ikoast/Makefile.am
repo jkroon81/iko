@@ -29,6 +29,7 @@ libikoast_la_SOURCES = \
 	iko-ast-integer-literal.vala \
 	iko-ast-level-operators.vala \
 	iko-ast-literal.vala \
+	iko-ast-math.vala \
 	iko-ast-method-call.vala \
 	iko-ast-method.vala \
 	iko-ast-multiplicative-expression.vala \

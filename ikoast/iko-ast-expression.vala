@@ -15,19 +15,6 @@ public abstract class Iko.AST.Expression : Node {
     return strcmp(to_string(), expr.to_string());
   }
 
-  public Expression simplify() {
-    var expr = this;
-    expr = new RemoveNegatives().transform(expr);
-    expr = new SimplifyPowers().transform(expr);
-    expr = new SimplifyRationals().transform(expr);
-    expr = new ExpandSymbols().transform(expr);
-    expr = new LevelOperators().transform(expr);
-    expr = new CollectSymbols().transform(expr);
-    expr = new FoldConstants().transform(expr);
-    expr = new AddNegatives().transform(expr);
-    return expr;
-  }
-
   public string to_string() {
     return new Writer().generate_string(this);
   }
