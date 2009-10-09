@@ -12,16 +12,7 @@ public class Iko.AST.AddNegatives : ExpressionTransformer {
 
     if(me.operands.data.compare_to(IntegerLiteral.MINUS_ONE) == 0) {
       me.operands.remove_link(me.operands);
-      switch(me.operands.length()) {
-      case 0:
-        assert_not_reached();
-      case 1:
-        q.push_head(new NegativeExpression(me.operands.nth_data(0)));
-        break;
-      default:
-        q.push_head(new NegativeExpression(me));
-        break;
-      }
+      q.push_head(new NegativeExpression(me));
     } else
       q.push_head(me);
   }

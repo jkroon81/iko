@@ -15,9 +15,4 @@ public abstract class Iko.Literal : Expression {
     base.accept(v);
     v.visit_literal(this);
   }
-
-  public override void accept_children(Visitor v) {
-    base.accept_children(v);
-    literal_type.accept(v);
-  }
 }

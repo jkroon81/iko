@@ -16,7 +16,7 @@ public class Iko.AST.State : DataSymbol {
   }
 
   construct {
-    der    = new HashTable<IndependentVariable, Expression>(direct_hash, direct_equal);
+    der = new HashTable<IndependentVariable, Expression>(direct_hash, direct_equal);
   }
 
   public override void accept(Visitor v) {

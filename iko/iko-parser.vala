@@ -62,7 +62,7 @@ public class Iko.Parser : Object {
   }
 
   SourceReference get_src(SourceLocation begin) {
-    return new SourceReference(scanner.filename, begin, tokens[index].end);
+    return new SourceReference(scanner.source, begin, tokens[index].end);
   }
 
   string get_prev_string () {

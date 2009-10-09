@@ -30,7 +30,7 @@ public class Iko.AST.Generator : Iko.Visitor {
         buffer.append(ma.member.name);
       } else {
         buffer.append(ma.member.get_full_name());
-        buffer.erase(0, 5);
+        buffer.erase(0, root.name.len() + 1);
       }
       return buffer.str;
     } else if(expr is Iko.ArrayAccess) {

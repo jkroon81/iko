@@ -9,7 +9,7 @@ public class Iko.Context : Node {
   public Namespace root { get; private set; }
 
   construct {
-    root = new Namespace(null, "Root");
+    root = new Namespace(null, "(root)");
     try {
       root.add_type(new FloatType());
       root.add_type(new IntegerType());

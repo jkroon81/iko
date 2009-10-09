@@ -14,9 +14,7 @@ public class Iko.MemberResolver : Visitor {
     if(m.member is UnresolvedMember) {
       if(m.inner != null) {
         m.inner.accept(this);
-        var sym = m.inner.data_type.scope.lookup(m.member.name);
-        if(sym is Member)
-          member = sym as Member;
+        member = m.inner.data_type.scope.lookup(m.member.name) as Member;
       } else {
         Symbol s = current_symbol;
 

@@ -12,12 +12,12 @@ public class Iko.Scanner : Object {
   int column;
   MappedFile mapped_file;
 
-  public string filename { get; construct; }
+  public string source { get; construct; }
 
   public Scanner.from_file(string filename) throws FileError {
     char *begin;
 
-    this.filename = filename;
+    this.source = filename;
     mapped_file = new MappedFile(filename, false);
     begin = mapped_file.get_contents();
     end = begin + mapped_file.get_length();
@@ -26,7 +26,7 @@ public class Iko.Scanner : Object {
   }
 
   public Scanner.from_string(string code) {
-    this.filename = "(string)";
+    this.source = "(string)";
     end = (char*)code + code.size();
     current = code;
     line = column = 1;

@@ -22,9 +22,7 @@ public class Iko.TypeResolver : Visitor {
     if(t.type_symbol is UnresolvedType) {
       if(t.inner != null) {
         t.inner.accept(this);
-        var sym = t.inner.scope.lookup(t.type_symbol.name);
-        if(sym is TypeSymbol)
-          type_symbol = sym as TypeSymbol;
+        type_symbol = t.inner.scope.lookup(t.type_symbol.name) as TypeSymbol;
       } else {
         Symbol s = current_symbol;
 
