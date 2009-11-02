@@ -10,8 +10,7 @@ public class Iko.AST.EqualityExpression : Expression {
 	public Expression right { get; construct; }
 
 	public EqualityExpression(Expression left, Expression right) {
-		this.left  = left;
-		this.right = right;
+		Object(left : left, right : right);
 	}
 
 	public override void accept(Visitor v) {

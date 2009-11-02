@@ -7,8 +7,7 @@
 
 public class Iko.AST.Method : DataSymbol {
 	public Method(string name, DataType data_type) {
-		this.name      = name;
-		this.data_type = data_type;
+		Object(name : name, data_type : data_type);
 	}
 
 	public override void accept(Visitor v) {

@@ -11,7 +11,7 @@ public class Iko.AST.MethodCall : SimpleExpression {
 	public Expression method { get; construct; }
 
 	public MethodCall(Expression method) {
-		this.method = method;
+		Object(method : method);
 	}
 
 	public override void accept(Visitor v) {

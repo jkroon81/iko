@@ -12,8 +12,7 @@ public class Iko.AST.Matrix : Object {
 	Expression[] expr;
 
 	public Matrix(uint n_rows, uint n_columns) {
-		this.n_rows    = n_rows;
-		this.n_columns = n_columns;
+		Object(n_rows : n_rows, n_columns : n_columns);
 	}
 
 	construct {

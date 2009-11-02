@@ -7,7 +7,7 @@
 
 public class Iko.AST.RealType : DataType {
 	public RealType() {
-		name = "real";
+		Object(name : "real");
 	}
 
 	public override void accept(Visitor v) {

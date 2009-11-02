@@ -11,7 +11,7 @@ public class Iko.AST.IntegerLiteral : Literal {
 	public static IntegerLiteral MINUS_ONE { owned get { return new IntegerLiteral("-1"); } }
 
 	public IntegerLiteral(string value) {
-		this.value = value;
+		Object(value : value);
 	}
 
 	public override void accept(Visitor v) {

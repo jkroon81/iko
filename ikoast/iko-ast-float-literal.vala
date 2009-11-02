@@ -7,7 +7,7 @@
 
 public class Iko.AST.FloatLiteral : Literal {
 	public FloatLiteral(string value) {
-		this.value = value;
+		Object(value : value);
 	}
 
 	public override void accept(Visitor v) {

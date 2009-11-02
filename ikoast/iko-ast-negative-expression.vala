@@ -9,7 +9,7 @@ public class Iko.AST.NegativeExpression : ArithmeticExpression {
 	public Expression expr { get; construct; }
 
 	public NegativeExpression(Expression expr) {
-		this.expr = expr;
+		Object(expr : expr);
 	}
 
 	public override void accept(Visitor v) {

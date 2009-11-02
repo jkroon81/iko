@@ -9,7 +9,7 @@ public class Iko.AST.SymbolAccess : SimpleExpression {
 	public Symbol symbol { get; construct; }
 
 	public SymbolAccess(Symbol symbol) {
-		this.symbol = symbol;
+		Object(symbol : symbol);
 	}
 
 	public override void accept(Visitor v) {

@@ -10,8 +10,7 @@ public class Iko.AST.DivisionExpression : ArithmeticExpression {
 	public Expression den { get; construct; }
 
 	public DivisionExpression(Expression num, Expression den) {
-		this.num = num;
-		this.den = den;
+		Object(num : num, den : den);
 	}
 
 	public override void accept(Visitor v) {

@@ -7,8 +7,7 @@
 
 public class Iko.AST.DerivativeMethod : Method {
 	public DerivativeMethod() {
-		this.name      = "der";
-		this.data_type = new RealType();
+		Object(name : "der", data_type : new RealType());
 	}
 
 	public override void accept(Visitor v) {

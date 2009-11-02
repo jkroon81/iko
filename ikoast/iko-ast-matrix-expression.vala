@@ -9,7 +9,7 @@ public class Iko.AST.MatrixExpression : Expression {
 	public Matrix matrix { get; construct; }
 
 	public MatrixExpression(Matrix matrix) {
-		this.matrix = matrix;
+		Object(matrix : matrix);
 	}
 
 	public override void accept(Visitor v) {

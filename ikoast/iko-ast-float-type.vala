@@ -7,7 +7,7 @@
 
 public class Iko.AST.FloatType : DataType {
 	public FloatType() {
-		name = "float";
+		Object(name : "float");
 	}
 
 	public override void accept(Visitor v) {

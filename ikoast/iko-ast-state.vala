@@ -11,8 +11,7 @@ public class Iko.AST.State : DataSymbol {
 	public HashTable<IndependentVariable, Expression> der { get; private set; }
 
 	public State(string name, DataType data_type) {
-		this.name      = name;
-		this.data_type = data_type;
+		Object(name : name, data_type : data_type);
 	}
 
 	construct {
