@@ -7,10 +7,12 @@
 
 public class Iko.DerivativeMethod : Method {
 	public DerivativeMethod() {
-		name      = "der";
-		visible   = false;
-		binding   = Member.Binding.STATIC;
-		data_type = new TypeAccess(null, null, new UnresolvedType(null, "real"));
+		Object(
+			name      : "der",
+			visible   : false,
+			binding   : Member.Binding.STATIC,
+			data_type : new TypeAccess(null, null, new UnresolvedType(null, "real"))
+		);
 	}
 
 	construct {

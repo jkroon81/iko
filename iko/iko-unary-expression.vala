@@ -26,9 +26,7 @@ public class Iko.UnaryExpression : Expression {
 	public override DataType data_type { get { return expr.data_type; } }
 
 	public UnaryExpression(SourceReference? src, Operator op, Expression expr) {
-		this.src  = src;
-		this.op   = op;
-		this.expr = expr;
+		Object(src : src, op : op, expr : expr);
 	}
 
 	public override void accept(Visitor v) {

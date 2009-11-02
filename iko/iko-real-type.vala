@@ -7,8 +7,7 @@
 
 public class Iko.RealType : Class {
 	public RealType() {
-		name    = "real";
-		visible = false;
+		Object(name : "real", visible : false);
 	}
 
 	construct {

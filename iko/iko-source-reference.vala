@@ -11,9 +11,7 @@ public class Iko.SourceReference : Object {
 	public SourceLocation end      { private get; construct; }
 
 	public SourceReference(string filename, SourceLocation begin, SourceLocation end) {
-		this.filename = filename;
-		this.begin    = begin;
-		this.end      = end;
+		Object(filename : filename, begin : begin, end : end);
 	}
 
 	public string to_string() {

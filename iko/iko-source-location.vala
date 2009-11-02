@@ -11,9 +11,7 @@ public class Iko.SourceLocation : Object {
 	public int   column { private get; construct; }
 
 	public SourceLocation(char *pos, int line, int column) {
-		this.pos    = pos;
-		this.line   = line;
-		this.column = column;
+		Object(pos : pos, line : line, column : column);
 	}
 
 	public bool matches(SourceLocation location) {

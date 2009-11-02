@@ -7,9 +7,7 @@
 
 public class Iko.Parameter : DataSymbol {
 	public Parameter(SourceReference? src, DataType data_type, string name) {
-		this.src       = src;
-		this.data_type = data_type;
-		this.name      = name;
+		Object(src : src, data_type : data_type, name : name);
 	}
 
 	public override void accept(Visitor v) {

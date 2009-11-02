@@ -10,9 +10,7 @@ public class Iko.Equation : Node {
 	public Expression right { get; construct; }
 
 	public Equation(SourceReference? src, Expression left, Expression right) {
-		this.src   = src;
-		this.left  = left;
-		this.right = right;
+		Object(src : src, left : left, right : right);
 	}
 
 	public override void accept(Visitor v) {

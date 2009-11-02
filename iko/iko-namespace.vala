@@ -13,8 +13,7 @@ public class Iko.Namespace : Symbol {
 	public SList<TypeSymbol> types;
 
 	public Namespace(SourceReference? src, string name) {
-		this.src  = src;
-		this.name = name;
+		Object(src : src, name : name);
 	}
 
 	public override void accept(Visitor v) {

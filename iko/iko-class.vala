@@ -12,8 +12,7 @@ public class Iko.Class : TypeSymbol {
 	public SList<TypeSymbol> types;
 
 	public Class(SourceReference? src, string name) {
-		this.src  = src;
-		this.name = name;
+		Object(src : src, name : name);
 	}
 
 	public override void accept(Visitor v) {

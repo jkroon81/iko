@@ -7,7 +7,7 @@
 
 public class Iko.IntegerType : TypeSymbol {
 	public IntegerType() {
-		name = "int";
+		Object(name : "int");
 	}
 
 	public override void accept(Visitor v) {

@@ -7,8 +7,7 @@
 
 public class Iko.UnresolvedType : TypeSymbol {
 	public UnresolvedType(SourceReference? src, string name) {
-		this.src  = src;
-		this.name = name;
+		Object(src : src, name : name);
 	}
 
 	public override void accept(Visitor v) {

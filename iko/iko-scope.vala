@@ -11,7 +11,7 @@ public class Iko.Scope : Object {
 	public Symbol symbol { get; construct; }
 
 	public Scope(Symbol symbol) {
-		this.symbol = symbol;
+		Object(symbol : symbol);
 	}
 
 	construct {

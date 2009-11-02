@@ -44,10 +44,7 @@ public class Iko.BinaryExpression : Expression {
 	public override DataType data_type { get { return left.data_type; } }
 
 	public BinaryExpression(SourceReference? src, Operator op, Expression left, Expression right) {
-		this.src   = src;
-		this.op    = op;
-		this.left  = left;
-		this.right = right;
+		Object(src : src, op : op, left : left, right : right);
 	}
 
 	public override void accept(Visitor v) {

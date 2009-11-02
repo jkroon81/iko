@@ -12,9 +12,7 @@ public class Iko.ArrayAccess : Expression {
 	public override DataType data_type { get { return array.data_type; } }
 
 	public ArrayAccess(SourceReference? src, Expression array, Expression index) {
-		this.src   = src;
-		this.array = array;
-		this.index = index;
+		Object(src : src, array : array, index : index);
 	}
 
 	public override void accept(Visitor v) {

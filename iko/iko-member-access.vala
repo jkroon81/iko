@@ -12,9 +12,7 @@ public class Iko.MemberAccess : Expression {
 	public override DataType data_type { get { return member.data_type; } }
 
 	public MemberAccess(SourceReference? src, Expression? inner, Member member) {
-		this.src    = src;
-		this.inner  = inner;
-		this.member = member;
+		Object(src : src, inner : inner, member : member);
 	}
 
 	public override void accept(Visitor v) {

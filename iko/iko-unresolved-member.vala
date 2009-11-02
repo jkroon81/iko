@@ -7,8 +7,7 @@
 
 public class Iko.UnresolvedMember : Member {
 	public UnresolvedMember(SourceReference? src, string name) {
-		this.src  = src;
-		this.name = name;
+		Object(src : src, name : name);
 	}
 
 	public override void accept(Visitor v) {

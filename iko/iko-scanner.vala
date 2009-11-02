@@ -15,18 +15,18 @@ public class Iko.Scanner : Object {
 	public string source { get; construct; }
 
 	public Scanner.from_file(string filename) throws FileError {
-		char *begin;
+		Object(source : filename);
 
-		this.source = filename;
 		mapped_file = new MappedFile(filename, false);
-		begin = mapped_file.get_contents();
+		var begin = mapped_file.get_contents();
 		end = begin + mapped_file.get_length();
 		current = begin;
 		line = column = 1;
 	}
 
 	public Scanner.from_string(string code) {
-		this.source = "(string)";
+		Object(source : "(string)");
+
 		end = (char*)code + code.size();
 		current = code;
 		line = column = 1;

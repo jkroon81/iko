@@ -7,10 +7,12 @@
 
 public class Iko.SquareRootMethod : Method {
 	public SquareRootMethod() {
-		name      = "sqrt";
-		visible   = false;
-		binding   = Member.Binding.STATIC;
-		data_type = new TypeAccess(null, null, new UnresolvedType(null, "real"));
+		Object(
+			name      : "sqrt",
+			visible   : false,
+			binding   : Member.Binding.STATIC,
+			data_type : new TypeAccess(null, null, new UnresolvedType(null, "real"))
+		);
 	}
 
 	construct {

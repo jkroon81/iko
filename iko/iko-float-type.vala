@@ -7,7 +7,7 @@
 
 public class Iko.FloatType : TypeSymbol {
 	public FloatType() {
-		name = "float";
+		Object(name : "float");
 	}
 
 	public override void accept(Visitor v) {

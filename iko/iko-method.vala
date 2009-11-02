@@ -9,10 +9,7 @@ public class Iko.Method : Member {
 	public SList<Parameter> params;
 
 	public Method(SourceReference? src, Member.Binding binding, DataType data_type, string name) {
-		this.src       = src;
-		this.binding   = binding;
-		this.data_type = data_type;
-		this.name      = name;
+		Object(src : src, binding : binding, data_type : data_type, name : name);
 	}
 
 	public override void accept(Visitor v) {

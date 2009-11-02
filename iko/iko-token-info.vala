@@ -11,8 +11,6 @@ public class Iko.TokenInfo : Object {
 	public SourceLocation end   { get; construct; }
 
 	public TokenInfo(TokenType token, SourceLocation begin, SourceLocation end) {
-		this.token = token;
-		this.begin = begin;
-		this.end   = end;
+		Object(token : token, begin : begin, end : end);
 	}
 }

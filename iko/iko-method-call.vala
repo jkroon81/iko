@@ -13,8 +13,7 @@ public class Iko.MethodCall : Expression {
 	public override DataType data_type { get { return method.data_type; } }
 
 	public MethodCall(SourceReference? src, Expression method) {
-		this.src    = src;
-		this.method = method;
+		Object(src : src, method : method);
 	}
 
 	public override void accept(Visitor v) {

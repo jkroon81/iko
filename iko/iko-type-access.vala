@@ -12,9 +12,7 @@ public class Iko.TypeAccess : DataType {
 	public override Scope scope { get { return type_symbol.scope; } }
 
 	public TypeAccess(SourceReference? src, DataType? inner, TypeSymbol type_symbol) {
-		this.src         = src;
-		this.inner       = inner;
-		this.type_symbol = type_symbol;
+		Object(src : src, inner : inner, type_symbol : type_symbol);
 	}
 
 	public override void accept(Visitor v) {
