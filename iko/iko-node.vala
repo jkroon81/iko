@@ -8,7 +8,7 @@
 public abstract class Iko.Node : Object {
 	public bool visible { get; construct; default = true; }
 
-	public SourceReference? src { get; construct; }
+	public SourceReference? src { get; construct; default = null; }
 
 	public virtual void accept(Visitor v) {
 		v.visit_node(this);
