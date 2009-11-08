@@ -7,7 +7,9 @@
 
 public class Iko.AST.SquareRootMethod : Method {
 	public SquareRootMethod() {
-		Object(name : "sqrt", data_type : new RealType());
+		/* FIXME */
+		var real_type = new RealType();
+		Object(name : "sqrt", data_type : real_type);
 	}
 
 	public override void accept(Visitor v) {

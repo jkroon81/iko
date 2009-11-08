@@ -7,10 +7,12 @@
 
 public class Iko.FloatLiteral : Literal {
 	public FloatLiteral(SourceReference? src, string value) {
+		/* FIXME */
+		var float_type = new TypeAccess(null, null, new UnresolvedType(null, "float"));
 		Object(
 			src          : src,
 			value        : value,
-			literal_type : new TypeAccess(null, null, new UnresolvedType(null, "float"))
+			literal_type : float_type
 		);
 	}
 
