@@ -6,10 +6,10 @@
  */
 
 namespace Iko.Report {
-  public int n_errors = 0;
+	public int n_errors = 0;
 
-  public void error(string message) {
-    n_errors++;
-    stderr.printf("%s\n", message);
-  }
+	public void error(string message) {
+		n_errors++;
+		stderr.printf("%s\n", message);
+	}
 }

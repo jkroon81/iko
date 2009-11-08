@@ -6,24 +6,24 @@
  */
 
 public class Iko.SquareRootMethod : Method {
-  public SquareRootMethod() {
-    name      = "sqrt";
-    visible   = false;
-    binding   = Member.Binding.STATIC;
-    data_type = new TypeAccess(null, null, new UnresolvedType(null, "real"));
-  }
+	public SquareRootMethod() {
+		name      = "sqrt";
+		visible   = false;
+		binding   = Member.Binding.STATIC;
+		data_type = new TypeAccess(null, null, new UnresolvedType(null, "real"));
+	}
 
-  construct {
-    var real_type = new TypeAccess(null, null, new UnresolvedType(null, "real"));
-    try {
-      add_parameter(new Parameter(null, real_type, "x"));
-    } catch(ParseError e) {
-      assert_not_reached();
-    }
-  }
+	construct {
+		var real_type = new TypeAccess(null, null, new UnresolvedType(null, "real"));
+		try {
+			add_parameter(new Parameter(null, real_type, "x"));
+		} catch(ParseError e) {
+			assert_not_reached();
+		}
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_square_root_method(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_square_root_method(this);
+	}
 }

@@ -6,17 +6,17 @@
  */
 
 public class Iko.SourceReference : Object {
-  public string         filename { private get; construct; }
-  public SourceLocation begin    { private get; construct; }
-  public SourceLocation end      { private get; construct; }
+	public string         filename { private get; construct; }
+	public SourceLocation begin    { private get; construct; }
+	public SourceLocation end      { private get; construct; }
 
-  public SourceReference(string filename, SourceLocation begin, SourceLocation end) {
-    this.filename = filename;
-    this.begin    = begin;
-    this.end      = end;
-  }
+	public SourceReference(string filename, SourceLocation begin, SourceLocation end) {
+		this.filename = filename;
+		this.begin    = begin;
+		this.end      = end;
+	}
 
-  public string to_string() {
-    return "%s:%s-%s".printf(filename, begin.to_string(), end.to_string());
-  }
+	public string to_string() {
+		return "%s:%s-%s".printf(filename, begin.to_string(), end.to_string());
+	}
 }

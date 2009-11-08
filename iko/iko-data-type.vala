@@ -6,10 +6,10 @@
  */
 
 public abstract class Iko.DataType : Node {
-  public abstract Scope scope { get; }
+	public abstract Scope scope { get; }
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_data_type(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_data_type(this);
+	}
 }

@@ -6,23 +6,23 @@
  */
 
 public abstract class Iko.Symbol : Node {
-  public string  name   { get; construct; default = "(null)"; }
-  public Symbol? parent { get; set; }
-  public Scope   scope  { get; private set; }
+	public string  name   { get; construct; default = "(null)"; }
+	public Symbol? parent { get; set; }
+	public Scope   scope  { get; private set; }
 
-  construct {
-    scope = new Scope(this);
-  }
+	construct {
+		scope = new Scope(this);
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_symbol(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_symbol(this);
+	}
 
-  public string get_full_name() {
-    if(parent != null)
-      return parent.get_full_name() + "." + name;
-    else
-      return name;
-  }
+	public string get_full_name() {
+		if(parent != null)
+			return parent.get_full_name() + "." + name;
+		else
+			return name;
+	}
 }

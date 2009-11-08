@@ -6,13 +6,13 @@
  */
 
 public class Iko.UnresolvedType : TypeSymbol {
-  public UnresolvedType(SourceReference? src, string name) {
-    this.src  = src;
-    this.name = name;
-  }
+	public UnresolvedType(SourceReference? src, string name) {
+		this.src  = src;
+		this.name = name;
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_unresolved_type(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_unresolved_type(this);
+	}
 }

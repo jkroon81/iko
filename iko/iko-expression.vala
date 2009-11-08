@@ -6,10 +6,10 @@
  */
 
 public abstract class Iko.Expression : Node {
-  public abstract DataType data_type { get; }
+	public abstract DataType data_type { get; }
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_expression(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_expression(this);
+	}
 }

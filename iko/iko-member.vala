@@ -6,15 +6,15 @@
  */
 
 public abstract class Iko.Member : DataSymbol {
-  public enum Binding {
-    INSTANCE,
-    STATIC
-  }
+	public enum Binding {
+		INSTANCE,
+		STATIC
+	}
 
-  public Binding binding { get; construct; }
+	public Binding binding { get; construct; }
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_member(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_member(this);
+	}
 }

@@ -6,8 +6,8 @@
  */
 
 public abstract class Iko.TypeSymbol : Symbol {
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_type_symbol(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_type_symbol(this);
+	}
 }

@@ -6,23 +6,23 @@
  */
 
 public class Iko.Field : Member {
-  public SList<Expression> params;
+	public SList<Expression> params;
 
-  public Field(SourceReference? src, Member.Binding binding, DataType data_type, string name) {
-    this.src       = src;
-    this.binding   = binding;
-    this.data_type = data_type;
-    this.name      = name;
-  }
+	public Field(SourceReference? src, Member.Binding binding, DataType data_type, string name) {
+		this.src       = src;
+		this.binding   = binding;
+		this.data_type = data_type;
+		this.name      = name;
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_field(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_field(this);
+	}
 
-  public override void accept_children(Visitor v) {
-    base.accept_children(v);
-    foreach(var p in params)
-      p.accept(v);
-  }
+	public override void accept_children(Visitor v) {
+		base.accept_children(v);
+		foreach(var p in params)
+			p.accept(v);
+	}
 }

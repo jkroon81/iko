@@ -6,27 +6,27 @@
  */
 
 public class Iko.Scope : Object {
-  HashTable<string, Symbol> map;
+	HashTable<string, Symbol> map;
 
-  public Symbol symbol { get; construct; }
+	public Symbol symbol { get; construct; }
 
-  public Scope(Symbol symbol) {
-    this.symbol = symbol;
-  }
+	public Scope(Symbol symbol) {
+		this.symbol = symbol;
+	}
 
-  construct {
-    map = new HashTable<string, Symbol>(str_hash, str_equal);
-  }
+	construct {
+		map = new HashTable<string, Symbol>(str_hash, str_equal);
+	}
 
-  public void add(Symbol sym) {
-    assert(sym.parent == null);
-    assert(map.lookup(sym.name) == null);
+	public void add(Symbol sym) {
+		assert(sym.parent == null);
+		assert(map.lookup(sym.name) == null);
 
-    sym.parent = symbol;
-    map.insert(sym.name, sym);
-  }
+		sym.parent = symbol;
+		map.insert(sym.name, sym);
+	}
 
-  public Symbol? lookup(string name) {
-    return map.lookup(name);
-  }
+	public Symbol? lookup(string name) {
+		return map.lookup(name);
+	}
 }

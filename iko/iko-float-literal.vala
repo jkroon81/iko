@@ -6,14 +6,14 @@
  */
 
 public class Iko.FloatLiteral : Literal {
-  public FloatLiteral(SourceReference? src, string value) {
-    this.src     = src;
-    this.value   = value;
-    literal_type = new TypeAccess(null, null, new UnresolvedType(null, "float"));
-  }
+	public FloatLiteral(SourceReference? src, string value) {
+		this.src     = src;
+		this.value   = value;
+		literal_type = new TypeAccess(null, null, new UnresolvedType(null, "float"));
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_float_literal(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_float_literal(this);
+	}
 }

@@ -6,13 +6,13 @@
  */
 
 public abstract class Iko.Node : Object {
-  public bool visible { get; construct; default = true; }
+	public bool visible { get; construct; default = true; }
 
-  public SourceReference? src { get; construct; }
+	public SourceReference? src { get; construct; }
 
-  public virtual void accept(Visitor v) {
-    v.visit_node(this);
-  }
+	public virtual void accept(Visitor v) {
+		v.visit_node(this);
+	}
 
-  public virtual void accept_children(Visitor v) {}
+	public virtual void accept_children(Visitor v) {}
 }

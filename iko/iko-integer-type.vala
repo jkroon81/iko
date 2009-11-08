@@ -6,12 +6,12 @@
  */
 
 public class Iko.IntegerType : TypeSymbol {
-  public IntegerType() {
-    name = "int";
-  }
+	public IntegerType() {
+		name = "int";
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_integer_type(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_integer_type(this);
+	}
 }
