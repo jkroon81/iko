@@ -6,13 +6,13 @@
  */
 
 public class Iko.AST.DerivativeMethod : Method {
-  public DerivativeMethod() {
-    this.name      = "der";
-    this.data_type = new RealType();
-  }
+	public DerivativeMethod() {
+		this.name      = "der";
+		this.data_type = new RealType();
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_derivative_method(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_derivative_method(this);
+	}
 }

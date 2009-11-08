@@ -6,10 +6,10 @@
  */
 
 public class Iko.AST.RemoveNegatives : ExpressionTransformer {
-  public override void visit_negative_expression(NegativeExpression ne_in) {
-    base.visit_negative_expression(ne_in);
-    var ne = q.pop_head() as NegativeExpression;
+	public override void visit_negative_expression(NegativeExpression ne_in) {
+		base.visit_negative_expression(ne_in);
+		var ne = q.pop_head() as NegativeExpression;
 
-    q.push_head(new MultiplicativeExpression.binary(IntegerLiteral.MINUS_ONE, ne.expr));
-  }
+		q.push_head(new MultiplicativeExpression.binary(IntegerLiteral.MINUS_ONE, ne.expr));
+	}
 }

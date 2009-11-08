@@ -6,27 +6,27 @@
  */
 
 public class Iko.AST.State : DataSymbol {
-  public SList<IndependentVariable> params;
+	public SList<IndependentVariable> params;
 
-  public HashTable<IndependentVariable, Expression> der { get; private set; }
+	public HashTable<IndependentVariable, Expression> der { get; private set; }
 
-  public State(string name, DataType data_type) {
-    this.name      = name;
-    this.data_type = data_type;
-  }
+	public State(string name, DataType data_type) {
+		this.name      = name;
+		this.data_type = data_type;
+	}
 
-  construct {
-    der = new HashTable<IndependentVariable, Expression>(direct_hash, direct_equal);
-  }
+	construct {
+		der = new HashTable<IndependentVariable, Expression>(direct_hash, direct_equal);
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_state(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_state(this);
+	}
 
-  public override void accept_children(Visitor v) {
-    base.accept_children(v);
-    foreach(var p in params)
-      p.accept(v);
-  }
+	public override void accept_children(Visitor v) {
+		base.accept_children(v);
+		foreach(var p in params)
+			p.accept(v);
+	}
 }

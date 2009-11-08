@@ -6,6 +6,6 @@
  */
 
 public abstract class Iko.AST.Node : Object {
-  public virtual void accept(Visitor v) {}
-  public virtual void accept_children(Visitor v) {}
+	public virtual void accept(Visitor v) {}
+	public virtual void accept_children(Visitor v) {}
 }

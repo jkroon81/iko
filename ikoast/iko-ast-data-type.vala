@@ -6,8 +6,8 @@
  */
 
 public abstract class Iko.AST.DataType : Symbol {
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_data_type(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_data_type(this);
+	}
 }

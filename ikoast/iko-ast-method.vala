@@ -6,13 +6,13 @@
  */
 
 public class Iko.AST.Method : DataSymbol {
-  public Method(string name, DataType data_type) {
-    this.name      = name;
-    this.data_type = data_type;
-  }
+	public Method(string name, DataType data_type) {
+		this.name      = name;
+		this.data_type = data_type;
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_method(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_method(this);
+	}
 }

@@ -6,10 +6,10 @@
  */
 
 public abstract class Iko.AST.Symbol : Node {
-  public string name { get; construct; }
+	public string name { get; construct; }
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_symbol(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_symbol(this);
+	}
 }

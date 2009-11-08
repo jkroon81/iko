@@ -6,12 +6,12 @@
  */
 
 public class Iko.AST.FloatLiteral : Literal {
-  public FloatLiteral(string value) {
-    this.value = value;
-  }
+	public FloatLiteral(string value) {
+		this.value = value;
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_float_literal(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_float_literal(this);
+	}
 }

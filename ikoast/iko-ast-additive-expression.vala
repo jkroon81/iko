@@ -6,27 +6,27 @@
  */
 
 public class Iko.AST.AdditiveExpression : ArithmeticExpression {
-  public SList<Expression> operands;
+	public SList<Expression> operands;
 
-  public AdditiveExpression.binary(Expression left, Expression right) {
-    operands.prepend(right);
-    operands.prepend(left);
-  }
+	public AdditiveExpression.binary(Expression left, Expression right) {
+		operands.prepend(right);
+		operands.prepend(left);
+	}
 
-  public AdditiveExpression.list(SList<Expression> op_list) {
-    foreach(var op in op_list)
-      operands.prepend(op);
-    operands.reverse();
-  }
+	public AdditiveExpression.list(SList<Expression> op_list) {
+		foreach(var op in op_list)
+			operands.prepend(op);
+		operands.reverse();
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_additive_expression(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_additive_expression(this);
+	}
 
-  public override void accept_children(Visitor v) {
-    base.accept_children(v);
-    foreach(var op in operands)
-      op.accept(v);
-  }
+	public override void accept_children(Visitor v) {
+		base.accept_children(v);
+		foreach(var op in operands)
+			op.accept(v);
+	}
 }

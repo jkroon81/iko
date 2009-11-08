@@ -6,12 +6,12 @@
  */
 
 public class Iko.AST.FloatType : DataType {
-  public FloatType() {
-    name = "float";
-  }
+	public FloatType() {
+		name = "float";
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_float_type(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_float_type(this);
+	}
 }

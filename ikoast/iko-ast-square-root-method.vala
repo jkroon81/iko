@@ -6,13 +6,13 @@
  */
 
 public class Iko.AST.SquareRootMethod : Method {
-  public SquareRootMethod() {
-    this.name      = "sqrt";
-    this.data_type = new RealType();
-  }
+	public SquareRootMethod() {
+		this.name      = "sqrt";
+		this.data_type = new RealType();
+	}
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_square_root_method(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_square_root_method(this);
+	}
 }

@@ -6,10 +6,10 @@
  */
 
 public abstract class Iko.AST.DataSymbol : Symbol {
-  public DataType data_type { get; construct; }
+	public DataType data_type { get; construct; }
 
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_data_symbol(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_data_symbol(this);
+	}
 }

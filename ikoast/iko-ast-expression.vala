@@ -6,16 +6,16 @@
  */
 
 public abstract class Iko.AST.Expression : Node {
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_expression(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_expression(this);
+	}
 
-  public int compare_to(Expression expr) {
-    return strcmp(to_string(), expr.to_string());
-  }
+	public int compare_to(Expression expr) {
+		return strcmp(to_string(), expr.to_string());
+	}
 
-  public string to_string() {
-    return new Writer().generate_string(this);
-  }
+	public string to_string() {
+		return new Writer().generate_string(this);
+	}
 }

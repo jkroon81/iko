@@ -6,8 +6,8 @@
  */
 
 public abstract class Iko.AST.ArithmeticExpression : Expression {
-  public override void accept(Visitor v) {
-    base.accept(v);
-    v.visit_arithmetic_expression(this);
-  }
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_arithmetic_expression(this);
+	}
 }
