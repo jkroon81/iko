@@ -5,8 +5,35 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.TypeResolver : Visitor {
+public class Iko.SymbolResolver : Visitor {
 	Symbol? current_symbol;
+
+	public override void visit_member_access(MemberAccess m) {
+		Member member = null;
+
+		if(m.member is UnresolvedMember) {
+			if(m.inner != null) {
+				m.inner.accept(this);
+				m.inner.data_type.accept(this);
+				member = m.inner.data_type.scope.lookup(m.member.name) as Member;
+			} else {
+				Symbol s = current_symbol;
+
+				while(s != null) {
+					var sym = s.scope.lookup(m.member.name);
+					if(sym is Member) {
+						member = sym as Member;
+						break;
+					}
+					s = s.parent;
+				}
+			}
+			if(member == null)
+				Report.error("%s:unresolved member '%s'".printf(m.member.src.to_string(), m.member.name));
+			else
+				m.member = member;
+		}
+	}
 
 	public override void visit_node(Node n) {
 		if(n is Symbol)

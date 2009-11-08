@@ -19,10 +19,7 @@ int main(string[] args) {
 	parser.parse_source_string(context, src);
 	if(Iko.Report.n_errors > 0)
 		return -1;
-	context.accept(new Iko.TypeResolver());
-	if(Iko.Report.n_errors > 0)
-		return -1;
-	context.accept(new Iko.MemberResolver());
+	context.accept(new Iko.SymbolResolver());
 	if(Iko.Report.n_errors > 0)
 		return -1;
 

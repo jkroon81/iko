@@ -17,8 +17,7 @@ namespace TestCommon {
 		var parser = new Iko.Parser();
 		string src = "real A,B,C,D,E,F; %s = %s;".printf(left, right);
 		parser.parse_source_string(context, src);
-		context.accept(new Iko.TypeResolver());
-		context.accept(new Iko.MemberResolver());
+		context.accept(new Iko.SymbolResolver());
 
 		var system = new Iko.AST.Generator().generate_system(context);
 		context = null;

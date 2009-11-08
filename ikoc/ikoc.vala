@@ -23,10 +23,7 @@ int main(string[] args) {
 			return -1;
 	}
 
-	context.accept(new Iko.TypeResolver());
-	if(Iko.Report.n_errors > 0)
-		return -1;
-	context.accept(new Iko.MemberResolver());
+	context.accept(new Iko.SymbolResolver());
 	if(Iko.Report.n_errors > 0)
 		return -1;
 	stdout.printf(new Iko.Writer().generate_string(context));

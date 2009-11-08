@@ -28,8 +28,7 @@ int main(string[] args) {
 			break;
 		default:
 			parser.parse_source_string(context, line);
-			context.accept(new Iko.TypeResolver());
-			context.accept(new Iko.MemberResolver());
+			context.accept(new Iko.SymbolResolver());
 			system = new Iko.AST.Generator().generate_system(context);
 			break;
 		}

@@ -25,7 +25,6 @@ libiko_la_SOURCES = \
 	iko-literal.vala \
 	iko-member.vala \
 	iko-member-access.vala \
-	iko-member-resolver.vala \
 	iko-method.vala \
 	iko-method-call.vala \
 	iko-namespace.vala \
@@ -40,10 +39,10 @@ libiko_la_SOURCES = \
 	iko-source-reference.vala \
 	iko-square-root-method.vala \
 	iko-symbol.vala \
+	iko-symbol-resolver.vala \
 	iko-token-info.vala \
 	iko-token-type.vala \
 	iko-type-access.vala \
-	iko-type-resolver.vala \
 	iko-type-symbol.vala \
 	iko-unary-expression.vala \
 	iko-unresolved-member.vala \
