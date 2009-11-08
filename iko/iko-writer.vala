@@ -71,7 +71,7 @@ public class Iko.Writer : Visitor {
 
 	public override void visit_binary_expression(BinaryExpression be) {
 		if(be.left is BinaryExpression &&
-			 (be.left as BinaryExpression).op.priority() < be.op.priority()) {
+		   (be.left as BinaryExpression).op.priority() < be.op.priority()) {
 			write("(");
 			be.left.accept(this);
 			write(")");
@@ -79,7 +79,7 @@ public class Iko.Writer : Visitor {
 			be.left.accept(this);
 		write(be.op.to_string());
 		if(be.right is BinaryExpression &&
-			 (be.right as BinaryExpression).op.priority() < be.op.priority()) {
+		   (be.right as BinaryExpression).op.priority() < be.op.priority()) {
 			write("(");
 			be.right.accept(this);
 			write(")");

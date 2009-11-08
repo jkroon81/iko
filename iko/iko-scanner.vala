@@ -44,13 +44,13 @@ public class Iko.Scanner : Object {
 	TokenType get_identifier_or_keyword(char *begin, int len) {
 		switch(len) {
 		case 5:
-					 if(matches(begin, "class")) return TokenType.CLASS;
+			if(matches(begin, "class")) return TokenType.CLASS;
 			break;
 		case 6:
-					 if(matches(begin, "static")) return TokenType.STATIC;
+			if(matches(begin, "static")) return TokenType.STATIC;
 			break;
 		case 9:
-					 if(matches(begin, "namespace")) return TokenType.NAMESPACE;
+			if(matches(begin, "namespace")) return TokenType.NAMESPACE;
 			break;
 		}
 		return TokenType.IDENTIFIER;
