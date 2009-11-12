@@ -55,16 +55,11 @@ public class Iko.AST.Generator : Iko.Visitor {
 				buffer.append(n);
 			var type_symbol = (data_type as Iko.TypeAccess).type_symbol;
 			if(type_symbol is Iko.RealType) {
-				if(params != null) {
-					var s = new State(buffer.str, real_type);
-					foreach(var p in params)
-						s.params.prepend(system.map.lookup(expression_to_string(p)) as IndependentVariable);
-					s.params.reverse();
-					system.add_state(s);
-				} else {
-					var iv = new IndependentVariable(buffer.str, real_type);
-					system.add_independent_variable(iv);
-				}
+				var s = new Variable(buffer.str, real_type);
+				foreach(var p in params)
+					s.params.prepend(system.map.lookup(expression_to_string(p)) as Variable);
+				s.params.reverse();
+				system.add_variable(s);
 			} else if(type_symbol is Iko.FloatType)
 				system.add_constant(new Constant(buffer.str, float_type));
 			if(type_symbol is Class)
@@ -168,8 +163,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 		c.accept_children(this);
 		system.constants.reverse();
 		system.equations.reverse();
-		system.ivars.reverse();
-		system.states.reverse();
+		system.variables.reverse();
 		root = null;
 	}
 

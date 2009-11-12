@@ -59,47 +59,12 @@ public class Iko.AST.Writer : Visitor {
 		write(";");
 	}
 
-	public override void visit_independent_variable(IndependentVariable iv) {
-		write(iv.name);
-		write(";");
-	}
-
-	public override void visit_state(State s) {
-		write(s.name);
-		write(" {");
-		write("derivative {");
-		foreach(var p in s.params) {
-			var expr = s.der.lookup(p);
-			write(p.name);
-			write(" = ");
-			if(expr != null)
-				write(Iko.CAS.to_string(expr));
-			else
-				write("(null)");
-			write(";");
-		}
-		write("}");
-		write("}");
-	}
-
 	public override void visit_system(System s) {
 		write("system {");
 		if(s.constants.length() > 0) {
 			write("constant {");
 			foreach(var c in s.constants)
 				c.accept(this);
-			write("}");
-		}
-		if(s.ivars.length() > 0) {
-			write("independent variable {");
-			foreach(var iv in s.ivars)
-				iv.accept(this);
-			write("}");
-		}
-		if(s.states.length() > 0) {
-			write("state {");
-			foreach(var st in s.states)
-				st.accept(this);
 			write("}");
 		}
 		if(s.equations.length() > 0) {
@@ -110,6 +75,30 @@ public class Iko.AST.Writer : Visitor {
 			}
 			write("}");
 		}
+		if(s.variables.length() > 0) {
+			write("variable {");
+			foreach(var v in s.variables)
+				v.accept(this);
+			write("}");
+		}
+		write("}");
+	}
+
+	public override void visit_variable(Variable v) {
+		write(v.name);
+		write(" {");
+		write("derivative {");
+		foreach(var p in v.params) {
+			var expr = v.der.lookup(p);
+			write(p.name);
+			write(" = ");
+			if(expr != null)
+				write(Iko.CAS.to_string(expr));
+			else
+				write("(null)");
+			write(";");
+		}
+		write("}");
 		write("}");
 	}
 }

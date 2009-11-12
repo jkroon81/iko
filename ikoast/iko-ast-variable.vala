@@ -5,22 +5,22 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.AST.State : DataSymbol {
-	public SList<IndependentVariable> params;
+public class Iko.AST.Variable : DataSymbol {
+	public SList<Variable> params;
 
-	public HashTable<IndependentVariable, Iko.CAS.Expression> der { get; private set; }
+	public HashTable<Variable, Iko.CAS.Expression> der { get; private set; }
 
-	public State(string name, DataType data_type) {
+	public Variable(string name, DataType data_type) {
 		Object(name : name, data_type : data_type);
 	}
 
 	construct {
-		der = new HashTable<IndependentVariable, Iko.CAS.Expression>(direct_hash, direct_equal);
+		der = new HashTable<Variable, Iko.CAS.Expression>(direct_hash, direct_equal);
 	}
 
 	public override void accept(Visitor v) {
 		base.accept(v);
-		v.visit_state(this);
+		v.visit_variable(this);
 	}
 
 	public override void accept_children(Visitor v) {

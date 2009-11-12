@@ -12,12 +12,11 @@ libikoast_la_SOURCES = \
 	iko-ast-data-type.vala \
 	iko-ast-float-type.vala \
 	iko-ast-generator.vala \
-	iko-ast-independent-variable.vala \
 	iko-ast-node.vala \
 	iko-ast-real-type.vala \
-	iko-ast-state.vala \
 	iko-ast-symbol.vala \
 	iko-ast-system.vala \
+	iko-ast-variable.vala \
 	iko-ast-visitor.vala \
 	iko-ast-writer.vala
 
