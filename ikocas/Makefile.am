@@ -14,8 +14,13 @@ libikocas_la_SOURCES = \
 	iko-cas-list.vala \
 	iko-cas-operator.vala \
 	iko-cas-output.vala \
+	iko-cas-parser.vala \
 	iko-cas-real.vala \
+	iko-cas-scanner.vala \
+	iko-cas-source-location.vala \
 	iko-cas-symbol.vala \
+	iko-cas-token-info.vala \
+	iko-cas-token-type.vala \
 	iko-cas.vala
 
 libikocas_la_VALAFLAGS = \
