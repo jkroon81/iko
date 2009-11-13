@@ -7,16 +7,13 @@
 
 public class Iko.AST.System : Node {
 	public SList<Constant>            constants;
-	public SList<EqualityExpression>  equations;
+	public SList<Iko.CAS.Expression>  equations;
 	public SList<IndependentVariable> ivars;
-	public SList<Method>              methods;
 	public SList<State>               states;
 	public HashTable<string, Symbol>  map { get; private set; }
 
 	construct {
 		map = new HashTable<string, Symbol>(str_hash, str_equal);
-		add_method(new DerivativeMethod());
-		add_method(new SquareRootMethod());
 	}
 
 	public override void accept(Visitor v) {
@@ -32,10 +29,6 @@ public class Iko.AST.System : Node {
 			iv.accept(v);
 		foreach(var s in states)
 			s.accept(v);
-		foreach(var m in methods)
-			m.accept(v);
-		foreach(var eq in equations)
-			eq.accept(v);
 	}
 
 	public void add_constant(Constant c) {
@@ -43,18 +36,13 @@ public class Iko.AST.System : Node {
 		map.insert(c.name, c);
 	}
 
-	public void add_equation(EqualityExpression eq) {
+	public void add_equation(Iko.CAS.Expression eq) {
 		equations.prepend(eq);
 	}
 
 	public void add_independent_variable(IndependentVariable iv) {
 		ivars.prepend(iv);
 		map.insert(iv.name, iv);
-	}
-
-	public void add_method(Method m) {
-		methods.prepend(m);
-		map.insert(m.name, m);
 	}
 
 	public void add_state(State s) {

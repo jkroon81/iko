@@ -8,14 +8,14 @@
 public class Iko.AST.Generator : Iko.Visitor {
 	Namespace root;
 	Queue<string> prefix;
-	Queue<Expression> q;
+	Queue<Iko.CAS.Expression> q;
 	FloatType float_type;
 	RealType real_type;
 	System system;
 
 	construct {
 		prefix = new Queue<string>();
-		q = new Queue<Expression>();
+		q = new Queue<Iko.CAS.Expression>();
 		float_type = new FloatType();
 		real_type = new RealType();
 	}
@@ -42,7 +42,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			assert_not_reached();
 	}
 
-	Expression generate_expression(Iko.Expression e) {
+	Iko.CAS.Expression generate_expression(Iko.Expression e) {
 		e.accept(this);
 		return q.pop_head();
 	}
@@ -89,34 +89,59 @@ public class Iko.AST.Generator : Iko.Visitor {
 	}
 
 	public override void visit_array_access(ArrayAccess aa) {
-		q.push_head(new SymbolAccess(system.map.lookup(expression_to_string(aa))));
+		q.push_head(new Iko.CAS.Symbol(system.map.lookup(expression_to_string(aa)).name));
 	}
 
 	public override void visit_binary_expression(Iko.BinaryExpression be) {
 		switch(be.op) {
 		case Iko.BinaryExpression.Operator.DIV:
-			q.push_head(new DivisionExpression(generate_expression(be.left),
-			                                   generate_expression(be.right)));
+			q.push_head(
+				new Iko.CAS.CompoundExpression.from_binary(
+					Iko.CAS.Operator.DIV,
+					generate_expression(be.left),
+					generate_expression(be.right)
+				)
+			);
 			break;
 		case Iko.BinaryExpression.Operator.MINUS:
 			q.push_head(
-				new AdditiveExpression.binary(
+				new Iko.CAS.CompoundExpression.from_binary(
+					Iko.CAS.Operator.PLUS,
 					generate_expression(be.left),
-					new NegativeExpression(generate_expression(be.right))
+					new Iko.CAS.CompoundExpression.from_binary(
+						Iko.CAS.Operator.MUL,
+						new Iko.CAS.Integer("-1"),
+						generate_expression(be.right)
+					)
 				)
 			);
 			break;
 		case Iko.BinaryExpression.Operator.MUL:
-			q.push_head(new MultiplicativeExpression.binary(generate_expression(be.left),
-			                                                generate_expression(be.right)));
+			q.push_head(
+				new Iko.CAS.CompoundExpression.from_binary(
+					Iko.CAS.Operator.MUL,
+					generate_expression(be.left),
+					generate_expression(be.right)
+				)
+			);
 			break;
 		case Iko.BinaryExpression.Operator.PLUS:
-			q.push_head(new AdditiveExpression.binary(generate_expression(be.left),
-			                                          generate_expression(be.right)));
+			q.push_head(
+				new Iko.CAS.CompoundExpression.from_binary(
+					Iko.CAS.Operator.PLUS,
+					generate_expression(be.left),
+					generate_expression(be.right)
+				)
+			);
 			break;
 		case Iko.BinaryExpression.Operator.POWER:
-			q.push_head(new PowerExpression(generate_expression(be.left),
-			                                generate_expression(be.right)));
+			q.push_head(
+				new Iko.CAS.CompoundExpression.from_binary(
+					Iko.CAS.Operator.POWER,
+					generate_expression(be.left),
+					generate_expression(be.right)
+				)
+			);
 			break;
 		default:
 			assert_not_reached();
@@ -144,14 +169,18 @@ public class Iko.AST.Generator : Iko.Visitor {
 		system.constants.reverse();
 		system.equations.reverse();
 		system.ivars.reverse();
-		system.methods.reverse();
 		system.states.reverse();
 		root = null;
 	}
 
 	public override void visit_equation(Iko.Equation eq) {
-		system.add_equation(new EqualityExpression(generate_expression(eq.left),
-		                                           generate_expression(eq.right)));
+		system.add_equation(
+			new Iko.CAS.CompoundExpression.from_binary(
+				Iko.CAS.Operator.EQUAL,
+				generate_expression(eq.left),
+				generate_expression(eq.right)
+			)
+		);
 	}
 
 	public override void visit_field(Field f) {
@@ -160,23 +189,43 @@ public class Iko.AST.Generator : Iko.Visitor {
 	}
 
 	public override void visit_float_literal(Iko.FloatLiteral fl) {
-		q.push_head(new FloatLiteral(fl.value));
+		q.push_head(new Iko.CAS.Real(fl.value));
 	}
 
 	public override void visit_integer_literal(Iko.IntegerLiteral il) {
-		q.push_head(new IntegerLiteral(il.value));
+		q.push_head(new Iko.CAS.Integer(il.value));
 	}
 
 	public override void visit_member_access(MemberAccess ma) {
-		q.push_head(new SymbolAccess(system.map.lookup(expression_to_string(ma))));
+		q.push_head(new Iko.CAS.Symbol(system.map.lookup(expression_to_string(ma)).name));
 	}
 
 	public override void visit_method_call(Iko.MethodCall mc) {
-		var expr = new MethodCall(generate_expression(mc.method));
-		foreach(var a in mc.args)
-			expr.args.prepend(generate_expression(a));
-		expr.args.reverse();
-		q.push_head(expr);
+		if(expression_to_string(mc.method) == "der") {
+			q.push_head(
+				new Iko.CAS.CompoundExpression.from_binary(
+					Iko.CAS.Operator.DER,
+					generate_expression(mc.args.nth_data(0)),
+					generate_expression(mc.args.nth_data(1))
+				)
+			);
+			return;
+		}
+		if(expression_to_string(mc.method) == "sqrt") {
+			q.push_head(
+				new Iko.CAS.CompoundExpression.from_binary(
+					Iko.CAS.Operator.POWER,
+					generate_expression(mc.args.data),
+					new Iko.CAS.CompoundExpression.from_binary(
+						Iko.CAS.Operator.DIV,
+						new Iko.CAS.Integer("1"),
+						new Iko.CAS.Integer("2")
+					)
+				)
+			);
+			return;
+		}
+		assert_not_reached();
 	}
 
 	public override void visit_namespace(Namespace ns) {
@@ -199,7 +248,13 @@ public class Iko.AST.Generator : Iko.Visitor {
 	public override void visit_unary_expression(Iko.UnaryExpression ue) {
 		switch(ue.op) {
 		case Iko.UnaryExpression.Operator.MINUS:
-			q.push_head(new NegativeExpression(generate_expression(ue.expr)));
+			q.push_head(
+				new Iko.CAS.CompoundExpression.from_binary(
+					Iko.CAS.Operator.MUL,
+					new Iko.CAS.Integer("-1"),
+					generate_expression(ue.expr)
+				)
+			);
 			break;
 		case Iko.UnaryExpression.Operator.PLUS:
 			q.push_head(generate_expression(ue.expr));

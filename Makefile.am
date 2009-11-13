@@ -15,6 +15,7 @@ MAINTAINERCLEANFILES = \
 
 SUBDIRS = \
 	iko \
+	ikocas \
 	ikoast \
 	ikovalacode \
 	ikoc \

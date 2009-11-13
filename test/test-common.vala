@@ -24,8 +24,16 @@ namespace TestCommon {
 
 		assert(system.equations.length() == 1);
 
-		var left_gen = Iko.AST.Math.simplify(system.equations.nth_data(0).left).to_string();
-		var right_gen = Iko.AST.Math.simplify(system.equations.nth_data(0).right).to_string();
+		var left_gen = Iko.CAS.to_string(
+			Iko.CAS.simplify(
+				Iko.CAS.operand(system.equations.nth_data(0), 1)
+			)
+		);
+		var right_gen = Iko.CAS.to_string(
+			Iko.CAS.simplify(
+				Iko.CAS.operand(system.equations.nth_data(0), 2)
+			)
+		);
 
 		if(left_gen != right_gen) {
 			stdout.printf(RED + "FAIL" + RESET);

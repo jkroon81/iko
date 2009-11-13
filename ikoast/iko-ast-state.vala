@@ -8,14 +8,14 @@
 public class Iko.AST.State : DataSymbol {
 	public SList<IndependentVariable> params;
 
-	public HashTable<IndependentVariable, Expression> der { get; private set; }
+	public HashTable<IndependentVariable, Iko.CAS.Expression> der { get; private set; }
 
 	public State(string name, DataType data_type) {
 		Object(name : name, data_type : data_type);
 	}
 
 	construct {
-		der = new HashTable<IndependentVariable, Expression>(direct_hash, direct_equal);
+		der = new HashTable<IndependentVariable, Iko.CAS.Expression>(direct_hash, direct_equal);
 	}
 
 	public override void accept(Visitor v) {

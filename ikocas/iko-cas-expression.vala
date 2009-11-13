@@ -5,5 +5,5 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.AST.DerivativeSolver : Visitor {
+public abstract class Iko.CAS.Expression : Object {
 }

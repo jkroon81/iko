@@ -31,7 +31,6 @@ int main(string[] args) {
 	var system = new Iko.AST.Generator().generate_system(context);
 	context = null;
 
-	system.accept(new Iko.AST.DerivativeSolver());
 	stdout.printf(new Iko.AST.Writer().generate_string(system));
 
 	stdout.printf(new Iko.ValaCode.Writer().generate_string(system));

@@ -54,118 +54,14 @@ public class Iko.AST.Writer : Visitor {
 		return buffer.str;
 	}
 
-	public override void visit_additive_expression(AdditiveExpression ae) {
-		for(unowned SList<Expression> node = ae.operands; node != null; node = node.next) {
-			node.data.accept(this);
-			if(node.next != null && !(node.next.data is NegativeExpression))
-				write("+");
-		}
-	}
-
 	public override void visit_constant(Constant c) {
 		write(c.name);
 		write(";");
 	}
 
-	public override void visit_division_expression(DivisionExpression de) {
-		if(de.num is AdditiveExpression)
-			write("(");
-		de.num.accept(this);
-		if(de.num is AdditiveExpression)
-			write(")");
-		write("/");
-		if(de.den is AdditiveExpression ||
-			 de.den is MultiplicativeExpression ||
-			 de.den is DivisionExpression)
-			write("(");
-		de.den.accept(this);
-		if(de.den is AdditiveExpression ||
-			 de.den is MultiplicativeExpression ||
-			 de.den is DivisionExpression)
-			write(")");
-	}
-
-	public override void visit_equality_expression(EqualityExpression ee) {
-		ee.left.accept(this);
-		write("=");
-		ee.right.accept(this);
-	}
-
 	public override void visit_independent_variable(IndependentVariable iv) {
 		write(iv.name);
 		write(";");
-	}
-
-	public override void visit_literal(Literal l) {
-		write(l.value);
-	}
-
-	public override void visit_matrix_expression(MatrixExpression me) {
-		var m = me.matrix;
-		write("[");
-		for(int i = 0; i < m.n_rows; i++) {
-			for(int j = 0; j < m.n_columns; j++) {
-				m.get(i, j).accept(this);
-				if(j != m.n_columns - 1)
-					write(",");
-			}
-			if(i != m.n_rows - 1)
-				write(":");
-		}
-		write("]");
-	}
-
-	public override void visit_method(Method m) {
-		write(m.data_type.name);
-		write(" ");
-		write(m.name);
-		write("();");
-	}
-
-	public override void visit_method_call(MethodCall mc) {
-		mc.method.accept(this);
-		write("(");
-		for(unowned SList<Expression> node = mc.args; node != null; node = node.next) {
-			node.data.accept(this);
-			if(node.next != null)
-				write(",");
-		}
-		write(")");
-	}
-
-	public override void visit_multiplicative_expression(MultiplicativeExpression me) {
-		for(unowned SList<Expression> node = me.operands; node != null; node = node.next) {
-			if(node.data is AdditiveExpression)
-				write("(");
-			node.data.accept(this);
-			if(node.data is AdditiveExpression)
-				write(")");
-			if(node.next != null)
-				write("*");
-		}
-	}
-
-	public override void visit_negative_expression(NegativeExpression ne) {
-		write("-");
-		if(ne.expr is AdditiveExpression)
-			write("(");
-		ne.expr.accept(this);
-		if(ne.expr is AdditiveExpression)
-			write(")");
-	}
-
-	public override void visit_power_expression(PowerExpression pe) {
-		if(!(pe.radix is SimpleExpression))
-			write("(");
-		pe.radix.accept(this);
-		if(!(pe.radix is SimpleExpression))
-			write(")");
-		write("^");
-		if(!(pe.exp is SimpleExpression))
-			write("(");
-		pe.exp.accept(this);
-		if(!(pe.exp is SimpleExpression))
-			write(")");
 	}
 
 	public override void visit_state(State s) {
@@ -177,17 +73,13 @@ public class Iko.AST.Writer : Visitor {
 			write(p.name);
 			write(" = ");
 			if(expr != null)
-				expr.accept(this);
+				write(Iko.CAS.to_string(expr));
 			else
 				write("(null)");
 			write(";");
 		}
 		write("}");
 		write("}");
-	}
-
-	public override void visit_symbol_access(SymbolAccess sa) {
-		write(sa.symbol.name);
 	}
 
 	public override void visit_system(System s) {
@@ -210,16 +102,10 @@ public class Iko.AST.Writer : Visitor {
 				st.accept(this);
 			write("}");
 		}
-		if(s.methods.length() > 0) {
-			write("methods {");
-			foreach(var m in s.methods)
-				m.accept(this);
-			write("}");
-		}
 		if(s.equations.length() > 0) {
 			write("equation {");
 			foreach(var eq in s.equations) {
-				eq.accept(this);
+				write(Iko.CAS.to_string(eq));
 				write(";");
 			}
 			write("}");

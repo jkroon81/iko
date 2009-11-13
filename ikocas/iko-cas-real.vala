@@ -5,11 +5,10 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public abstract class Iko.AST.Literal : SimpleExpression {
+public class Iko.CAS.Real : AtomicExpression {
 	public string value { get; construct; }
 
-	public override void accept(Visitor v) {
-		base.accept(v);
-		v.visit_literal(this);
+	public Real(string value) {
+		Object(value : value);
 	}
 }
