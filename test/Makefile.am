@@ -1,5 +1,5 @@
 bin_PROGRAMS = \
-	ish
+	icas
 
 check_PROGRAMS = \
 	test-addition \
@@ -19,7 +19,7 @@ TESTS = \
 XFAIL_TESTS = \
 	test-power
 
-ish_SOURCES = ish.vala
+icas_SOURCES = icas.vala
 test_addition_SOURCES = test-common.vala test-addition.vala
 test_constant_folding_SOURCES = test-common.vala test-constant-folding.vala
 test_multiplication_SOURCES = test-common.vala test-multiplication.vala
