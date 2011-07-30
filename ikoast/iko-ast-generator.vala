@@ -42,7 +42,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			assert_not_reached();
 	}
 
-	Iko.CAS.Expression generate_expression(Iko.Expression e) {
+	Iko.CAS.Expression generate_cas_expression(Iko.Expression e) {
 		e.accept(this);
 		return q.pop_head();
 	}
@@ -93,8 +93,8 @@ public class Iko.AST.Generator : Iko.Visitor {
 			q.push_head(
 				new Iko.CAS.CompoundExpression.from_binary(
 					Iko.CAS.Operator.DIV,
-					generate_expression(be.left),
-					generate_expression(be.right)
+					generate_cas_expression(be.left),
+					generate_cas_expression(be.right)
 				)
 			);
 			break;
@@ -102,11 +102,11 @@ public class Iko.AST.Generator : Iko.Visitor {
 			q.push_head(
 				new Iko.CAS.CompoundExpression.from_binary(
 					Iko.CAS.Operator.PLUS,
-					generate_expression(be.left),
+					generate_cas_expression(be.left),
 					new Iko.CAS.CompoundExpression.from_binary(
 						Iko.CAS.Operator.MUL,
 						new Iko.CAS.Integer("-1"),
-						generate_expression(be.right)
+						generate_cas_expression(be.right)
 					)
 				)
 			);
@@ -115,8 +115,8 @@ public class Iko.AST.Generator : Iko.Visitor {
 			q.push_head(
 				new Iko.CAS.CompoundExpression.from_binary(
 					Iko.CAS.Operator.MUL,
-					generate_expression(be.left),
-					generate_expression(be.right)
+					generate_cas_expression(be.left),
+					generate_cas_expression(be.right)
 				)
 			);
 			break;
@@ -124,8 +124,8 @@ public class Iko.AST.Generator : Iko.Visitor {
 			q.push_head(
 				new Iko.CAS.CompoundExpression.from_binary(
 					Iko.CAS.Operator.PLUS,
-					generate_expression(be.left),
-					generate_expression(be.right)
+					generate_cas_expression(be.left),
+					generate_cas_expression(be.right)
 				)
 			);
 			break;
@@ -133,8 +133,8 @@ public class Iko.AST.Generator : Iko.Visitor {
 			q.push_head(
 				new Iko.CAS.CompoundExpression.from_binary(
 					Iko.CAS.Operator.POWER,
-					generate_expression(be.left),
-					generate_expression(be.right)
+					generate_cas_expression(be.left),
+					generate_cas_expression(be.right)
 				)
 			);
 			break;
@@ -171,8 +171,8 @@ public class Iko.AST.Generator : Iko.Visitor {
 		system.add_equation(
 			new Iko.CAS.CompoundExpression.from_binary(
 				Iko.CAS.Operator.EQUAL,
-				generate_expression(eq.left),
-				generate_expression(eq.right)
+				generate_cas_expression(eq.left),
+				generate_cas_expression(eq.right)
 			)
 		);
 	}
@@ -199,8 +199,8 @@ public class Iko.AST.Generator : Iko.Visitor {
 			q.push_head(
 				new Iko.CAS.CompoundExpression.from_binary(
 					Iko.CAS.Operator.DER,
-					generate_expression(mc.args.nth_data(0)),
-					generate_expression(mc.args.nth_data(1))
+					generate_cas_expression(mc.args.nth_data(0)),
+					generate_cas_expression(mc.args.nth_data(1))
 				)
 			);
 			return;
@@ -209,7 +209,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			q.push_head(
 				new Iko.CAS.CompoundExpression.from_binary(
 					Iko.CAS.Operator.POWER,
-					generate_expression(mc.args.data),
+					generate_cas_expression(mc.args.data),
 					new Iko.CAS.CompoundExpression.from_binary(
 						Iko.CAS.Operator.DIV,
 						new Iko.CAS.Integer("1"),
@@ -246,12 +246,12 @@ public class Iko.AST.Generator : Iko.Visitor {
 				new Iko.CAS.CompoundExpression.from_binary(
 					Iko.CAS.Operator.MUL,
 					new Iko.CAS.Integer("-1"),
-					generate_expression(ue.expr)
+					generate_cas_expression(ue.expr)
 				)
 			);
 			break;
 		case Iko.UnaryExpression.Operator.PLUS:
-			q.push_head(generate_expression(ue.expr));
+			q.push_head(generate_cas_expression(ue.expr));
 			break;
 		default:
 			assert_not_reached();
