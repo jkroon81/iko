@@ -18,7 +18,7 @@ int main(string[] args) {
 		switch(line) {
 		default:
 			var expr = parser.parse_source_string(line);
-			stdout.printf("%s\n", Iko.CAS.to_string(expr));
+			stdout.printf("%s\n", new Iko.CAS.Writer().generate_string(expr));
 			break;
 		}
 	}

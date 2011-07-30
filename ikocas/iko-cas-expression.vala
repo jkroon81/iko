@@ -5,5 +5,9 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public abstract class Iko.CAS.Expression : Object {
+public abstract class Iko.CAS.Expression : Node {
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_expression(this);
+	}
 }

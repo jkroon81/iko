@@ -5,23 +5,22 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.CAS.CompoundExpression : Expression {
+public abstract class Iko.CAS.CompoundExpression : Expression {
 	public Operator         op   { get; construct; }
 	public List<Expression> list { get; private set; }
 
-	public CompoundExpression.from_binary(Operator op, Expression expr1, Expression expr2) {
-		Object(op : op);
-		list.append(expr1);
-		list.append(expr2);
-	}
-
-	public CompoundExpression.from_list(Operator op, List<Expression> list) {
-		Object(op : op);
-		foreach(var operand in list)
-			this.list.append(operand);
-	}
-
 	construct {
 		list = new List<Expression>();
+	}
+
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_compound_expression(this);
+	}
+
+	public override void accept_children(Visitor v) {
+		base.accept_children(v);
+		foreach(var op in list)
+			op.accept(v);
 	}
 }

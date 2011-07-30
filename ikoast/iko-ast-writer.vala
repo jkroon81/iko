@@ -70,7 +70,7 @@ public class Iko.AST.Writer : Visitor {
 		if(s.equations.length() > 0) {
 			write("equation {");
 			foreach(var eq in s.equations) {
-				write(Iko.CAS.to_string(eq));
+				write(new Iko.CAS.Writer().generate_string(eq));
 				write(";");
 			}
 			write("}");
@@ -93,7 +93,7 @@ public class Iko.AST.Writer : Visitor {
 			write(p.name);
 			write(" = ");
 			if(expr != null)
-				write(Iko.CAS.to_string(expr));
+				write(new Iko.CAS.Writer().generate_string(expr));
 			else
 				write("(null)");
 			write(";");

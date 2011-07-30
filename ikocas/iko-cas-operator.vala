@@ -7,22 +7,22 @@
 
 namespace Iko.CAS {
 	public enum Operator {
-		DER,
 		DIV,
 		EQUAL,
+		FUNCTION,
 		MUL,
 		PLUS,
 		POWER;
 
 		public string to_string() {
 			switch(this) {
-			case DER:   return "der";
-			case DIV:   return "/";
-			case EQUAL: return "=";
-			case MUL:   return "*";
-			case PLUS:  return "+";
-			case POWER: return "^";
-			default:    assert_not_reached();
+			case DIV:      return "/";
+			case EQUAL:    return "=";
+			case FUNCTION: return "<f>";
+			case MUL:      return "*";
+			case PLUS:     return "+";
+			case POWER:    return "^";
+			default:       assert_not_reached();
 			}
 		}
 	}

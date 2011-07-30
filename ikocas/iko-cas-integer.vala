@@ -11,4 +11,9 @@ public class Iko.CAS.Integer : AtomicExpression {
 	public Integer(string value) {
 		Object(value : value);
 	}
+
+	public override void accept(Visitor v) {
+		base.accept(v);
+		v.visit_integer(this);
+	}
 }
