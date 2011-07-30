@@ -20,12 +20,11 @@ public class Iko.SymbolResolver : Visitor {
 				Symbol s = current_symbol;
 
 				while(s != null) {
-					var sym = s.scope.lookup(m.member.name);
-					if(sym is Member) {
-						member = sym as Member;
+					member = s.scope.lookup(m.member.name) as Member;
+					if(member != null)
 						break;
-					}
-					s = s.parent;
+					else
+						s = s.parent;
 				}
 			}
 			if(member == null)
@@ -54,12 +53,11 @@ public class Iko.SymbolResolver : Visitor {
 				Symbol s = current_symbol;
 
 				while(s != null) {
-					var sym = s.scope.lookup(t.type_symbol.name);
-					if(sym is TypeSymbol) {
-						type_symbol = sym as TypeSymbol;
+					type_symbol = s.scope.lookup(t.type_symbol.name) as TypeSymbol;
+					if(type_symbol != null)
 						break;
-					}
-					s = s.parent;
+					else
+						s = s.parent;
 				}
 			}
 			if(type_symbol == null)
