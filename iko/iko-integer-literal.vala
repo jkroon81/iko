@@ -7,12 +7,10 @@
 
 public class Iko.IntegerLiteral : Literal {
 	public IntegerLiteral(SourceReference? src, string value) {
-		/* FIXME */
-		var int_type = new TypeAccess(null, null, new UnresolvedType(null, "int"));
 		Object(
 			src          : src,
 			value        : value,
-			literal_type : int_type
+			literal_type : new TypeAccess(null, null, new UnresolvedType(null, "int"))
 		);
 	}
 

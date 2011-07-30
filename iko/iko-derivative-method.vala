@@ -7,13 +7,11 @@
 
 public class Iko.DerivativeMethod : Method {
 	public DerivativeMethod() {
-		/* FIXME */
-		var real_type = new TypeAccess(null, null, new UnresolvedType(null, "real"));
 		Object(
 			name      : "der",
 			visible   : false,
 			binding   : Member.Binding.STATIC,
-			data_type : real_type
+			data_type : new TypeAccess(null, null, new UnresolvedType(null, "real"))
 		);
 	}
 
