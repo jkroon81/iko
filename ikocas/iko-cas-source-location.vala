@@ -1,5 +1,5 @@
 /*
- * Iko - Copyright (C) 2009 Jacob Kroon
+ * Iko - Copyright (C) 2009-2011 Jacob Kroon
  *
  * Contributor(s):
  *   Jacob Kroon <jacob.kroon@gmail.com>
@@ -19,11 +19,9 @@ public class Iko.CAS.SourceLocation : Object {
 	}
 
 	public static string extract_string(TokenInfo token) {
-		size_t size;
-
-		size = token.end.pos - token.begin.pos;
+		var size = token.end.pos - token.begin.pos;
 		assert(size > 0);
-		return ((string)token.begin.pos).ndup(size);
+		return ((string)token.begin.pos).substring(0, (long)size);
 	}
 
 	public string to_string() {

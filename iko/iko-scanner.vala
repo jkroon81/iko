@@ -1,5 +1,5 @@
 /*
- * Iko - Copyright (C) 2008-2009 Jacob Kroon
+ * Iko - Copyright (C) 2008-2011 Jacob Kroon
  *
  * Contributor(s):
  *   Jacob Kroon <jacob.kroon@gmail.com>
@@ -27,13 +27,13 @@ public class Iko.Scanner : Object {
 	public Scanner.from_string(string code) {
 		Object(source : "(string)");
 
-		end = (char*)code + code.size();
+		end = (char*)code + code.length;
 		current = code;
 		line = column = 1;
 	}
 
 	bool matches(char *begin, string keyword) {
-		long len = keyword.len();
+		long len = keyword.length;
 
 		for(int i = 0; i < len; i++)
 			if(begin[i] != ((char*)keyword)[i])

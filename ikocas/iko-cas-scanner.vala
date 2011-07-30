@@ -1,5 +1,5 @@
 /*
- * Iko - Copyright (C) 2009 Jacob Kroon
+ * Iko - Copyright (C) 2009-2011 Jacob Kroon
  *
  * Contributor(s):
  *   Jacob Kroon <jacob.kroon@gmail.com>
@@ -12,7 +12,7 @@ public class Iko.CAS.Scanner : Object {
 	int column;
 
 	public Scanner(string text) {
-		end = (char*)text + text.size();
+		end = (char*)text + text.length;
 		current = text;
 		line = column = 1;
 	}

@@ -1,5 +1,5 @@
 /*
- * Iko - Copyright (C) 2008-2009 Jacob Kroon
+ * Iko - Copyright (C) 2008-2011 Jacob Kroon
  *
  * Contributor(s):
  *   Jacob Kroon <jacob.kroon@gmail.com>
@@ -30,7 +30,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 				buffer.append(ma.member.name);
 			} else {
 				buffer.append(ma.member.get_full_name());
-				buffer.erase(0, root.name.len() + 1);
+				buffer.erase(0, root.name.length + 1);
 			}
 			return buffer.str;
 		} else if(expr is Iko.ArrayAccess) {
@@ -68,7 +68,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 						generate_instance(f.data_type, "." + f.name, f.params);
 			prefix.pop_tail();
 		} else if(data_type is Iko.ArrayType) {
-			var length = ((data_type as Iko.ArrayType).length as Iko.IntegerLiteral).value.to_int();
+			var length = int.parse(((data_type as Iko.ArrayType).length as Iko.IntegerLiteral).value);
 			for(var i = 0; i < length; i++)
 				generate_instance((data_type as Iko.ArrayType).element_type,
 				                  name + "[" + i.to_string() + "]",
