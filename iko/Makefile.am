@@ -1,7 +1,6 @@
 lib_LTLIBRARIES = libiko.la
 
 CLEANFILES = \
-	iko.gir \
 	iko.h \
 	iko.vapi \
 	*~

@@ -1,7 +1,6 @@
 lib_LTLIBRARIES = libikocas.la
 
 CLEANFILES = \
-	ikocas.gir \
 	ikocas.h \
 	ikocas.vapi \
 	*~
@@ -32,4 +31,7 @@ libikocas_la_VALAFLAGS = \
 
 libikocas_la_CFLAGS = \
 	@GOBJECT_CFLAGS@
+
+libikocas_la_LIBADD = \
+	@GOBJECT_LIBS@
 

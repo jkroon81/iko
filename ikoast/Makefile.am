@@ -1,7 +1,6 @@
 lib_LTLIBRARIES = libikoast.la
 
 CLEANFILES = \
-	ikoast.gir \
 	ikoast.h \
 	ikoast.vapi \
 	*~
@@ -34,6 +33,7 @@ libikoast_la_CFLAGS = \
 	-I$(top_srcdir)/ikocas
 
 libikoast_la_LIBADD = \
+	@GOBJECT_LIBS@ \
 	$(top_builddir)/iko/libiko.la \
 	$(top_builddir)/ikocas/libikocas.la
 

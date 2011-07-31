@@ -27,20 +27,21 @@ test_power_SOURCES = test-common.vala test-power.vala
 
 AM_VALAFLAGS = \
 	--vapidir=$(top_builddir)/iko \
-	--vapidir=$(top_builddir)/ikocas \
 	--vapidir=$(top_builddir)/ikoast \
+	--vapidir=$(top_builddir)/ikocas \
 	--pkg=iko \
-	--pkg=ikocas \
-	--pkg=ikoast
+	--pkg=ikoast \
+	--pkg=ikocas
 
 AM_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
 	-I$(top_srcdir)/iko \
-	-I$(top_srcdir)/ikocas \
-	-I$(top_srcdir)/ikoast
+	-I$(top_srcdir)/ikoast \
+	-I$(top_srcdir)/ikocas
 
 LDADD = \
+	@GOBJECT_LIBS@ \
 	$(top_builddir)/iko/libiko.la \
-	$(top_builddir)/ikocas/libikocas.la \
-	$(top_builddir)/ikoast/libikoast.la
+	$(top_builddir)/ikoast/libikoast.la \
+	$(top_builddir)/ikocas/libikocas.la
 
