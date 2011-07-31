@@ -10,4 +10,6 @@ public abstract class Iko.CAS.Expression : Node {
 		base.accept(v);
 		v.visit_expression(this);
 	}
+
+	public abstract Expression eval();
 }

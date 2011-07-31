@@ -6,6 +6,8 @@ CLEANFILES = \
 	*~
 
 libikocas_la_SOURCES = \
+	gi.vapi \
+	iko-cas.vala \
 	iko-cas-algebraic-expression.vala \
 	iko-cas-atomic-expression.vala \
 	iko-cas-compound-expression.vala \
@@ -30,8 +32,10 @@ libikocas_la_VALAFLAGS = \
 	-H ikocas.h
 
 libikocas_la_CFLAGS = \
-	@GOBJECT_CFLAGS@
+	@GOBJECT_CFLAGS@ \
+	@GI_CFLAGS@
 
 libikocas_la_LIBADD = \
-	@GOBJECT_LIBS@
+	@GOBJECT_LIBS@ \
+	@GI_LIBS@
 

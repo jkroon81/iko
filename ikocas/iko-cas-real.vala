@@ -16,4 +16,8 @@ public class Iko.CAS.Real : AtomicExpression {
 		base.accept(v);
 		v.visit_real(this);
 	}
+
+	public override Expression eval() {
+		return this;
+	}
 }

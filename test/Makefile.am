@@ -43,5 +43,6 @@ LDADD = \
 	@GOBJECT_LIBS@ \
 	$(top_builddir)/iko/libiko.la \
 	$(top_builddir)/ikoast/libikoast.la \
-	$(top_builddir)/ikocas/libikocas.la
+	$(top_builddir)/ikocas/libikocas.la \
+	$(top_builddir)/ikocaslib/libikocaslib.la
 

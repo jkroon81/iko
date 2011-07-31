@@ -8,6 +8,8 @@
 int main(string[] args) {
 	Environment.set_prgname("icas");
 
+	Iko.CAS.init();
+
 	var parser = new Iko.CAS.Parser();
 
 	while(true) {
@@ -18,7 +20,7 @@ int main(string[] args) {
 		switch(line) {
 		default:
 			var expr = parser.parse_source_string(line);
-			stdout.printf("%s\n", new Iko.CAS.Writer().generate_string(expr));
+			stdout.printf("%s\n", new Iko.CAS.Writer().generate_string(expr.eval()));
 			break;
 		}
 	}

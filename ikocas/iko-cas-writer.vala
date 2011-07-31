@@ -39,7 +39,7 @@ public class Iko.CAS.Writer : Visitor {
 	}
 
 	public override void visit_integer(Integer i) {
-		buffer.append(i.value);
+		buffer.append(i.sval);
 	}
 
 	public override void visit_real(Real r) {

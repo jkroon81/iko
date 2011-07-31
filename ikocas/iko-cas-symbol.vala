@@ -16,4 +16,8 @@ public class Iko.CAS.Symbol : AtomicExpression {
 		base.accept(v);
 		v.visit_symbol(this);
 	}
+
+	public override Expression eval() {
+		return this;
+	}
 }

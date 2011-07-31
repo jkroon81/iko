@@ -105,7 +105,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 					generate_cas_expression(be.left),
 					new Iko.CAS.AlgebraicExpression.from_binary(
 						Iko.CAS.Operator.MUL,
-						new Iko.CAS.Integer("-1"),
+						new Iko.CAS.Integer.from_int(-1),
 						generate_cas_expression(be.right)
 					)
 				)
@@ -187,7 +187,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 	}
 
 	public override void visit_integer_literal(Iko.IntegerLiteral il) {
-		q.push_head(new Iko.CAS.Integer(il.value));
+		q.push_head(new Iko.CAS.Integer.from_string(il.value));
 	}
 
 	public override void visit_member_access(MemberAccess ma) {
@@ -224,7 +224,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			q.push_head(
 				new Iko.CAS.AlgebraicExpression.from_binary(
 					Iko.CAS.Operator.MUL,
-					new Iko.CAS.Integer("-1"),
+					new Iko.CAS.Integer.from_int(-1),
 					generate_cas_expression(ue.expr)
 				)
 			);

@@ -28,4 +28,8 @@ public class Iko.CAS.AlgebraicExpression : CompoundExpression {
 		foreach(var op in list)
 			op.accept(v);
 	}
+
+	public override Expression eval() {
+		return this;
+	}
 }

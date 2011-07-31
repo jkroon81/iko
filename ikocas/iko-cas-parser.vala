@@ -76,7 +76,7 @@ public class Iko.CAS.Parser : Object {
 					left,
 					new AlgebraicExpression.from_binary(
 						Operator.MUL,
-						new Integer("-1"),
+						new Integer.from_int(-1),
 						right
 					)
 				);
@@ -156,7 +156,7 @@ public class Iko.CAS.Parser : Object {
 			next();
 			return new AlgebraicExpression.from_binary(
 				Operator.MUL,
-				new Integer("-1"),
+				new Integer.from_int(-1),
 				parse_expression_primary()
 			);
 		}
@@ -184,7 +184,7 @@ public class Iko.CAS.Parser : Object {
 	Integer parse_literal_integer() throws ParseError {
 		expect(TokenType.INTEGER);
 		var value = get_prev_string();
-		return new Integer(value);
+		return new Integer.from_string(value);
 	}
 
 	public Expression? parse_source_string(string text) {

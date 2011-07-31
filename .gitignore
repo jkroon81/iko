@@ -1,11 +1,13 @@
 *~
 *swp
 *.c
+*.gir
 *.h
 *.la
 *.lo
 *.o
 *.stamp
+*.typelib
 *.vapi
 .deps
 .libs
