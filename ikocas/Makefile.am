@@ -25,6 +25,7 @@ libikocas_la_SOURCES = \
 	iko-cas-symbol.vala \
 	iko-cas-token-info.vala \
 	iko-cas-token-type.vala \
+	iko-cas-undefined.vala \
 	iko-cas-visitor.vala \
 	iko-cas-writer.vala
 

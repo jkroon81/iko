@@ -15,4 +15,5 @@ public abstract class Iko.CAS.Visitor : Object {
 	public virtual void visit_list(List l) {}
 	public virtual void visit_real(Real r) {}
 	public virtual void visit_symbol(Symbol s) {}
+	public virtual void visit_undefined(Undefined u) {}
 }

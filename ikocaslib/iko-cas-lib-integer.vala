@@ -6,7 +6,13 @@
  */
 
 namespace Iko.CAS.Library {
-	public List iext_euc_alg(Integer a, Integer b) {
+	public Expression iext_euc_alg(Expression x1, Expression x2) {
+		var a = x1 as Integer;
+		var b = x2 as Integer;
+
+		if(a == null || b == null)
+			return new Undefined();
+
 		int mpp = 1;
 		int mp = 0;
 		int m;
@@ -41,7 +47,13 @@ namespace Iko.CAS.Library {
 		return l;
 	}
 
-	public Integer igcd(Integer a, Integer b) {
+	public Expression igcd(Expression x1, Expression x2) {
+		var a = x1 as Integer;
+		var b = x2 as Integer;
+
+		if(a == null || b == null)
+			return new Undefined();
+
 		var A = a.ival;
 		var B = b.ival;
 
@@ -53,11 +65,23 @@ namespace Iko.CAS.Library {
 		return new Integer.from_int(A.abs());
 	}
 
-	public Integer iquot(Integer a, Integer b) {
+	public Expression iquot(Expression x1, Expression x2) {
+		var a = x1 as Integer;
+		var b = x2 as Integer;
+
+		if(a == null || b == null)
+			return new Undefined();
+
 		return new Integer.from_int(a.ival / b.ival);
 	}
 
-	public Integer irem(Integer a, Integer b) {
+	public Expression irem(Expression x1, Expression x2) {
+		var a = x1 as Integer;
+		var b = x2 as Integer;
+
+		if(a == null || b == null)
+			return new Undefined();
+
 		return new Integer.from_int(a.ival % b.ival);
 	}
 }
