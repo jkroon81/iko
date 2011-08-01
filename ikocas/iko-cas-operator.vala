@@ -10,6 +10,7 @@ namespace Iko.CAS {
 		DIV,
 		EQUAL,
 		FUNCTION,
+		LIST,
 		MUL,
 		PLUS,
 		POWER;
@@ -19,6 +20,7 @@ namespace Iko.CAS {
 			case DIV:      return "/";
 			case EQUAL:    return "=";
 			case FUNCTION: return "<f>";
+			case LIST:     return "<l>";
 			case MUL:      return "*";
 			case PLUS:     return "+";
 			case POWER:    return "^";

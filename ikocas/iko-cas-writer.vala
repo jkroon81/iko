@@ -34,12 +34,22 @@ public class Iko.CAS.Writer : Visitor {
 			arg.accept(this);
 			buffer.append(",");
 		}
-		buffer.erase(buffer.len -1, 1);
+		buffer.erase(buffer.len - 1, 1);
 		buffer.append(")");
 	}
 
 	public override void visit_integer(Integer i) {
 		buffer.append(i.sval);
+	}
+
+	public override void visit_list(List l) {
+		buffer.append("[");
+		foreach(Expression e in l.list) {
+			e.accept(this);
+			buffer.append(",");
+		}
+		buffer.erase(buffer.len - 1, 1);
+		buffer.append("]");
 	}
 
 	public override void visit_real(Real r) {

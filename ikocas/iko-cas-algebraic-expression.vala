@@ -12,9 +12,9 @@ public class Iko.CAS.AlgebraicExpression : CompoundExpression {
 		list.append(expr2);
 	}
 
-	public AlgebraicExpression.from_list(Operator op, List<Expression> list) {
+	public AlgebraicExpression.from_list(Operator op, List l) {
 		Object(op : op);
-		foreach(var operand in list)
+		foreach(var operand in l.list)
 			this.list.append(operand);
 	}
 

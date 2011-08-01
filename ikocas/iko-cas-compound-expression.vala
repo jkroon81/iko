@@ -6,11 +6,11 @@
  */
 
 public abstract class Iko.CAS.CompoundExpression : Expression {
-	public Operator         op   { get; construct; }
-	public List<Expression> list { get; private set; }
+	public Operator               op   { get; construct; }
+	public LinkedList<Expression> list { get; private set; }
 
 	construct {
-		list = new List<Expression>();
+		list = new LinkedList<Expression>();
 	}
 
 	public override void accept(Visitor v) {

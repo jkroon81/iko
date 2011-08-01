@@ -12,6 +12,7 @@ public abstract class Iko.CAS.Visitor : Object {
 	public virtual void visit_expression(Expression e) {}
 	public virtual void visit_function_call(FunctionCall fc) {}
 	public virtual void visit_integer(Integer i) {}
+	public virtual void visit_list(List l) {}
 	public virtual void visit_real(Real r) {}
 	public virtual void visit_symbol(Symbol s) {}
 }
