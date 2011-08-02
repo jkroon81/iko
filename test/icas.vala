@@ -7,24 +7,18 @@
 
 int main(string[] args) {
 	Environment.set_prgname("icas");
-
 	Iko.CAS.init();
-
 	var parser = new Iko.CAS.Parser();
+	Readline.bind_key('\t', Readline.abort);
 
 	while(true) {
-		stdout.printf("> ");
-		var line = stdin.read_line();
-		if(line == null)
+		var line = Readline.readline("> ");
+		if(line == "exit" || line == null)
 			break;
-		switch(line) {
-		default:
-			var expr = parser.parse_source_string(line);
-			stdout.printf("%s\n", new Iko.CAS.Writer().generate_string(expr.eval()));
-			break;
-		}
+		var expr = parser.parse_source_string(line);
+		stdout.printf("%s\n", new Iko.CAS.Writer().generate_string(expr.eval()));
+		Readline.History.add(line);
 	}
-	stdout.printf("\n");
 
 	return 0;
 }
