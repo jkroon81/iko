@@ -8,9 +8,9 @@ CLEANFILES = \
 libikocas_la_SOURCES = \
 	gi.vapi \
 	iko-cas.vala \
-	iko-cas-algebraic-expression.vala \
 	iko-cas-atomic-expression.vala \
 	iko-cas-compound-expression.vala \
+	iko-cas-equality.vala \
 	iko-cas-expression.vala \
 	iko-cas-function-call.vala \
 	iko-cas-integer.vala \
@@ -19,9 +19,12 @@ libikocas_la_SOURCES = \
 	iko-cas-node.vala \
 	iko-cas-operator.vala \
 	iko-cas-parser.vala \
+	iko-cas-power.vala \
+	iko-cas-product.vala \
 	iko-cas-real.vala \
 	iko-cas-scanner.vala \
 	iko-cas-source-location.vala \
+	iko-cas-sum.vala \
 	iko-cas-symbol.vala \
 	iko-cas-token-info.vala \
 	iko-cas-token-type.vala \

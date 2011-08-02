@@ -91,20 +91,20 @@ public class Iko.AST.Generator : Iko.Visitor {
 		switch(be.op) {
 		case Iko.BinaryExpression.Operator.DIV:
 			q.push_head(
-				new Iko.CAS.AlgebraicExpression.from_binary(
-					Iko.CAS.Operator.DIV,
+				new Iko.CAS.Product.from_binary(
 					generate_cas_expression(be.left),
-					generate_cas_expression(be.right)
+					new Iko.CAS.Power(
+						generate_cas_expression(be.right),
+						new Iko.CAS.Integer.from_int(-1)
+					)
 				)
 			);
 			break;
 		case Iko.BinaryExpression.Operator.MINUS:
 			q.push_head(
-				new Iko.CAS.AlgebraicExpression.from_binary(
-					Iko.CAS.Operator.PLUS,
+				new Iko.CAS.Sum.from_binary(
 					generate_cas_expression(be.left),
-					new Iko.CAS.AlgebraicExpression.from_binary(
-						Iko.CAS.Operator.MUL,
+					new Iko.CAS.Product.from_binary(
 						new Iko.CAS.Integer.from_int(-1),
 						generate_cas_expression(be.right)
 					)
@@ -113,8 +113,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			break;
 		case Iko.BinaryExpression.Operator.MUL:
 			q.push_head(
-				new Iko.CAS.AlgebraicExpression.from_binary(
-					Iko.CAS.Operator.MUL,
+				new Iko.CAS.Product.from_binary(
 					generate_cas_expression(be.left),
 					generate_cas_expression(be.right)
 				)
@@ -122,8 +121,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			break;
 		case Iko.BinaryExpression.Operator.PLUS:
 			q.push_head(
-				new Iko.CAS.AlgebraicExpression.from_binary(
-					Iko.CAS.Operator.PLUS,
+				new Iko.CAS.Sum.from_binary(
 					generate_cas_expression(be.left),
 					generate_cas_expression(be.right)
 				)
@@ -131,8 +129,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			break;
 		case Iko.BinaryExpression.Operator.POWER:
 			q.push_head(
-				new Iko.CAS.AlgebraicExpression.from_binary(
-					Iko.CAS.Operator.POWER,
+				new Iko.CAS.Power(
 					generate_cas_expression(be.left),
 					generate_cas_expression(be.right)
 				)
@@ -169,8 +166,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 
 	public override void visit_equation(Iko.Equation eq) {
 		system.add_equation(
-			new Iko.CAS.AlgebraicExpression.from_binary(
-				Iko.CAS.Operator.EQUAL,
+			new Iko.CAS.Equality.from_binary(
 				generate_cas_expression(eq.left),
 				generate_cas_expression(eq.right)
 			)
@@ -222,8 +218,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 		switch(ue.op) {
 		case Iko.UnaryExpression.Operator.MINUS:
 			q.push_head(
-				new Iko.CAS.AlgebraicExpression.from_binary(
-					Iko.CAS.Operator.MUL,
+				new Iko.CAS.Product.from_binary(
 					new Iko.CAS.Integer.from_int(-1),
 					generate_cas_expression(ue.expr)
 				)

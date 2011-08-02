@@ -18,13 +18,12 @@ public class Iko.CAS.Writer : Visitor {
 		return buffer.str;
 	}
 
-	public override void visit_algebraic_expression(AlgebraicExpression ae) {
-		var op = ae.op.to_string();
-		foreach(Expression e in ae.list) {
+	public override void visit_equality(Equality eq) {
+		foreach(var e in eq.list) {
 			e.accept(this);
-			buffer.append(op);
+			buffer.append("=");
 		}
-		buffer.erase(buffer.len - op.length, op.length);
+		buffer.erase(buffer.len - 1, 1);
 	}
 
 	public override void visit_function_call(FunctionCall fc) {
@@ -54,6 +53,28 @@ public class Iko.CAS.Writer : Visitor {
 
 	public override void visit_real(Real r) {
 		buffer.append(r.value);
+	}
+
+	public override void visit_power(Power p) {
+		p.list[0].accept(this);
+		buffer.append("^");
+		p.list[1].accept(this);
+	}
+
+	public override void visit_product(Product p) {
+		foreach(var f in p.list) {
+			f.accept(this);
+			buffer.append("*");
+		}
+		buffer.erase(buffer.len - 1, 1);
+	}
+
+	public override void visit_sum(Sum s) {
+		foreach(var t in s.list) {
+			t.accept(this);
+			buffer.append("+");
+		}
+		buffer.erase(buffer.len - 1, 1);
 	}
 
 	public override void visit_symbol(Symbol s) {

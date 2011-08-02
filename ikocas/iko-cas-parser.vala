@@ -71,11 +71,9 @@ public class Iko.CAS.Parser : Object {
 			case TokenType.MINUS:
 				next();
 				var right = parse_expression_multiplicative();
-				left = new AlgebraicExpression.from_binary(
-					Operator.PLUS,
+				left = new Sum.from_binary(
 					left,
-					new AlgebraicExpression.from_binary(
-						Operator.MUL,
+					new Product.from_binary(
 						new Integer.from_int(-1),
 						right
 					)
@@ -84,7 +82,7 @@ public class Iko.CAS.Parser : Object {
 			case TokenType.PLUS:
 				next();
 				var right = parse_expression_multiplicative();
-				left = new AlgebraicExpression.from_binary(Operator.PLUS, left, right);
+				left = new Sum.from_binary(left, right);
 				break;
 			default:
 				loop = false;
@@ -102,12 +100,15 @@ public class Iko.CAS.Parser : Object {
 			case TokenType.SLASH:
 				next();
 				var right = parse_expression_power();
-				left = new AlgebraicExpression.from_binary(Operator.DIV, left, right);
+				left = new Product.from_binary(
+					left,
+					new Power(right, new Integer.from_int(-1))
+				);
 				break;
 			case TokenType.STAR:
 				next();
 				var right = parse_expression_power();
-				left = new AlgebraicExpression.from_binary(Operator.MUL, left, right);
+				left = new Product.from_binary(left, right);
 				break;
 			default:
 				loop = false;
@@ -130,7 +131,7 @@ public class Iko.CAS.Parser : Object {
 		while(loop) {
 			if(accept(TokenType.CARET)) {
 				var right = parse_expression_unary();
-				left = new AlgebraicExpression.from_binary(Operator.POWER, left, right);
+				left = new Power(left, right);
 			} else
 				loop = false;
 		}
@@ -154,8 +155,7 @@ public class Iko.CAS.Parser : Object {
 	Expression parse_expression_unary() throws ParseError {
 		if(current() == TokenType.MINUS) {
 			next();
-			return new AlgebraicExpression.from_binary(
-				Operator.MUL,
+			return new Product.from_binary(
 				new Integer.from_int(-1),
 				parse_expression_primary()
 			);
