@@ -12,6 +12,7 @@ libikocas_la_SOURCES = \
 	iko-cas-compound-expression.vala \
 	iko-cas-equality.vala \
 	iko-cas-expression.vala \
+	iko-cas-fraction.vala \
 	iko-cas-function-call.vala \
 	iko-cas-integer.vala \
 	iko-cas-linked-list.vala \
@@ -21,7 +22,6 @@ libikocas_la_SOURCES = \
 	iko-cas-parser.vala \
 	iko-cas-power.vala \
 	iko-cas-product.vala \
-	iko-cas-real.vala \
 	iko-cas-scanner.vala \
 	iko-cas-source-location.vala \
 	iko-cas-sum.vala \

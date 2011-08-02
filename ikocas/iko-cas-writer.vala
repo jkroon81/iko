@@ -26,6 +26,12 @@ public class Iko.CAS.Writer : Visitor {
 		buffer.erase(buffer.len - 1, 1);
 	}
 
+	public override void visit_fraction(Fraction f) {
+		f.num.accept(this);
+		buffer.append("/");
+		f.den.accept(this);
+	}
+
 	public override void visit_function_call(FunctionCall fc) {
 		buffer.append(fc.name);
 		buffer.append("(");
@@ -49,10 +55,6 @@ public class Iko.CAS.Writer : Visitor {
 		}
 		buffer.erase(buffer.len - 1, 1);
 		buffer.append("]");
-	}
-
-	public override void visit_real(Real r) {
-		buffer.append(r.value);
 	}
 
 	public override void visit_power(Power p) {

@@ -12,12 +12,14 @@ public class Iko.AST.Generator : Iko.Visitor {
 	FloatType float_type;
 	RealType real_type;
 	System system;
+	Iko.CAS.Parser cas_parser;
 
 	construct {
 		prefix = new Queue<string>();
 		q = new Queue<Iko.CAS.Expression>();
 		float_type = new FloatType();
 		real_type = new RealType();
+		cas_parser = new Iko.CAS.Parser();
 	}
 
 	string expression_to_string(Iko.Expression expr) {
@@ -179,7 +181,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 	}
 
 	public override void visit_float_literal(Iko.FloatLiteral fl) {
-		q.push_head(new Iko.CAS.Real(fl.value));
+		q.push_head(cas_parser.parse_source_string(fl.value));
 	}
 
 	public override void visit_integer_literal(Iko.IntegerLiteral il) {

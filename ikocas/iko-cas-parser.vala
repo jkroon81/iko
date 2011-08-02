@@ -142,9 +142,9 @@ public class Iko.CAS.Parser : Object {
 		Expression expr = null;
 
 		switch(current()) {
-		case TokenType.FLOAT:       expr = parse_literal_float();            break;
+		case TokenType.DOT:         expr = parse_numerical();                break;
 		case TokenType.IDENTIFIER:  expr = parse_symbol();                   break;
-		case TokenType.INTEGER:     expr = parse_literal_integer();          break;
+		case TokenType.INTEGER:     expr = parse_numerical();                break;
 		case TokenType.OPEN_PARENS: expr = parse_expression_parenthesized(); break;
 		default:
 			throw new ParseError.SYNTAX("expected expression");
@@ -175,16 +175,30 @@ public class Iko.CAS.Parser : Object {
 		return mc;
 	}
 
-	Real parse_literal_float() throws ParseError {
-		expect(TokenType.FLOAT);
-		var value = get_prev_string();
-		return new Real(value);
-	}
+	Expression parse_numerical() throws ParseError {
+		var integer = "0";
+		var fraction = "";
 
-	Integer parse_literal_integer() throws ParseError {
-		expect(TokenType.INTEGER);
-		var value = get_prev_string();
-		return new Integer.from_string(value);
+		if(accept(TokenType.INTEGER))
+			integer = get_prev_string();
+		if(accept(TokenType.DOT)) {
+			expect(TokenType.INTEGER);
+			fraction = get_prev_string();
+		}
+
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(integer);
+		buffer.append(fraction);
+		var num = int.parse(buffer.str).to_string();
+		buffer.truncate(0);
+		buffer.append("1");
+		for(var i = 0; i < fraction.length; i++)
+			buffer.append("0");
+		var den = buffer.str;
+		return new Fraction.from_binary(
+			new Integer.from_string(num),
+			new Integer.from_string(den)
+		);
 	}
 
 	public Expression? parse_source_string(string text) {

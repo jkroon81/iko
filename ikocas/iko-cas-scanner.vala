@@ -54,12 +54,6 @@ public class Iko.CAS.Scanner : Object {
 			while(current < end && current[0].isdigit())
 				current++;
 			token = TokenType.INTEGER;
-			if(current < end && current[0] == '.') {
-				current++;
-				while(current < end && current[0].isdigit())
-					current++;
-				token = TokenType.FLOAT;
-			}
 		} else {
 			switch(current[0]) {
 			case '^': token = TokenType.CARET;         break;

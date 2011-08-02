@@ -14,7 +14,6 @@ public enum Iko.CAS.TokenType {
 	DOT,
 	EOF,
 	EQ,
-	FLOAT,
 	IDENTIFIER,
 	INTEGER,
 	INVALID,
@@ -37,7 +36,6 @@ public enum Iko.CAS.TokenType {
 		case DOT:           return ".";
 		case EOF:           return "EOF";
 		case EQ:            return "=";
-		case FLOAT:         return "FLOAT";
 		case IDENTIFIER:    return "IDENTIFIER";
 		case INTEGER:       return "INTEGER";
 		case INVALID:       return "INVALID";
