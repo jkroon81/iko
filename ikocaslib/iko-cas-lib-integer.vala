@@ -11,7 +11,7 @@ namespace Iko.CAS.Library {
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			return new Undefined();
+			return undefined();
 
 		int mpp = 1;
 		int mp = 0;
@@ -52,7 +52,7 @@ namespace Iko.CAS.Library {
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			return new Undefined();
+			return undefined();
 
 		var A = a.ival;
 		var B = b.ival;
@@ -70,7 +70,7 @@ namespace Iko.CAS.Library {
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			return new Undefined();
+			return undefined();
 
 		return new Integer.from_int(a.ival / b.ival);
 	}
@@ -80,7 +80,7 @@ namespace Iko.CAS.Library {
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			return new Undefined();
+			return undefined();
 
 		return new Integer.from_int(a.ival % b.ival);
 	}

@@ -73,10 +73,7 @@ public class Iko.CAS.Parser : Object {
 				var right = parse_expression_multiplicative();
 				left = new Sum.from_binary(
 					left,
-					new Product.from_binary(
-						new Integer.from_int(-1),
-						right
-					)
+					new Product.from_binary(neg_one(), right)
 				);
 				break;
 			case TokenType.PLUS:
@@ -102,7 +99,7 @@ public class Iko.CAS.Parser : Object {
 				var right = parse_expression_power();
 				left = new Product.from_binary(
 					left,
-					new Power(right, new Integer.from_int(-1))
+					new Power(right, neg_one())
 				);
 				break;
 			case TokenType.STAR:
@@ -156,7 +153,7 @@ public class Iko.CAS.Parser : Object {
 		if(current() == TokenType.MINUS) {
 			next();
 			return new Product.from_binary(
-				new Integer.from_int(-1),
+				neg_one(),
 				parse_expression_primary()
 			);
 		}
