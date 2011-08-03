@@ -6,7 +6,7 @@
  */
 
 namespace Iko.CAS.Library {
-	public Expression iext_euc_alg(Expression x1, Expression x2) {
+	public Expression i_ext_euc_alg(Expression x1, Expression x2) {
 		var a = x1 as Integer;
 		var b = x2 as Integer;
 
@@ -47,7 +47,7 @@ namespace Iko.CAS.Library {
 		return l;
 	}
 
-	public Expression igcd(Expression x1, Expression x2) {
+	public Expression i_gcd(Expression x1, Expression x2) {
 		var a = x1 as Integer;
 		var b = x2 as Integer;
 
@@ -65,7 +65,7 @@ namespace Iko.CAS.Library {
 		return new Integer.from_int(A.abs());
 	}
 
-	public Expression iquot(Expression x1, Expression x2) {
+	public Expression i_quot(Expression x1, Expression x2) {
 		var a = x1 as Integer;
 		var b = x2 as Integer;
 
@@ -75,7 +75,7 @@ namespace Iko.CAS.Library {
 		return new Integer.from_int(a.ival / b.ival);
 	}
 
-	public Expression irem(Expression x1, Expression x2) {
+	public Expression i_rem(Expression x1, Expression x2) {
 		var a = x1 as Integer;
 		var b = x2 as Integer;
 
