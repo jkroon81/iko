@@ -184,7 +184,8 @@ public class Iko.CAS.Parser : Object {
 		if(accept(TokenType.DOT)) {
 			expect(TokenType.INTEGER);
 			fraction = get_prev_string();
-		}
+		} else
+			return new Integer.from_string(integer);
 
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(integer);
