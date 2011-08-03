@@ -28,6 +28,8 @@ namespace GI {
 		public static unowned Repository get_default ();
 		public unowned string load_typelib (Typelib typelib, RepositoryLoadFlags flags) throws RepositoryError;
 		public BaseInfo? find_by_name (string namespace_, string name);
+		public int get_n_infos (string namespace_);
+		public BaseInfo get_info (string namespace_, int index);
 	}
 
 	[Compact]
@@ -45,6 +47,7 @@ namespace GI {
 	[CCode (cprefix = "g_base_info_", ref_function = "g_base_info_ref", unref_function = "g_base_info_unref")]
 	public class BaseInfo {
 		public InfoType get_type ();
+		public unowned string get_name ();
 	}
 
 	[CCode (cname = "GInvokeError", cprefix = "G_INVOKE_ERROR_")]

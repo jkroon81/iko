@@ -48,17 +48,21 @@ LDADD = \
 
 icas_VALAFLAGS = \
 	--vapidir=$(top_builddir)/ikocas \
+	--pkg=gi \
 	--pkg=ikocas \
+	--pkg=posix \
 	--pkg=readline
 
 icas_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
+	@GI_CFLAGS@ \
 	-I$(top_srcdir)/iko \
 	-I$(top_srcdir)/ikoast \
 	-I$(top_srcdir)/ikocas
 
 icas_LDADD = \
 	@GOBJECT_LIBS@ \
+	@GI_LIBS@ \
 	$(top_builddir)/ikocas/libikocas.la \
 	$(top_builddir)/ikocaslib/libikocaslib.la \
 	-lreadline
