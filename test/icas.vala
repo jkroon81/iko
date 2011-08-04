@@ -50,7 +50,7 @@ int main(string[] args) {
 		if(line == "exit" || line == null)
 			break;
 		var expr = parser.parse_source_string(line);
-		stdout.printf("%s\n", new Iko.CAS.Writer().generate_string(expr.eval()));
+		stdout.printf("%s\n", expr.eval().to_string());
 		Readline.History.add(line);
 	}
 
