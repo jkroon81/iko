@@ -7,8 +7,57 @@ check_PROGRAMS = \
 	test-multiplication \
 	test-power
 
-CLEANFILES = \
-	*~
+icas_CFLAGS = \
+	@GOBJECT_CFLAGS@ \
+	@GI_CFLAGS@ \
+	-I$(top_srcdir)/ikocas
+
+icas_LDADD = \
+	@GOBJECT_LIBS@ \
+	@GI_LIBS@ \
+	$(top_builddir)/ikocas/libikocas.la \
+	$(top_builddir)/ikocaslib/libikocaslib.la \
+	-lreadline
+
+icas_SOURCES = \
+	icas.vala
+
+icas_VALAFLAGS = \
+	--pkg=gi \
+	--pkg=ikocas \
+	--pkg=posix \
+	--pkg=readline \
+	--vapidir=$(top_srcdir)/ikocas
+
+test_addition_SOURCES = \
+	test-common.vala \
+	test-addition.vala
+
+test_constant_folding_SOURCES = \
+	test-common.vala \
+	test-constant-folding.vala
+
+test_multiplication_SOURCES = \
+	test-common.vala \
+	test-multiplication.vala
+
+test_power_SOURCES = \
+	test-common.vala \
+	test-power.vala
+
+AM_CFLAGS = \
+	@GOBJECT_CFLAGS@ \
+	-I$(top_srcdir)/ikocas
+
+AM_VALAFLAGS = \
+	--pkg=ikocas \
+	--vapidir=$(top_srcdir)/ikocas
+
+CLEANFILES = *~
+
+LDADD = \
+	@GOBJECT_LIBS@ \
+	$(top_builddir)/ikocas/libikocas.la
 
 TESTS = \
 	test-addition \
@@ -18,52 +67,4 @@ TESTS = \
 
 XFAIL_TESTS = \
 	test-power
-
-icas_SOURCES = icas.vala
-test_addition_SOURCES = test-common.vala test-addition.vala
-test_constant_folding_SOURCES = test-common.vala test-constant-folding.vala
-test_multiplication_SOURCES = test-common.vala test-multiplication.vala
-test_power_SOURCES = test-common.vala test-power.vala
-
-AM_VALAFLAGS = \
-	--vapidir=$(top_builddir)/iko \
-	--vapidir=$(top_builddir)/ikoast \
-	--vapidir=$(top_builddir)/ikocas \
-	--pkg=iko \
-	--pkg=ikoast \
-	--pkg=ikocas
-
-AM_CFLAGS = \
-	@GOBJECT_CFLAGS@ \
-	-I$(top_srcdir)/iko \
-	-I$(top_srcdir)/ikoast \
-	-I$(top_srcdir)/ikocas
-
-LDADD = \
-	@GOBJECT_LIBS@ \
-	$(top_builddir)/iko/libiko.la \
-	$(top_builddir)/ikoast/libikoast.la \
-	$(top_builddir)/ikocas/libikocas.la \
-	$(top_builddir)/ikocaslib/libikocaslib.la
-
-icas_VALAFLAGS = \
-	--vapidir=$(top_builddir)/ikocas \
-	--pkg=gi \
-	--pkg=ikocas \
-	--pkg=posix \
-	--pkg=readline
-
-icas_CFLAGS = \
-	@GOBJECT_CFLAGS@ \
-	@GI_CFLAGS@ \
-	-I$(top_srcdir)/iko \
-	-I$(top_srcdir)/ikoast \
-	-I$(top_srcdir)/ikocas
-
-icas_LDADD = \
-	@GOBJECT_LIBS@ \
-	@GI_LIBS@ \
-	$(top_builddir)/ikocas/libikocas.la \
-	$(top_builddir)/ikocaslib/libikocaslib.la \
-	-lreadline
 

@@ -14,9 +14,9 @@ MAINTAINERCLEANFILES = \
 	$(srcdir)/build/missing
 
 SUBDIRS = \
-	iko \
 	ikocas \
 	ikocaslib \
+	iko \
 	ikoast \
 	ikovalacode \
 	ikoc \

@@ -1,36 +1,29 @@
+ikocaslib-1.0.typelib : ikocaslib-1.0.gir
+	g-ir-compiler $< -o $@
+
 lib_LTLIBRARIES = libikocaslib.la
-
-CLEANFILES = \
-	ikocaslib-1.0.gir \
-	ikocaslib-1.0.typelib \
-	ikocaslib.h \
-	ikocaslib.vapi \
-	*~
-
-libikocaslib_la_SOURCES = \
-	iko-cas-lib-integer.vala
-
-libikocaslib_la_VALAFLAGS = \
-	--library=ikocaslib \
-	--vapidir=$(top_builddir)/ikocas \
-	--pkg=ikocas \
-	--gir=ikocaslib-1.0.gir \
-	-H ikocaslib.h
 
 libikocaslib_la_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
-	-I$(top_builddir)/ikocas
+	-I$(top_srcdir)/ikocas
 
 libikocaslib_la_LIBADD = \
 	@GOBJECT_LIBS@ \
 	$(top_builddir)/ikocas/libikocas.la
 
-girdir = $(datadir)/gir-1.0
-gir_DATA = ikocaslib-1.0.gir
+libikocaslib_la_SOURCES = \
+	iko-cas-lib-integer.vala
 
-typelibdir = $(libdir)/girepository-1.0
-typelib_DATA = ikocaslib-1.0.typelib
+libikocaslib_la_VALAFLAGS = \
+	--gir=ikocaslib-1.0.gir \
+	--header=ikocaslib.h \
+	--library=ikocaslib \
+	--pkg=ikocas \
+	--vapidir=$(top_srcdir)/ikocas
 
-ikocaslib-1.0.typelib : ikocaslib-1.0.gir
-	g-ir-compiler $< -o $@
+noinst_typelib_DATA = ikocaslib-1.0.typelib
+
+noinst_typelibdir =
+
+CLEANFILES = *~
 

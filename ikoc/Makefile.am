@@ -1,21 +1,5 @@
 bin_PROGRAMS = ikoc
 
-CLEANFILES = \
-	*~
-
-ikoc_SOURCES = \
-	ikoc.vala
-
-ikoc_VALAFLAGS = \
-	--vapidir=$(top_builddir)/iko \
-	--vapidir=$(top_builddir)/ikoast \
-	--vapidir=$(top_builddir)/ikocas \
-	--vapidir=$(top_builddir)/ikovalacode \
-	--pkg=iko \
-	--pkg=ikoast \
-	--pkg=ikocas \
-	--pkg=ikovalacode
-
 ikoc_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
 	-I$(top_srcdir)/iko \
@@ -29,4 +13,19 @@ ikoc_LDADD = \
 	$(top_builddir)/ikoast/libikoast.la \
 	$(top_builddir)/ikocas/libikocas.la \
 	$(top_builddir)/ikovalacode/libikovalacode.la
+
+ikoc_SOURCES = \
+	ikoc.vala
+
+ikoc_VALAFLAGS = \
+	--pkg=iko \
+	--pkg=ikoast \
+	--pkg=ikocas \
+	--pkg=ikovalacode \
+	--vapidir=$(top_srcdir)/iko \
+	--vapidir=$(top_srcdir)/ikoast \
+	--vapidir=$(top_srcdir)/ikocas \
+	--vapidir=$(top_srcdir)/ikovalacode
+
+CLEANFILES = *~
 

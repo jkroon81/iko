@@ -1,9 +1,12 @@
 lib_LTLIBRARIES = libikocas.la
 
-CLEANFILES = \
-	ikocas.h \
-	ikocas.vapi \
-	*~
+libikocas_la_CFLAGS = \
+	@GOBJECT_CFLAGS@ \
+	@GI_CFLAGS@
+
+libikocas_la_LIBADD = \
+	@GOBJECT_LIBS@ \
+	@GI_LIBS@
 
 libikocas_la_SOURCES = \
 	gi.vapi \
@@ -33,14 +36,8 @@ libikocas_la_SOURCES = \
 	iko-cas-writer.vala
 
 libikocas_la_VALAFLAGS = \
-	--library=ikocas \
-	-H ikocas.h
+	--header=ikocas.h \
+	--library=ikocas
 
-libikocas_la_CFLAGS = \
-	@GOBJECT_CFLAGS@ \
-	@GI_CFLAGS@
-
-libikocas_la_LIBADD = \
-	@GOBJECT_LIBS@ \
-	@GI_LIBS@
+CLEANFILES = *~
 

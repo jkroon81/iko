@@ -1,9 +1,10 @@
 lib_LTLIBRARIES = libiko.la
 
-CLEANFILES = \
-	iko.h \
-	iko.vapi \
-	*~
+libiko_la_CFLAGS = \
+	@GOBJECT_CFLAGS@
+
+libiko_la_LIBADD = \
+	@GOBJECT_LIBS@
 
 libiko_la_SOURCES = \
 	iko-array-access.vala \
@@ -50,12 +51,8 @@ libiko_la_SOURCES = \
 	iko-writer.vala
 
 libiko_la_VALAFLAGS = \
-	--library=iko \
-	-H iko.h
+	--header=iko.h \
+	--library=iko
 
-libiko_la_CFLAGS = \
-	@GOBJECT_CFLAGS@
-
-libiko_la_LIBADD = \
-	@GOBJECT_LIBS@
+CLEANFILES = *~
 
