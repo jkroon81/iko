@@ -199,16 +199,12 @@ public class Iko.CAS.Parser : Object {
 		);
 	}
 
-	public Expression? parse_source_string(string text) {
+	public Expression parse_source_string(string text) throws ParseError {
 		scanner = new Scanner(text);
 		index = -1;
 		size = 0;
 		next();
-		try {
-			return parse_expression();
-		} catch(ParseError e) {
-			return null;
-		}
+		return parse_expression();
 	}
 
 	Expression parse_symbol() throws ParseError {

@@ -38,11 +38,19 @@ int main(string[] args) {
 
 	while(true) {
 		var line = Readline.readline("> ");
-		if(line == "exit" || line == null)
+		if(line == null) {
+			stdout.putc('\n');
 			break;
-		var expr = parser.parse_source_string(line);
-		stdout.printf("%s\n", expr.eval().to_string());
-		Readline.History.add(line);
+		}
+		if(line[0] != 0) {
+			try {
+				var expr = parser.parse_source_string(line);
+				stdout.printf("%s\n", expr.eval().to_string());
+			} catch(Iko.CAS.ParseError e) {
+				stdout.printf("Syntax error\n");
+			}
+			Readline.History.add(line);
+		}
 	}
 
 	return 0;

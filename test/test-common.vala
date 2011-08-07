@@ -11,11 +11,17 @@ namespace TestCommon {
 	const string GREEN = "\033[1;32m";
 
 	public static int test(string left_in, string right_in) {
+		Iko.CAS.Expression left, right;
 		int retval;
 
 		var parser = new Iko.CAS.Parser();
-		var left = parser.parse_source_string(left_in);
-		var right = parser.parse_source_string(right_in);
+
+		try {
+			left = parser.parse_source_string(left_in);
+			right = parser.parse_source_string(right_in);
+		} catch(Iko.CAS.ParseError e) {
+			assert_not_reached();
+		}
 
 		var left_gen = Iko.CAS.Library.rne_simplify(left).to_string();
 		var right_gen = Iko.CAS.Library.rne_simplify(right).to_string();
