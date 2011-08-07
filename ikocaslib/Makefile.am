@@ -19,7 +19,8 @@ libikocaslib_la_LIBADD = \
 
 libikocaslib_la_SOURCES = \
 	iko-cas-lib.vala \
-	iko-cas-lib-integer.vala
+	iko-cas-lib-integer.vala \
+	iko-cas-lib-rational-number-expression.vala
 
 libikocaslib_la_VALAFLAGS = \
 	--gir=ikocaslib-1.0.gir \

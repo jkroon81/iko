@@ -47,17 +47,21 @@ test_power_SOURCES = \
 
 AM_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
-	-I$(top_srcdir)/ikocas
+	-I$(top_srcdir)/ikocas \
+	-I$(top_srcdir)/ikocaslib
 
 AM_VALAFLAGS = \
 	--pkg=ikocas \
-	--vapidir=$(top_srcdir)/ikocas
+	--pkg=ikocaslib \
+	--vapidir=$(top_srcdir)/ikocas \
+	--vapidir=$(top_srcdir)/ikocaslib
 
 CLEANFILES = *~
 
 LDADD = \
 	@GOBJECT_LIBS@ \
-	$(top_builddir)/ikocas/libikocas.la
+	$(top_builddir)/ikocas/libikocas.la \
+	$(top_builddir)/ikocaslib/libikocaslib.la
 
 TESTS = \
 	test-addition \
