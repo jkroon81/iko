@@ -9,14 +9,6 @@ static string[] db;
 static int list_index = 0;
 static int len = 0;
 
-static void create_db() {
-	var repo = GI.Repository.get_default();
-	var n = repo.get_n_infos("ikocaslib");
-	db = new string[n];
-	for(var i = 0; i < n; i++)
-		db[i] = repo.get_info("ikocaslib", i).get_name().substring(12, -1);
-}
-
 static string? compl_func(string text, int state) {
 	string name;
 
@@ -35,15 +27,14 @@ static string? compl_func(string text, int state) {
 
 int main(string[] args) {
 	Environment.set_prgname("icas");
-	Iko.CAS.init();
+	Iko.CAS.Library.init();
+	db = Iko.CAS.Library.get_functions();
 	var parser = new Iko.CAS.Parser();
 
 	Readline.basic_word_break_characters ="0123456789+-*/^()[],. ";
 	Readline.bind_key('\t', Readline.complete);
 	Readline.completion_entry_function = compl_func;
 	Readline.variable_bind("show-all-if-unmodified", "on");
-
-	create_db();
 
 	while(true) {
 		var line = Readline.readline("> ");

@@ -22,5 +22,6 @@ SUBDIRS = \
 	ikoc \
 	test \
 	examples \
-	util
+	util \
+	vapi
 

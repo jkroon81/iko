@@ -5,8 +5,6 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-using GI;
-
 namespace Iko.CAS {
 	static Integer _neg_one = null;
 	static Integer _one = null;
@@ -28,22 +26,5 @@ namespace Iko.CAS {
 		if(_undefined == null)
 			_undefined = new Undefined();
 		return _undefined;
-	}
-
-	public static bool init() {
-		var repo = Repository.get_default();
-
-		try {
-			var typelib = Typelib.new_from_mapped_file(
-				new MappedFile("ikocaslib/ikocaslib-1.0.typelib", false)
-			);
-			repo.load_typelib(typelib, RepositoryLoadFlags.LAZY);
-		} catch(FileError e) {
-			return false;
-		} catch(RepositoryError e) {
-			return false;
-		}
-
-		return true;
 	}
 }

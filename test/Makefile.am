@@ -9,12 +9,11 @@ check_PROGRAMS = \
 
 icas_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
-	@GI_CFLAGS@ \
-	-I$(top_srcdir)/ikocas
+	-I$(top_srcdir)/ikocas \
+	-I$(top_srcdir)/ikocaslib
 
 icas_LDADD = \
 	@GOBJECT_LIBS@ \
-	@GI_LIBS@ \
 	$(top_builddir)/ikocas/libikocas.la \
 	$(top_builddir)/ikocaslib/libikocaslib.la \
 	-lreadline
@@ -23,11 +22,12 @@ icas_SOURCES = \
 	icas.vala
 
 icas_VALAFLAGS = \
-	--pkg=gi \
 	--pkg=ikocas \
+	--pkg=ikocaslib \
 	--pkg=posix \
 	--pkg=readline \
-	--vapidir=$(top_srcdir)/ikocas
+	--vapidir=$(top_srcdir)/ikocas \
+	--vapidir=$(top_srcdir)/ikocaslib
 
 test_addition_SOURCES = \
 	test-common.vala \

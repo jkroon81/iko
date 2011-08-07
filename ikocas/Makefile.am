@@ -2,15 +2,14 @@ lib_LTLIBRARIES = libikocas.la
 
 libikocas_la_CFLAGS = \
 	@GOBJECT_CFLAGS@ \
-	@GI_CFLAGS@
+	@GI_CFLAGS@ \
+	-I$(top_srcdir)/vapi
 
 libikocas_la_LIBADD = \
 	@GOBJECT_LIBS@ \
 	@GI_LIBS@
 
 libikocas_la_SOURCES = \
-	gi.vapi \
-	iko-cas.vala \
 	iko-cas-atomic-expression.vala \
 	iko-cas-compound-expression.vala \
 	iko-cas-equality.vala \
@@ -26,6 +25,7 @@ libikocas_la_SOURCES = \
 	iko-cas-power.vala \
 	iko-cas-product.vala \
 	iko-cas-scanner.vala \
+	iko-cas-singletons.vala \
 	iko-cas-source-location.vala \
 	iko-cas-sum.vala \
 	iko-cas-symbol.vala \
@@ -37,7 +37,9 @@ libikocas_la_SOURCES = \
 
 libikocas_la_VALAFLAGS = \
 	--header=ikocas.h \
-	--library=ikocas
+	--library=ikocas \
+	--pkg=gi \
+	--vapidir=$(top_srcdir)/vapi
 
 CLEANFILES = *~
 

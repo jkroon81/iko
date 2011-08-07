@@ -24,4 +24,5 @@ AC_OUTPUT(
 	ikovalacode/Makefile
 	test/Makefile
 	util/Makefile
+	vapi/Makefile
 	)

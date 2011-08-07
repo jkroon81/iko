@@ -7,7 +7,7 @@
 
 using GLib;
 
-[CCode (cprefix = "GI", lower_case_cprefix = "g_i", cheader_filename = "gi-fixes.h")]
+[CCode (cprefix = "GI", lower_case_cprefix = "g_i", cheader_filename = "gi.h")]
 namespace GI {
 
 	[CCode (cprefix = "G_IREPOSITORY_ERROR_")]
@@ -35,7 +35,7 @@ namespace GI {
 	[Compact]
 	[CCode (cname = "GTypelib", cprefix = "g_typelib_", free_function = "")]
 	public class Typelib {
-		public static Typelib new_from_mapped_file (owned MappedFile mfile) throws RepositoryError;
+		public static Typelib new_from_const_memory (uchar[] memory) throws RepositoryError;
 	}
 
 	[CCode (cprefix = "GI_INFO_TYPE_")]
