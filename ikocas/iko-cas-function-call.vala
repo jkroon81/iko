@@ -11,18 +11,12 @@ public class Iko.CAS.FunctionCall : CompoundExpression {
 	public string name { get; construct; }
 
 	public FunctionCall(string name) {
-		Object(name : name, op : Operator.FUNCTION);
+		Object(name : name);
 	}
 
 	public override void accept(Visitor v) {
 		base.accept(v);
 		v.visit_function_call(this);
-	}
-
-	public override void accept_children(Visitor v) {
-		base.accept_children(v);
-		foreach(var arg in list)
-			arg.accept(v);
 	}
 
 	public override Expression eval() {
@@ -33,11 +27,11 @@ public class Iko.CAS.FunctionCall : CompoundExpression {
 		if(base_info.get_type() != InfoType.FUNCTION)
 			return this;
 
-		Argument[] arg_in = new Argument[list.size];
+		Argument[] arg_in = new Argument[size];
 		Argument retval;
 
-		for(var i = 0; i < list.size; i++)
-			arg_in[i].pointer = list[i];
+		for(var i = 0; i < size; i++)
+			arg_in[i].pointer = this[i];
 
 		try {
 			((FunctionInfo)base_info).invoke(arg_in, null, out retval);

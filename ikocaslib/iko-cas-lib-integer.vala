@@ -36,13 +36,13 @@ namespace Iko.CAS.Library {
 		}
 		var l = new List();
 		if(A >= 0) {
-			l.list.append(new Integer.from_int(A));
-			l.list.append(new Integer.from_int(mpp));
-			l.list.append(new Integer.from_int(npp));
+			l.append(new Integer.from_int(A));
+			l.append(new Integer.from_int(mpp));
+			l.append(new Integer.from_int(npp));
 		} else {
-			l.list.append(new Integer.from_int(-A));
-			l.list.append(new Integer.from_int(-mpp));
-			l.list.append(new Integer.from_int(-npp));
+			l.append(new Integer.from_int(-A));
+			l.append(new Integer.from_int(-mpp));
+			l.append(new Integer.from_int(-npp));
 		}
 		return l;
 	}

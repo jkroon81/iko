@@ -7,20 +7,13 @@
 
 public class Iko.CAS.Power : CompoundExpression {
 	public Power(Expression radix, Expression exp) {
-		Object(op : Operator.POWER);
-		list.append(radix);
-		list.append(exp);
+		append(radix);
+		append(exp);
 	}
 
 	public override void accept(Visitor v) {
 		base.accept(v);
 		v.visit_power(this);
-	}
-
-	public override void accept_children(Visitor v) {
-		base.accept_children(v);
-		foreach(var e in list)
-			e.accept(v);
 	}
 
 	public override Expression eval() {

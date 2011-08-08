@@ -12,8 +12,8 @@ namespace Iko.CAS.Library {
 		if(p == null)
 			return e;
 
-		var radix = p.list[0];
-		var exp = p.list[1] as Integer;
+		var radix = p[0];
+		var exp = p[1] as Integer;
 
 		if(exp == null)
 			return e;
@@ -51,7 +51,7 @@ namespace Iko.CAS.Library {
 		var rn = 1;
 		var rd = 1;
 
-		foreach(var f in p.list) {
+		foreach(var f in p) {
 			if(f is Integer)
 				rn *= (f as Integer).ival;
 			else if(f is Fraction) {
@@ -76,7 +76,7 @@ namespace Iko.CAS.Library {
 		var rn = 0;
 		var rd = 1;
 
-		foreach(var t in s.list) {
+		foreach(var t in s) {
 			if(t is Integer)
 				rn += rd * (t as Integer).ival;
 			else if(t is Fraction) {
@@ -145,8 +145,8 @@ namespace Iko.CAS.Library {
 				return e;
 		} else if(e is Power) {
 			var p = e as Power;
-			var radix = rne_simplify_rec(p.list[0]);
-			var exp = rne_simplify(p.list[1]);
+			var radix = rne_simplify_rec(p[0]);
+			var exp = rne_simplify(p[1]);
 			if(radix is Undefined)
 				return radix;
 			else
@@ -154,21 +154,21 @@ namespace Iko.CAS.Library {
 		} else if(e is Product) {
 			var p = e as Product;
 			var p2 = new Product();
-			foreach(var f in p.list) {
+			foreach(var f in p) {
 				f = rne_simplify_rec(f);
 				if(f is Undefined)
 					return f;
-				p2.list.append(f);
+				p2.append(f);
 			}
 			return rne_eval_product(p2);
 		} else if(e is Sum) {
 			var s = e as Sum;
 			var s2 = new Sum();
-			foreach(var t in s.list) {
+			foreach(var t in s) {
 				t = rne_simplify_rec(t);
 				if(t is Undefined)
 					return t;
-				s2.list.append(t);
+				s2.append(t);
 			}
 			return rne_eval_sum(s2);
 		}

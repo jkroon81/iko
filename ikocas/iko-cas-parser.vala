@@ -164,12 +164,12 @@ public class Iko.CAS.Parser : Object {
 
 	FunctionCall parse_function_call(string name) throws ParseError {
 		expect(TokenType.OPEN_PARENS);
-		var mc = new FunctionCall(name);
+		var fc = new FunctionCall(name);
 		do {
-			mc.list.append(parse_expression());
+			fc.append(parse_expression());
 		} while(accept(TokenType.COMMA));
 		expect(TokenType.CLOSE_PARENS);
-		return mc;
+		return fc;
 	}
 
 	Expression parse_numerical() throws ParseError {

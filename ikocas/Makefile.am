@@ -17,10 +17,8 @@ libikocas_la_SOURCES = \
 	iko-cas-fraction.vala \
 	iko-cas-function-call.vala \
 	iko-cas-integer.vala \
-	iko-cas-linked-list.vala \
 	iko-cas-list.vala \
 	iko-cas-node.vala \
-	iko-cas-operator.vala \
 	iko-cas-parser.vala \
 	iko-cas-power.vala \
 	iko-cas-product.vala \

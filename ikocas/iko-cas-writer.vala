@@ -19,7 +19,7 @@ public class Iko.CAS.Writer : Visitor {
 	}
 
 	public override void visit_equality(Equality eq) {
-		foreach(var e in eq.list) {
+		foreach(var e in eq) {
 			e.accept(this);
 			buffer.append("=");
 		}
@@ -35,7 +35,7 @@ public class Iko.CAS.Writer : Visitor {
 	public override void visit_function_call(FunctionCall fc) {
 		buffer.append(fc.name);
 		buffer.append("(");
-		foreach(Expression arg in fc.list) {
+		foreach(Expression arg in fc) {
 			arg.accept(this);
 			buffer.append(",");
 		}
@@ -49,7 +49,7 @@ public class Iko.CAS.Writer : Visitor {
 
 	public override void visit_list(List l) {
 		buffer.append("[");
-		foreach(Expression e in l.list) {
+		foreach(Expression e in l) {
 			e.accept(this);
 			buffer.append(",");
 		}
@@ -58,13 +58,13 @@ public class Iko.CAS.Writer : Visitor {
 	}
 
 	public override void visit_power(Power p) {
-		p.list[0].accept(this);
+		p[0].accept(this);
 		buffer.append("^");
-		p.list[1].accept(this);
+		p[1].accept(this);
 	}
 
 	public override void visit_product(Product p) {
-		foreach(var f in p.list) {
+		foreach(var f in p) {
 			f.accept(this);
 			buffer.append("*");
 		}
@@ -72,7 +72,7 @@ public class Iko.CAS.Writer : Visitor {
 	}
 
 	public override void visit_sum(Sum s) {
-		foreach(var t in s.list) {
+		foreach(var t in s) {
 			t.accept(this);
 			buffer.append("+");
 		}
