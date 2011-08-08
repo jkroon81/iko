@@ -14,6 +14,7 @@ libikocas_la_SOURCES = \
 	iko-cas-compound-expression.vala \
 	iko-cas-equality.vala \
 	iko-cas-expression.vala \
+	iko-cas-factorial.vala \
 	iko-cas-fraction.vala \
 	iko-cas-function-call.vala \
 	iko-cas-integer.vala \

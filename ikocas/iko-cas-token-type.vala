@@ -18,6 +18,7 @@ public enum Iko.CAS.TokenType {
 	INTEGER,
 	INVALID,
 	MINUS,
+	NOT,
 	OPEN_BRACE,
 	OPEN_BRACKET,
 	OPEN_PARENS,
@@ -40,6 +41,7 @@ public enum Iko.CAS.TokenType {
 		case INTEGER:       return "INTEGER";
 		case INVALID:       return "INVALID";
 		case MINUS:         return "MINUS";
+		case NOT:           return "!";
 		case OPEN_BRACE:    return "{";
 		case OPEN_BRACKET:  return "[";
 		case OPEN_PARENS:   return "(";

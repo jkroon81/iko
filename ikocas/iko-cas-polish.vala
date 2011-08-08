@@ -28,6 +28,12 @@ public class Iko.CAS.Polish : Visitor {
 		buffer.append(")");
 	}
 
+	public override void visit_factorial(Factorial f) {
+		buffer.append("(! ");
+		f[0].accept(this);
+		buffer.append(")");
+	}
+
 	public override void visit_fraction(Fraction f) {
 		buffer.append("(/ ");
 		f.num.accept(this);

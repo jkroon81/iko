@@ -65,6 +65,7 @@ public class Iko.CAS.Scanner : Object {
 			case '=': token = TokenType.EQ;            break;
 			default : token = TokenType.INVALID;       break;
 			case '-': token = TokenType.MINUS;         break;
+			case '!': token = TokenType.NOT;           break;
 			case '{': token = TokenType.OPEN_BRACE;    break;
 			case '[': token = TokenType.OPEN_BRACKET;  break;
 			case '(': token = TokenType.OPEN_PARENS;   break;

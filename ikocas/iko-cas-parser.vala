@@ -159,7 +159,10 @@ public class Iko.CAS.Parser : Object {
 		}
 		if(current() == TokenType.PLUS)
 			next();
-		return parse_expression_primary();
+		var e = parse_expression_primary();
+		if(accept(TokenType.NOT))
+			e = new Factorial.from_unary(e);
+		return e;
 	}
 
 	FunctionCall parse_function_call(string name) throws ParseError {

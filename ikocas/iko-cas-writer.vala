@@ -26,6 +26,11 @@ public class Iko.CAS.Writer : Visitor {
 		buffer.erase(buffer.len - 1, 1);
 	}
 
+	public override void visit_factorial(Factorial f) {
+		f[0].accept(this);
+		buffer.append("!");
+	}
+
 	public override void visit_fraction(Fraction f) {
 		f.num.accept(this);
 		buffer.append("/");
