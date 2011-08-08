@@ -9,7 +9,7 @@ public class Iko.CAS.Fraction : Expression {
 	public Integer num { get; construct; }
 	public Integer den { get; construct; }
 
-	public Fraction.from_binary(Integer num, Integer den) {
+	public Fraction(Integer num, Integer den) {
 		Object(num : num, den : den);
 	}
 

@@ -20,22 +20,28 @@ namespace Iko.CAS.Library {
 
 		if(radix is Integer || radix is Fraction) {
 			if(exp.ival > 0) {
-				var s = rne_eval_power(new Power(radix, new Integer.from_int(exp.ival - 1)));
+				var s = rne_eval_power(
+					new Power.from_binary(radix, new Integer.from_int(exp.ival - 1))
+				);
 				return rne_eval_product(new Product.from_binary(s, radix));
 			} else if(exp.ival == 0)
 				return one();
 			else if(exp.ival == -1) {
 				if(radix is Integer)
-					return new Fraction.from_binary(one(), radix as Integer);
+					return new Fraction(one(), radix as Integer);
 				else
-					return new Fraction.from_binary((radix as Fraction).den, (radix as Fraction).num);
+					return new Fraction((radix as Fraction).den, (radix as Fraction).num);
 			} else {
 				if(radix is Integer) {
-					var s = new Fraction.from_binary(one(), radix as Integer);
-					return rne_eval_power(new Power(s, new Integer.from_int(-exp.ival)));
+					var s = new Fraction(one(), radix as Integer);
+					return rne_eval_power(
+						new Power.from_binary(s, new Integer.from_int(-exp.ival))
+					);
 				} else {
-					var s = new Fraction.from_binary((radix as Fraction).den, (radix as Fraction).num);
-					return rne_eval_power(new Power(s, new Integer.from_int(-exp.ival)));
+					var s = new Fraction((radix as Fraction).den, (radix as Fraction).num);
+					return rne_eval_power(
+						new Power.from_binary(s, new Integer.from_int(-exp.ival))
+					);
 				}
 			}
 		} else
@@ -61,10 +67,7 @@ namespace Iko.CAS.Library {
 				return e;
 		}
 
-		return new Fraction.from_binary(
-			new Integer.from_int(rn),
-			new Integer.from_int(rd)
-		);
+		return new Fraction(new Integer.from_int(rn), new Integer.from_int(rd));
 	}
 
 	Expression rne_eval_sum(Expression e) {
@@ -90,10 +93,7 @@ namespace Iko.CAS.Library {
 				return e;
 		}
 
-		return new Fraction.from_binary(
-			new Integer.from_int(rn),
-			new Integer.from_int(rd)
-		);
+		return new Fraction(new Integer.from_int(rn), new Integer.from_int(rd));
 	}
 
 	public Expression rne_simplify(Expression e) {
@@ -117,12 +117,9 @@ namespace Iko.CAS.Library {
 			else {
 				var g = i_gcd(n, d);
 				if(d.ival > 0)
-					return new Fraction.from_binary(
-						i_quot(n, g) as Integer,
-						i_quot(d, g) as Integer
-					);
+					return new Fraction(i_quot(n, g) as Integer, i_quot(d, g) as Integer);
 				else if(d.ival < 0) {
-					return new Fraction.from_binary(
+					return new Fraction(
 						i_quot(new Integer.from_int(-n.ival),g) as Integer,
 						i_quot(new Integer.from_int(-d.ival),g) as Integer
 					);
@@ -150,7 +147,7 @@ namespace Iko.CAS.Library {
 			if(radix is Undefined)
 				return radix;
 			else
-				return rne_eval_power(new Power(radix, exp));
+				return rne_eval_power(new Power.from_binary(radix, exp));
 		} else if(e is Product) {
 			var p = e as Product;
 			var p2 = new Product();

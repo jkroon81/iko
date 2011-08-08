@@ -6,7 +6,7 @@
  */
 
 public class Iko.CAS.Power : CompoundExpression {
-	public Power(Expression radix, Expression exp) {
+	public Power.from_binary(Expression radix, Expression exp) {
 		append(radix);
 		append(exp);
 	}

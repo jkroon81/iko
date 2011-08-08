@@ -95,7 +95,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			q.push_head(
 				new Iko.CAS.Product.from_binary(
 					generate_cas_expression(be.left),
-					new Iko.CAS.Power(
+					new Iko.CAS.Power.from_binary(
 						generate_cas_expression(be.right),
 						Iko.CAS.neg_one()
 					)
@@ -131,7 +131,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			break;
 		case Iko.BinaryExpression.Operator.POWER:
 			q.push_head(
-				new Iko.CAS.Power(
+				new Iko.CAS.Power.from_binary(
 					generate_cas_expression(be.left),
 					generate_cas_expression(be.right)
 				)

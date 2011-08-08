@@ -99,7 +99,7 @@ public class Iko.CAS.Parser : Object {
 				var right = parse_expression_power();
 				left = new Product.from_binary(
 					left,
-					new Power(right, neg_one())
+					new Power.from_binary(right, neg_one())
 				);
 				break;
 			case TokenType.STAR:
@@ -128,7 +128,7 @@ public class Iko.CAS.Parser : Object {
 		while(loop) {
 			if(accept(TokenType.CARET)) {
 				var right = parse_expression_unary();
-				left = new Power(left, right);
+				left = new Power.from_binary(left, right);
 			} else
 				loop = false;
 		}
@@ -193,7 +193,7 @@ public class Iko.CAS.Parser : Object {
 		for(var i = 0; i < fraction.length; i++)
 			buffer.append("0");
 		var den = buffer.str;
-		return new Fraction.from_binary(
+		return new Fraction(
 			new Integer.from_string(num),
 			new Integer.from_string(den)
 		);
