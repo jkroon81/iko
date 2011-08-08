@@ -21,10 +21,10 @@ public class Iko.CAS.FunctionCall : CompoundExpression {
 
 	public override Expression eval() {
 		var repo = Repository.get_default();
-		var base_info = repo.find_by_name("ikocaslib", "cas_library_" + name);
-		if(base_info == null)
+		var info = repo.find_by_name("ikocaslib", "cas_library_" + name);
+		if(info == null)
 			return this;
-		if(base_info.get_type() != InfoType.FUNCTION)
+		if(info.get_type() != InfoType.FUNCTION)
 			return this;
 
 		Argument[] arg_in = new Argument[size];
@@ -34,7 +34,7 @@ public class Iko.CAS.FunctionCall : CompoundExpression {
 			arg_in[i].pointer = this[i];
 
 		try {
-			((FunctionInfo)base_info).invoke(arg_in, null, out retval);
+			((FunctionInfo)info).invoke(arg_in, null, out retval);
 		} catch (InvokeError e) {
 			stdout.printf("Error invoking\n");
 			return this;
