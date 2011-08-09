@@ -47,7 +47,7 @@ int main(string[] args) {
 				var expr = parser.parse_source_string(line);
 				stdout.printf("%s\n", expr.eval().to_string());
 			} catch(Iko.CAS.ParseError e) {
-				stdout.printf("Syntax error\n");
+				stdout.printf("Syntax error: %s\n", e.message);
 			}
 			Readline.History.add(line);
 		}

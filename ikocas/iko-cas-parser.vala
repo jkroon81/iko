@@ -204,7 +204,9 @@ public class Iko.CAS.Parser : Object {
 		index = -1;
 		size = 0;
 		next();
-		return parse_expression();
+		var e = parse_expression();
+		expect(TokenType.EOF);
+		return e;
 	}
 
 	Expression parse_symbol() throws ParseError {
