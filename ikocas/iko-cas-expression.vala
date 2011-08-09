@@ -13,6 +13,10 @@ public abstract class Iko.CAS.Expression : Node {
 
 	public abstract Expression eval();
 
+	public string to_polish() {
+		return new Iko.CAS.Polish().generate_string(this);
+	}
+
 	public string to_string() {
 		return new Iko.CAS.Writer().generate_string(this);
 	}
