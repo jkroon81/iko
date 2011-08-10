@@ -6,17 +6,12 @@
  */
 
 namespace Iko.CAS.Library {
-	Expression rne_eval_power(Expression e) {
-		var p = e as Power;
-
-		if(p == null)
-			return e;
-
+	Expression rne_eval_power(Power p) {
 		var radix = p[0];
 		var exp = p[1] as Integer;
 
 		if(exp == null)
-			return e;
+			return p;
 
 		if(radix is Integer || radix is Fraction) {
 			if(exp.ival > 0) {
@@ -45,15 +40,10 @@ namespace Iko.CAS.Library {
 				}
 			}
 		} else
-			return e;
+			return p;
 	}
 
-	Expression rne_eval_product(Expression e) {
-		var p = e as Product;
-
-		if(p == null)
-			return e;
-
+	Expression rne_eval_product(Product p) {
 		var rn = 1;
 		var rd = 1;
 
@@ -64,18 +54,13 @@ namespace Iko.CAS.Library {
 				rn *= (f as Fraction).num.ival;
 				rd *= (f as Fraction).den.ival;
 			} else
-				return e;
+				return p;
 		}
 
 		return new Fraction(new Integer.from_int(rn), new Integer.from_int(rd));
 	}
 
-	Expression rne_eval_sum(Expression e) {
-		var s = e as Sum;
-
-		if(s == null)
-			return e;
-
+	Expression rne_eval_sum(Sum s) {
 		var rn = 0;
 		var rd = 1;
 
@@ -90,7 +75,7 @@ namespace Iko.CAS.Library {
 				rn = rn * lcm / rd + n.ival * lcm / d.ival;
 				rd = lcm;
 			} else
-				return e;
+				return s;
 		}
 
 		return new Fraction(new Integer.from_int(rn), new Integer.from_int(rd));
