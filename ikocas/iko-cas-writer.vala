@@ -137,8 +137,4 @@ public class Iko.CAS.Writer : Visitor {
 	public override void visit_symbol(Symbol s) {
 		buffer.append(s.name);
 	}
-
-	public override void visit_undefined(Undefined u) {
-		buffer.append("Undefined");
-	}
 }
