@@ -48,7 +48,7 @@ public class Iko.CAS.Writer : Visitor {
 	}
 
 	public override void visit_function_call(FunctionCall fc) {
-		buffer.append(fc.name);
+		buffer.append(fc.symbol.name);
 		buffer.append("(");
 		if(fc.size > 0) {
 			foreach(Expression arg in fc) {

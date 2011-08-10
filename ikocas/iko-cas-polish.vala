@@ -43,7 +43,7 @@ public class Iko.CAS.Polish : Visitor {
 	}
 
 	public override void visit_function_call(FunctionCall fc) {
-		buffer.append("(" + fc.name + " ");
+		buffer.append("(" + fc.symbol.name + " ");
 		foreach(Expression arg in fc) {
 			arg.accept(this);
 			buffer.append(" ");

@@ -165,18 +165,6 @@ public class Iko.CAS.Parser : Object {
 		return e;
 	}
 
-	FunctionCall parse_function_call(string name) throws ParseError {
-		expect(TokenType.OPEN_PARENS);
-		var fc = new FunctionCall(name);
-		if(!accept(TokenType.CLOSE_PARENS)) {
-			do {
-				fc.append(parse_expression());
-			} while(accept(TokenType.COMMA));
-			expect(TokenType.CLOSE_PARENS);
-		}
-		return fc;
-	}
-
 	Expression parse_numerical() throws ParseError {
 		var integer = "0";
 		var fraction = "";
@@ -216,12 +204,17 @@ public class Iko.CAS.Parser : Object {
 
 	Expression parse_symbol() throws ParseError {
 		expect(TokenType.IDENTIFIER);
-		var name = get_prev_string();
-		switch(current()) {
-		case TokenType.OPEN_PARENS:
-			return parse_function_call(name);
-		default:
-			return new Iko.CAS.Symbol(name);
-		}
+		var s = new Iko.CAS.Symbol(get_prev_string());
+		if(accept(TokenType.OPEN_PARENS)) {
+			var fc = new FunctionCall(s);
+			if(!accept(TokenType.CLOSE_PARENS)) {
+				do {
+					fc.append(parse_expression());
+				} while(accept(TokenType.COMMA));
+				expect(TokenType.CLOSE_PARENS);
+			}
+			return fc;
+		} else
+			return s;
 	}
 }

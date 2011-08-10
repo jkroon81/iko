@@ -197,7 +197,9 @@ public class Iko.AST.Generator : Iko.Visitor {
 	}
 
 	public override void visit_method_call(Iko.MethodCall mc) {
-		var fc = new Iko.CAS.FunctionCall((mc.method as Symbol).name);
+		var fc = new Iko.CAS.FunctionCall(
+			new Iko.CAS.Symbol((mc.method as Symbol).name)
+		);
 		foreach(var arg in mc.args)
 			fc.append(generate_cas_expression(arg));
 		q.push_head(fc);
