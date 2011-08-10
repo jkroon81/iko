@@ -12,6 +12,7 @@ libikocas_la_LIBADD = \
 libikocas_la_SOURCES = \
 	iko-cas-atomic-expression.vala \
 	iko-cas-compound-expression.vala \
+	iko-cas-constant.vala \
 	iko-cas-equality.vala \
 	iko-cas-expression.vala \
 	iko-cas-factorial.vala \

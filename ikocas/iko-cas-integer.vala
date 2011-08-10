@@ -5,7 +5,7 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.CAS.Integer : AtomicExpression {
+public class Iko.CAS.Integer : Constant {
 	public int    ival { get; construct; }
 	public string sval { get; construct; }
 

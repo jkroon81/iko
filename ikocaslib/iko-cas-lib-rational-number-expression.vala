@@ -13,7 +13,7 @@ namespace Iko.CAS.Library {
 		if(exp == null)
 			return p;
 
-		if(radix is Integer || radix is Fraction) {
+		if(radix is Constant) {
 			if(exp.ival > 0) {
 				var s = rne_eval_power(
 					new Power.from_binary(radix, new Integer.from_int(exp.ival - 1))

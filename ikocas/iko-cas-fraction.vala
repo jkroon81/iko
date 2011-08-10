@@ -5,7 +5,7 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.CAS.Fraction : Expression {
+public class Iko.CAS.Fraction : Constant {
 	public Integer num { get; construct; }
 	public Integer den { get; construct; }
 
