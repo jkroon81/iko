@@ -81,7 +81,7 @@ namespace Iko.CAS.Library {
 		return new Fraction(new Integer.from_int(rn), new Integer.from_int(rd));
 	}
 
-	public Expression rne_simplify(Expression e) {
+	Expression rne_simplify(Expression e) {
 		var x = rne_simplify_rec(e);
 		if(x is Undefined)
 			return x;

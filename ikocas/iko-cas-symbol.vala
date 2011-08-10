@@ -45,4 +45,36 @@ public class Iko.CAS.Symbol : AtomicExpression {
 
 		return (retval.pointer as Expression);
 	}
+
+	public Expression map(Expression e, ...) {
+		var c = e as CompoundExpression;
+
+		if(c == null)
+			return undefined();
+
+		var l = new List();
+		l.append(e);
+
+		var args = va_list();
+		var arg = args.arg<Expression?>();
+
+		while(arg != null) {
+			l.append(arg);
+			arg = args.arg<Expression?>();
+		}
+
+		CompoundExpression x;
+
+		if(c is FunctionCall)
+			x = new FunctionCall((c as FunctionCall).symbol);
+		else
+			x = Object.new(c.get_type()) as CompoundExpression;
+
+		foreach(var op in c) {
+			l[0] = op;
+			x.append(invoke(l));
+		}
+
+		return x;
+	}
 }

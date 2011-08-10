@@ -23,8 +23,8 @@ namespace TestCommon {
 			assert_not_reached();
 		}
 
-		var left_gen = Iko.CAS.Library.rne_simplify(left).to_string();
-		var right_gen = Iko.CAS.Library.rne_simplify(right).to_string();
+		var left_gen = Iko.CAS.Library.simplify(left).to_string();
+		var right_gen = Iko.CAS.Library.simplify(right).to_string();
 
 		if(left_gen != right_gen) {
 			stdout.printf(RED + "FAIL" + RESET);

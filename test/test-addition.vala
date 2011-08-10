@@ -12,6 +12,8 @@ int main() {
 
 	Environment.set_prgname("test-addition");
 
+	Iko.CAS.Library.init();
+
 	n_errors += test("A + B", "B + A");
 	n_errors += test("( A + B ) + C", "A + ( B + C )");
 	n_errors += test("A + 0", "A");

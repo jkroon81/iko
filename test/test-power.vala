@@ -12,6 +12,8 @@ int main() {
 
 	Environment.set_prgname("test-power");
 
+	Iko.CAS.Library.init();
+
 	n_errors += test("A^0", "1");
 	n_errors += test("A^1", "A");
 	n_errors += test("A^-B", "1/A^B");

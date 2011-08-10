@@ -19,6 +19,7 @@ libikocaslib_la_LIBADD = \
 
 libikocaslib_la_SOURCES = \
 	iko-cas-lib.vala \
+	iko-cas-lib-basic-algebraic-expression.vala \
 	iko-cas-lib-integer.vala \
 	iko-cas-lib-rational-number-expression.vala
 

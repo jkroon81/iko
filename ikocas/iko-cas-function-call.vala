@@ -23,6 +23,6 @@ public class Iko.CAS.FunctionCall : CompoundExpression {
 	}
 
 	public override Expression eval() {
-		return symbol.invoke(new List.from_function_call(this));
+		return symbol.invoke(to_list());
 	}
 }

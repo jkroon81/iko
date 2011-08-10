@@ -73,6 +73,15 @@ public abstract class Iko.CAS.CompoundExpression : Expression {
 		node.expr = e;
 	}
 
+	public List to_list() {
+		var r = new List();
+
+		foreach(var op in this)
+			r.append(op);
+
+		return r;
+	}
+
 	public class Iterator {
 		CompoundExpression ce;
 		Node? node;

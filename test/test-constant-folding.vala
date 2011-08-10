@@ -12,6 +12,8 @@ int main() {
 
 	Environment.set_prgname("test-constant-folding");
 
+	Iko.CAS.Library.init();
+
 	n_errors += test("3 + 4", "7");
 	n_errors += test("3 - 4", "-1");
 	n_errors += test("3 * 4", "12");

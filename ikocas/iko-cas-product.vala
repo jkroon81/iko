@@ -11,6 +11,15 @@ public class Iko.CAS.Product : CompoundExpression {
 		append(x2);
 	}
 
+	public Product.from_list(List l) {
+		foreach(var f in l)
+			append(f);
+	}
+
+	public Product.from_unary(Expression e) {
+		append(e);
+	}
+
 	public override void accept(Visitor v) {
 		base.accept(v);
 		v.visit_product(this);

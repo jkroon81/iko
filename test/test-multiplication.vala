@@ -12,6 +12,8 @@ int main() {
 
 	Environment.set_prgname("test-multiplication");
 
+	Iko.CAS.Library.init();
+
 	n_errors += test("A * B", "B * A");
 	n_errors += test("( A * B ) * C", "A * ( B * C )");
 	n_errors += test("A * ( B + C )", "A * B + A * C");
