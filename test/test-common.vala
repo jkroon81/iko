@@ -10,30 +10,30 @@ namespace TestCommon {
 	const string RED   = "\033[1;31m";
 	const string GREEN = "\033[1;32m";
 
-	public static int test(string left_in, string right_in) {
-		Iko.CAS.Expression left, right;
+	public static int test(string lhs_in, string rhs_in) {
+		Iko.CAS.Expression lhs, rhs;
 		int retval;
 
 		var parser = new Iko.CAS.Parser();
 
 		try {
-			left = parser.parse_source_string(left_in);
-			right = parser.parse_source_string(right_in);
+			lhs = parser.parse_source_string(lhs_in);
+			rhs = parser.parse_source_string(rhs_in);
 		} catch(Iko.CAS.ParseError e) {
 			assert_not_reached();
 		}
 
-		var left_gen = Iko.CAS.Library.simplify(left).to_string();
-		var right_gen = Iko.CAS.Library.simplify(right).to_string();
+		var lhs_gen = Iko.CAS.Library.simplify(lhs).to_string();
+		var rhs_gen = Iko.CAS.Library.simplify(rhs).to_string();
 
-		if(left_gen != right_gen) {
+		if(lhs_gen != rhs_gen) {
 			stdout.printf(RED + "FAIL" + RESET);
 			retval = 1;
 		} else {
 			stdout.printf(GREEN + "PASS" + RESET);
 			retval = 0;
 		}
-		stdout.printf(" %s = %s [ %s = %s ]\n", left_in, right_in, left_gen, right_gen);
+		stdout.printf(" %s = %s [ %s = %s ]\n", lhs_in, rhs_in, lhs_gen, rhs_gen);
 		return retval;
 	}
 }
