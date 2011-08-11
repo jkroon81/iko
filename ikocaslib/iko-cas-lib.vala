@@ -50,6 +50,6 @@ namespace Iko.CAS.Library {
 	}
 
 	public static Expression simplify(Expression e) {
-		return bae_simplify(bae_simplify(e).eval());
+		return bae_simplify(e);
 	}
 }

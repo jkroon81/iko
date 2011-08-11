@@ -26,8 +26,6 @@ public abstract class Iko.CAS.Expression : Node {
 		assert_not_reached();
 	}
 
-	public abstract Expression eval();
-
 	public Expression exponent() {
 		if(this is Symbol || this is Sum || this is Product || this is Factorial || this is FunctionCall)
 			return one();

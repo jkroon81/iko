@@ -15,8 +15,4 @@ public class Iko.CAS.Power : CompoundExpression {
 		base.accept(v);
 		v.visit_power(this);
 	}
-
-	public override Expression eval() {
-		return this;
-	}
 }

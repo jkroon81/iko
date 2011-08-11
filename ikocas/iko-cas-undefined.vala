@@ -14,8 +14,4 @@ public class Iko.CAS.Undefined : Symbol {
 		base.accept(v);
 		v.visit_undefined(this);
 	}
-
-	public override Expression eval() {
-		return this;
-	}
 }

@@ -30,10 +30,6 @@ public abstract class Iko.CAS.CompoundExpression : Expression {
 		size++;
 	}
 
-	public override Expression eval() {
-		return this;
-	}
-
 	public new Expression? get(int index) {
 		assert(index >= 0 && index < size);
 

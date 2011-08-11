@@ -24,8 +24,4 @@ public class Iko.CAS.Product : CompoundExpression {
 		base.accept(v);
 		v.visit_product(this);
 	}
-
-	public override Expression eval() {
-		return this;
-	}
 }

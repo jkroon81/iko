@@ -23,8 +23,4 @@ public class Iko.CAS.Fraction : Constant {
 		num.accept(v);
 		den.accept(v);
 	}
-
-	public override Expression eval() {
-		return this;
-	}
 }

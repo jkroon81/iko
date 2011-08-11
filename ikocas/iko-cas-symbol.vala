@@ -19,10 +19,6 @@ public class Iko.CAS.Symbol : AtomicExpression {
 		v.visit_symbol(this);
 	}
 
-	public override Expression eval() {
-		return this;
-	}
-
 	public Expression invoke(List args) {
 		var repo = Repository.get_default();
 		var info = repo.find_by_name("ikocaslib", "cas_library_" + name);

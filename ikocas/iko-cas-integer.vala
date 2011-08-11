@@ -27,8 +27,4 @@ public class Iko.CAS.Integer : Constant {
 		base.accept(v);
 		v.visit_integer(this);
 	}
-
-	public override Expression eval() {
-		return this;
-	}
 }

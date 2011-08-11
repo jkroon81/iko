@@ -14,8 +14,4 @@ public class Iko.CAS.Factorial : CompoundExpression {
 		base.accept(v);
 		v.visit_factorial(this);
 	}
-
-	public override Expression eval() {
-		return this;
-	}
 }

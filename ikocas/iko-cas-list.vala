@@ -20,10 +20,6 @@ public class Iko.CAS.List : CompoundExpression {
 		v.visit_list(this);
 	}
 
-	public override Expression eval() {
-		return this;
-	}
-
 	public List tail() {
 		var r = new List();
 

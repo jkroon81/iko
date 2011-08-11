@@ -15,8 +15,4 @@ public class Iko.CAS.Equality : CompoundExpression {
 		base.accept(v);
 		v.visit_equality(this);
 	}
-
-	public override Expression eval() {
-		return this;
-	}
 }

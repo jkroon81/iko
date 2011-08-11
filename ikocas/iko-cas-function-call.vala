@@ -21,8 +21,4 @@ public class Iko.CAS.FunctionCall : CompoundExpression {
 		base.accept_children(v);
 		symbol.accept(v);
 	}
-
-	public override Expression eval() {
-		return symbol.invoke(to_list());
-	}
 }

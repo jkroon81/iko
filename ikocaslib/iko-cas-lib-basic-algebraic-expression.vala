@@ -206,7 +206,7 @@ namespace Iko.CAS.Library {
 			if(arg is Undefined)
 				return arg;
 
-		return fc;
+		return bae_simplify(fc.symbol.invoke(fc.to_list()));
 	}
 
 	Expression bae_simplify_integer_factorial(Integer f) {

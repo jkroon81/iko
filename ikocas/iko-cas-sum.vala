@@ -24,8 +24,4 @@ public class Iko.CAS.Sum : CompoundExpression {
 		base.accept(v);
 		v.visit_sum(this);
 	}
-
-	public override Expression eval() {
-		return this;
-	}
 }
