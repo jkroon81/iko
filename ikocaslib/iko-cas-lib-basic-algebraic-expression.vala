@@ -187,6 +187,8 @@ namespace Iko.CAS.Library {
 				return bae_simplify_factorial(x as Factorial);
 			else if(x is FunctionCall)
 				return bae_simplify_function_call(x as FunctionCall);
+			else if(x is List)
+				return x;
 			assert_not_reached();
 		}
 	}
