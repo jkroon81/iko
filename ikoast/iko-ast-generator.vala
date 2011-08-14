@@ -97,7 +97,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 					generate_cas_expression(be.left),
 					new Iko.CAS.Power.from_binary(
 						generate_cas_expression(be.right),
-						Iko.CAS.neg_one()
+						Iko.CAS.int_neg_one()
 					)
 				)
 			);
@@ -107,7 +107,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 				new Iko.CAS.Sum.from_binary(
 					generate_cas_expression(be.left),
 					new Iko.CAS.Product.from_binary(
-						Iko.CAS.neg_one(),
+						Iko.CAS.int_neg_one(),
 						generate_cas_expression(be.right)
 					)
 				)
@@ -227,7 +227,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 		case Iko.UnaryExpression.Operator.MINUS:
 			q.push_head(
 				new Iko.CAS.Product.from_binary(
-					Iko.CAS.neg_one(),
+					Iko.CAS.int_neg_one(),
 					generate_cas_expression(ue.expr)
 				)
 			);

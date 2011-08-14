@@ -6,32 +6,32 @@
  */
 
 namespace Iko.CAS {
-	static Integer _neg_one = null;
-	static Integer _one = null;
+	static Integer _int_neg_one = null;
+	static Integer _int_one = null;
+	static Integer _int_zero = null;
 	static Undefined _undefined = null;
-	static Integer _zero = null;
 
-	public Integer neg_one() {
-		if(_neg_one == null)
-			_neg_one = new Integer.from_int(-1);
-		return _neg_one;
+	public Integer int_neg_one() {
+		if(_int_neg_one == null)
+			_int_neg_one = new Integer.from_int(-1);
+		return _int_neg_one;
 	}
 
-	public Integer one() {
-		if(_one == null)
-			_one = new Integer.from_int(1);
-		return _one;
+	public Integer int_one() {
+		if(_int_one == null)
+			_int_one = new Integer.from_int(1);
+		return _int_one;
+	}
+
+	public Integer int_zero() {
+		if(_int_zero == null)
+			_int_zero = new Integer.from_int(0);
+		return _int_zero;
 	}
 
 	public Undefined undefined() {
 		if(_undefined == null)
 			_undefined = new Undefined();
 		return _undefined;
-	}
-
-	public Integer zero() {
-		if(_zero == null)
-			_zero = new Integer.from_int(0);
-		return _zero;
 	}
 }

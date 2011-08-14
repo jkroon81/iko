@@ -146,7 +146,7 @@ namespace Iko.CAS.Library {
 
 		if(u is Power)
 			if(v is Sum || v is Factorial || v is FunctionCall || v is Symbol)
-				return bae_compare(u, new Power.from_binary(v, one()));
+				return bae_compare(u, new Power.from_binary(v, int_one()));
 
 		if(u is Sum)
 			if(v is Factorial || v is FunctionCall || v is Symbol)
@@ -218,7 +218,7 @@ namespace Iko.CAS.Library {
 			return undefined();
 
 		if(s == 0)
-			return one();
+			return int_one();
 
 		int r = s;
 
@@ -233,7 +233,7 @@ namespace Iko.CAS.Library {
 			return rne_simplify(new Power.from_binary(radix, exp));
 
 		if(exp.ival == 0)
-			return one();
+			return int_one();
 
 		if(exp.ival == 1)
 			return radix;
@@ -267,13 +267,13 @@ namespace Iko.CAS.Library {
 		if(radix is Integer && (radix as Integer).ival == 0) {
 			if((exp is Integer && (exp as Integer).ival > 0) ||
 			   (exp is Fraction && (exp as Fraction).num.ival > 0))
-				return zero();
+				return int_zero();
 			else
 				return undefined();
 		}
 
 		if(radix is Integer && (radix as Integer).ival == 1)
-			return one();
+			return int_one();
 
 		if(exp is Integer)
 			return bae_simplify_integer_power(radix, exp as Integer);
@@ -295,7 +295,7 @@ namespace Iko.CAS.Library {
 		var v = bae_simplify_product_rec(p.to_list());
 
 		if(v.size == 0)
-			return one();
+			return int_one();
 		else if(v.size == 1)
 			return v[0];
 		else
@@ -379,7 +379,7 @@ namespace Iko.CAS.Library {
 		var v = bae_simplify_sum_rec(s.to_list());
 
 		if(v.size == 0)
-			return zero();
+			return int_zero();
 		else if(v.size == 1)
 			return v[0];
 		else

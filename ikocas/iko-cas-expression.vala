@@ -13,13 +13,13 @@ public abstract class Iko.CAS.Expression : Node {
 
 	public Expression constant() {
 		if(this is Symbol || this is Sum || this is Power || this is Factorial || this is FunctionCall)
-			return one();
+			return int_one();
 		if(this is Product) {
 			var p = this as Product;
 			if(p[0] is Constant)
 				return p[0];
 			else
-				return one();
+				return int_one();
 		}
 		if(this is Constant)
 			return undefined();
@@ -28,7 +28,7 @@ public abstract class Iko.CAS.Expression : Node {
 
 	public Expression exponent() {
 		if(this is Symbol || this is Sum || this is Product || this is Factorial || this is FunctionCall)
-			return one();
+			return int_one();
 		if(this is Power)
 			return (this as Power)[1];
 		if(this is Constant)

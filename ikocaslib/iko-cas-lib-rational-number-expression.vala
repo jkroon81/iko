@@ -20,15 +20,15 @@ namespace Iko.CAS.Library {
 				);
 				return rne_eval_product(new Product.from_binary(s, radix));
 			} else if(exp.ival == 0)
-				return one();
+				return int_one();
 			else if(exp.ival == -1) {
 				if(radix is Integer)
-					return new Fraction(one(), radix as Integer);
+					return new Fraction(int_one(), radix as Integer);
 				else
 					return new Fraction((radix as Fraction).den, (radix as Fraction).num);
 			} else {
 				if(radix is Integer) {
-					var s = new Fraction(one(), radix as Integer);
+					var s = new Fraction(int_one(), radix as Integer);
 					return rne_eval_power(
 						new Power.from_binary(s, new Integer.from_int(-exp.ival))
 					);
