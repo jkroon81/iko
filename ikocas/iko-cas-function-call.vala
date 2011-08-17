@@ -16,9 +16,4 @@ public class Iko.CAS.FunctionCall : CompoundExpression {
 		base.accept(v);
 		v.visit_function_call(this);
 	}
-
-	public override void accept_children(Visitor v) {
-		base.accept_children(v);
-		symbol.accept(v);
-	}
 }

@@ -17,10 +17,4 @@ public class Iko.CAS.Fraction : Constant {
 		base.accept(v);
 		v.visit_fraction(this);
 	}
-
-	public override void accept_children(Visitor v) {
-		base.accept_children(v);
-		num.accept(v);
-		den.accept(v);
-	}
 }

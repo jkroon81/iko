@@ -44,7 +44,7 @@ public class Iko.CAS.Polish : Visitor {
 
 	public override void visit_function_call(FunctionCall fc) {
 		buffer.append("(" + fc.symbol.name + " ");
-		foreach(Expression arg in fc) {
+		foreach(var arg in fc) {
 			arg.accept(this);
 			buffer.append(" ");
 		}
@@ -58,7 +58,7 @@ public class Iko.CAS.Polish : Visitor {
 
 	public override void visit_list(List l) {
 		buffer.append("(list ");
-		foreach(Expression e in l) {
+		foreach(var e in l) {
 			e.accept(this);
 			buffer.append(" ");
 		}

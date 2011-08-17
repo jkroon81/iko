@@ -16,12 +16,6 @@ public abstract class Iko.CAS.CompoundExpression : Expression {
 		v.visit_compound_expression(this);
 	}
 
-	public override void accept_children(Visitor v) {
-		base.accept_children(v);
-		foreach(var e in this)
-			e.accept(v);
-	}
-
 	public void append(Expression e) {
 		if(tail == null)
 			head = tail = new Node(e, null, null);

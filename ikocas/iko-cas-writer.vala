@@ -51,7 +51,7 @@ public class Iko.CAS.Writer : Visitor {
 		buffer.append(fc.symbol.name);
 		buffer.append("(");
 		if(fc.size > 0) {
-			foreach(Expression arg in fc) {
+			foreach(var arg in fc) {
 				arg.accept(this);
 				buffer.append(", ");
 			}
@@ -69,7 +69,7 @@ public class Iko.CAS.Writer : Visitor {
 			buffer.append("[]");
 		else {
 			buffer.append("[ ");
-			foreach(Expression e in l) {
+			foreach(var e in l) {
 				e.accept(this);
 				buffer.append(" ");
 			}

@@ -136,17 +136,18 @@ public class Iko.CAS.Parser : Object {
 	}
 
 	Expression parse_expression_primary() throws ParseError {
-		Expression expr = null;
-
 		switch(current()) {
-		case TokenType.DOT:         expr = parse_numerical();                break;
-		case TokenType.IDENTIFIER:  expr = parse_symbol();                   break;
-		case TokenType.INTEGER:     expr = parse_numerical();                break;
-		case TokenType.OPEN_PARENS: expr = parse_expression_parenthesized(); break;
+		case TokenType.DOT:
+			return parse_numerical();
+		case TokenType.IDENTIFIER:
+			return parse_symbol();
+		case TokenType.INTEGER:
+			return parse_numerical();
+		case TokenType.OPEN_PARENS:
+			return parse_expression_parenthesized();
 		default:
 			throw new ParseError.SYNTAX("expected expression");
 		}
-		return expr;
 	}
 
 	Expression parse_expression_unary() throws ParseError {

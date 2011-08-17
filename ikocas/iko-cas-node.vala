@@ -7,5 +7,4 @@
 
 public abstract class Iko.CAS.Node : Object {
 	public virtual void accept(Visitor v) {}
-	public virtual void accept_children(Visitor v) {}
 }
