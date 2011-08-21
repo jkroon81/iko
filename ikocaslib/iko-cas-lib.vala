@@ -13,7 +13,7 @@ namespace Iko.CAS.Library {
 		"init"
 	};
 
-	public static bool init() {
+	public bool init() {
 		var repo = Repository.get_default();
 
 		try {
@@ -25,7 +25,7 @@ namespace Iko.CAS.Library {
 		return true;
 	}
 
-	public static string[] get_functions() {
+	public string[] get_functions() {
 		var repo = Repository.get_default();
 		var n = repo.get_n_infos("ikocaslib");
 		var func_array = new Array<string>(false, false, sizeof(string));
@@ -49,7 +49,43 @@ namespace Iko.CAS.Library {
 		return func;
 	}
 
-	public static Expression simplify(Expression e) {
-		return bae_simplify(e);
+	public Expression simplify(Expression e) {
+		var x = e;
+		if(x is CompoundExpression)
+			x = new Symbol("simplify").map(x);
+
+		switch(x.kind) {
+		case Kind.FACTORIAL:
+			return bae_simplify(x);
+		case Kind.FRACTION:
+			return rne_simplify(x);
+		case Kind.FUNCTION:
+			return simplify_function_call(x);
+		case Kind.INTEGER:
+			return x;
+		case Kind.MUL:
+			return bae_simplify(x);
+		case Kind.PLUS:
+			return bae_simplify(x);
+		case Kind.POWER:
+			return bae_simplify(x);
+		case Kind.SYMBOL:
+			return x;
+		default:
+			error("%s: Unhandled kind '%s'", Log.METHOD, x.kind.to_string());
+		}
+	}
+
+	Expression simplify_function_call(Expression e) {
+		if(e.kind != Kind.FUNCTION)
+			return e;
+
+		var fc = e as CompoundExpression;
+
+		foreach(var arg in fc)
+			if(arg is Undefined)
+				return arg;
+
+		return simplify((fc[0] as Symbol).invoke(fc.to_list().tail()));
 	}
 }

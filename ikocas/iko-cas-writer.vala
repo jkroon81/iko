@@ -113,8 +113,7 @@ public class Iko.CAS.Writer : Visitor {
 				buffer.append("]");
 			}
 		} else {
-			stdout.printf("Unhandled kind '%s'\n", ce.kind.to_string());
-			assert_not_reached();
+			error("%s: Unhandled kind '%s'\n", Log.METHOD, ce.kind.to_string());
 		}
 	}
 

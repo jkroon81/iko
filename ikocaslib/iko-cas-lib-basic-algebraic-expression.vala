@@ -186,26 +186,18 @@ namespace Iko.CAS.Library {
 		return !bae_compare(v, u);
 	}
 
-	public Expression bae_simplify(Expression e) {
-		if(e.kind == Kind.INTEGER || e.kind == Kind.SYMBOL)
-			return e;
-		else if(e.kind == Kind.FRACTION)
-			return rne_simplify(e);
-		else {
-			var x = new Symbol("bae_simplify").map(e);
-			if(x.kind == Kind.POWER)
-				return bae_simplify_power(x as CompoundExpression);
-			else if(x.kind == Kind.MUL)
-				return bae_simplify_product(x as CompoundExpression);
-			else if(x.kind == Kind.PLUS)
-				return bae_simplify_sum(x as CompoundExpression);
-			else if(x.kind == Kind.FACTORIAL)
-				return bae_simplify_factorial(x as CompoundExpression);
-			else if(x.kind == Kind.FUNCTION)
-				return bae_simplify_function_call(x as CompoundExpression);
-			else if(x.kind == Kind.LIST)
-				return x;
-			assert_not_reached();
+	Expression bae_simplify(Expression e) {
+		switch(e.kind) {
+		case Kind.FACTORIAL:
+			return bae_simplify_factorial(e as CompoundExpression);
+		case Kind.MUL:
+			return bae_simplify_product(e as CompoundExpression);
+		case Kind.PLUS:
+			return bae_simplify_sum(e as CompoundExpression);
+		case Kind.POWER:
+			return bae_simplify_power(e as CompoundExpression);
+		default:
+			error("%s: Unhandled kind '%s'", Log.METHOD, e.kind.to_string());
 		}
 	}
 
@@ -217,14 +209,6 @@ namespace Iko.CAS.Library {
 			return f[0];
 
 		return f;
-	}
-
-	Expression bae_simplify_function_call(CompoundExpression fc) {
-		foreach(var arg in fc)
-			if(arg is Undefined)
-				return arg;
-
-		return bae_simplify((fc[0] as Symbol).invoke(fc.to_list().tail()));
 	}
 
 	Expression bae_simplify_integer_factorial(Integer f) {
