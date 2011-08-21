@@ -5,12 +5,13 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.CAS.Integer : Constant {
+public class Iko.CAS.Integer : AtomicExpression {
 	public int    ival { get; construct; }
 	public string sval { get; construct; }
 
 	public Integer.from_int(int value) {
 		Object(
+			kind : Kind.INTEGER,
 			ival : value,
 			sval : value.to_string()
 		);
@@ -18,6 +19,7 @@ public class Iko.CAS.Integer : Constant {
 
 	public Integer.from_string(string value) {
 		Object(
+			kind : Kind.INTEGER,
 			ival : int.parse(value),
 			sval : value
 		);

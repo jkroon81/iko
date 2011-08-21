@@ -71,15 +71,16 @@ public class Iko.CAS.Parser : Object {
 			case TokenType.MINUS:
 				next();
 				var right = parse_expression_multiplicative();
-				left = new Sum.from_binary(
+				left = new CompoundExpression.from_binary(
+					Kind.PLUS,
 					left,
-					new Product.from_binary(int_neg_one(), right)
+					new CompoundExpression.from_binary(Kind.MUL, int_neg_one(), right)
 				);
 				break;
 			case TokenType.PLUS:
 				next();
 				var right = parse_expression_multiplicative();
-				left = new Sum.from_binary(left, right);
+				left = new CompoundExpression.from_binary(Kind.PLUS, left, right);
 				break;
 			default:
 				loop = false;
@@ -97,15 +98,16 @@ public class Iko.CAS.Parser : Object {
 			case TokenType.SLASH:
 				next();
 				var right = parse_expression_power();
-				left = new Product.from_binary(
+				left = new CompoundExpression.from_binary(
+					Kind.MUL,
 					left,
-					new Power.from_binary(right, int_neg_one())
+					new CompoundExpression.from_binary(Kind.POWER, right, int_neg_one())
 				);
 				break;
 			case TokenType.STAR:
 				next();
 				var right = parse_expression_power();
-				left = new Product.from_binary(left, right);
+				left = new CompoundExpression.from_binary(Kind.MUL, left, right);
 				break;
 			default:
 				loop = false;
@@ -128,7 +130,7 @@ public class Iko.CAS.Parser : Object {
 		while(loop) {
 			if(accept(TokenType.CARET)) {
 				var right = parse_expression_unary();
-				left = new Power.from_binary(left, right);
+				left = new CompoundExpression.from_binary(Kind.POWER, left, right);
 			} else
 				loop = false;
 		}
@@ -140,7 +142,13 @@ public class Iko.CAS.Parser : Object {
 		case TokenType.DOT:
 			return parse_numerical();
 		case TokenType.IDENTIFIER:
-			return parse_symbol();
+			var s = parse_symbol();
+			switch(current()) {
+			case TokenType.OPEN_PARENS:
+				return parse_function_call(s);
+			default:
+				return s;
+			}
 		case TokenType.INTEGER:
 			return parse_numerical();
 		case TokenType.OPEN_PARENS:
@@ -153,7 +161,8 @@ public class Iko.CAS.Parser : Object {
 	Expression parse_expression_unary() throws ParseError {
 		if(current() == TokenType.MINUS) {
 			next();
-			return new Product.from_binary(
+			return new CompoundExpression.from_binary(
+				Kind.MUL,
 				int_neg_one(),
 				parse_expression_primary()
 			);
@@ -162,8 +171,25 @@ public class Iko.CAS.Parser : Object {
 			next();
 		var e = parse_expression_primary();
 		if(accept(TokenType.NOT))
-			e = new Factorial.from_unary(e);
+			e = new CompoundExpression.from_unary(Kind.FACTORIAL, e);
 		return e;
+	}
+
+	Expression parse_function_call(Symbol s) throws ParseError {
+		expect(TokenType.OPEN_PARENS);
+		var fc = new CompoundExpression.from_unary(Kind.FUNCTION, s);
+		if(!accept(TokenType.CLOSE_PARENS)) {
+			do {
+				fc.append(parse_expression());
+			} while(accept(TokenType.COMMA));
+			expect(TokenType.CLOSE_PARENS);
+		}
+		return fc;
+	}
+
+	string parse_identifier() throws ParseError {
+		expect(TokenType.IDENTIFIER);
+		return get_prev_string();
 	}
 
 	Expression parse_numerical() throws ParseError {
@@ -203,19 +229,7 @@ public class Iko.CAS.Parser : Object {
 		return e;
 	}
 
-	Expression parse_symbol() throws ParseError {
-		expect(TokenType.IDENTIFIER);
-		var s = new Iko.CAS.Symbol(get_prev_string());
-		if(accept(TokenType.OPEN_PARENS)) {
-			var fc = new FunctionCall(s);
-			if(!accept(TokenType.CLOSE_PARENS)) {
-				do {
-					fc.append(parse_expression());
-				} while(accept(TokenType.COMMA));
-				expect(TokenType.CLOSE_PARENS);
-			}
-			return fc;
-		} else
-			return s;
+	Symbol parse_symbol() throws ParseError {
+		return new Symbol(parse_identifier());
 	}
 }

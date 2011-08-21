@@ -18,19 +18,13 @@ public class Iko.CAS.Polish : Visitor {
 		return buffer.str;
 	}
 
-	public override void visit_equality(Equality eq) {
-		buffer.append("(= ");
-		foreach(var e in eq) {
-			e.accept(this);
+	public override void visit_compound_expression(CompoundExpression ce) {
+		buffer.append("(%s ".printf(ce.kind.to_string()));
+		foreach(var x in ce) {
+			x.accept(this);
 			buffer.append(" ");
 		}
 		buffer.erase(buffer.len - 1, 1);
-		buffer.append(")");
-	}
-
-	public override void visit_factorial(Factorial f) {
-		buffer.append("(! ");
-		f[0].accept(this);
 		buffer.append(")");
 	}
 
@@ -42,63 +36,11 @@ public class Iko.CAS.Polish : Visitor {
 		buffer.append(")");
 	}
 
-	public override void visit_function_call(FunctionCall fc) {
-		buffer.append("(" + fc.symbol.name + " ");
-		foreach(var arg in fc) {
-			arg.accept(this);
-			buffer.append(" ");
-		}
-		buffer.erase(buffer.len - 1, 1);
-		buffer.append(")");
-	}
-
 	public override void visit_integer(Integer i) {
 		buffer.append(i.sval);
 	}
 
-	public override void visit_list(List l) {
-		buffer.append("(list ");
-		foreach(var e in l) {
-			e.accept(this);
-			buffer.append(" ");
-		}
-		buffer.erase(buffer.len - 1, 1);
-		buffer.append(")");
-	}
-
-	public override void visit_power(Power p) {
-		buffer.append("(^ ");
-		p[0].accept(this);
-		buffer.append(" ");
-		p[1].accept(this);
-		buffer.append(")");
-	}
-
-	public override void visit_product(Product p) {
-		buffer.append("(* ");
-		foreach(var f in p) {
-			f.accept(this);
-			buffer.append(" ");
-		}
-		buffer.erase(buffer.len - 1, 1);
-		buffer.append(")");
-	}
-
-	public override void visit_sum(Sum s) {
-		buffer.append("(+ ");
-		foreach(var t in s) {
-			t.accept(this);
-			buffer.append(" ");
-		}
-		buffer.erase(buffer.len - 1, 1);
-		buffer.append(")");
-	}
-
 	public override void visit_symbol(Symbol s) {
 		buffer.append(s.name);
-	}
-
-	public override void visit_undefined(Undefined u) {
-		buffer.append("Undefined");
 	}
 }

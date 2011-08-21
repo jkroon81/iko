@@ -18,27 +18,104 @@ public class Iko.CAS.Writer : Visitor {
 		return buffer.str;
 	}
 
-	public override void visit_equality(Equality eq) {
-		foreach(var e in eq) {
-			e.accept(this);
-			buffer.append(" = ");
-		}
-		buffer.erase(buffer.len - 3, 3);
-	}
+	public override void visit_compound_expression(CompoundExpression ce) {
+		if(ce.kind == Kind.PLUS) {
+			assert(ce.size > 0);
 
-	public override void visit_factorial(Factorial f) {
-		bool guard = true;
+			foreach(var t in ce) {
+				t.accept(this);
+				buffer.append(" + ");
+			}
+			buffer.erase(buffer.len - 3, 3);
+		} else if(ce.kind == Kind.MUL) {
+			assert(ce.size > 0);
 
-		if((f[0] is Integer && (f[0] as Integer).ival >= 0) ||
-		   f[0] is Symbol || f[0] is FunctionCall || f[0] is List)
-			guard = false;
+			foreach(var f in ce) {
+				bool guard = false;
 
-		if(guard)
+				if(f.kind == Kind.EQ || f.kind == Kind.PLUS)
+					guard = true;
+
+				if(guard)
+					buffer.append("(");
+				f.accept(this);
+				if(guard)
+					buffer.append(")");
+				buffer.append("*");
+			}
+			buffer.erase(buffer.len - 1, 1);
+		} else if(ce.kind == Kind.FACTORIAL) {
+			bool guard = true;
+
+			if((ce[0].kind == Kind.INTEGER && (ce[0] as Integer).ival >= 0) ||
+			   ce[0].kind == Kind.SYMBOL ||
+			   ce[0].kind == Kind.FUNCTION ||
+			   ce[0].kind == Kind.LIST)
+				guard = false;
+
+			if(guard)
+				buffer.append("(");
+			ce[0].accept(this);
+			if(guard)
+				buffer.append(")");
+			buffer.append("!");
+		} else if(ce.kind == Kind.POWER) {
+			bool guard = true;
+
+			if((ce[0].kind == Kind.INTEGER && (ce[0] as Integer).ival >= 0) ||
+			   ce[0].kind == Kind.FUNCTION ||
+			   ce[0].kind == Kind.SYMBOL ||
+			   ce[0].kind == Kind.LIST)
+				guard = false;
+
+			if(guard)
+				buffer.append("(");
+			ce[0].accept(this);
+			if(guard)
+				buffer.append(")");
+
+			buffer.append("^");
+
+			guard = true;
+
+			if(ce[1].kind == Kind.INTEGER ||
+			   ce[1].kind == Kind.FACTORIAL ||
+			   ce[1].kind == Kind.FUNCTION ||
+			   ce[1].kind == Kind.SYMBOL ||
+			   ce[1].kind == Kind.LIST)
+				guard = false;
+
+			if(guard)
+				buffer.append("(");
+			ce[1].accept(this);
+			if(guard)
+				buffer.append(")");
+		} else if(ce.kind == Kind.FUNCTION) {
+			ce[0].accept(this);
 			buffer.append("(");
-		f[0].accept(this);
-		if(guard)
+			if(ce.size > 1) {
+				for(var i = 1; i < ce.size; i++) {
+					ce[i].accept(this);
+					buffer.append(", ");
+				}
+				buffer.erase(buffer.len - 2, 2);
+			}
 			buffer.append(")");
-		buffer.append("!");
+		} else if(ce.kind == Kind.LIST) {
+			if(ce.size == 0)
+				buffer.append("[]");
+			else {
+				buffer.append("[ ");
+				foreach(var e in ce) {
+					e.accept(this);
+					buffer.append(" ");
+				}
+				buffer.append("]");
+			}
+		} else {
+			stdout.printf("Unhandled kind '%s'\n", ce.kind.to_string());
+			assert_not_reached();
+		}
 	}
 
 	public override void visit_fraction(Fraction f) {
@@ -47,91 +124,8 @@ public class Iko.CAS.Writer : Visitor {
 		f.den.accept(this);
 	}
 
-	public override void visit_function_call(FunctionCall fc) {
-		buffer.append(fc.symbol.name);
-		buffer.append("(");
-		if(fc.size > 0) {
-			foreach(var arg in fc) {
-				arg.accept(this);
-				buffer.append(", ");
-			}
-			buffer.erase(buffer.len - 2, 2);
-		}
-		buffer.append(")");
-	}
-
 	public override void visit_integer(Integer i) {
 		buffer.append(i.sval);
-	}
-
-	public override void visit_list(List l) {
-		if(l.size == 0)
-			buffer.append("[]");
-		else {
-			buffer.append("[ ");
-			foreach(var e in l) {
-				e.accept(this);
-				buffer.append(" ");
-			}
-			buffer.append("]");
-		}
-	}
-
-	public override void visit_power(Power p) {
-		bool guard = true;
-
-		if((p[0] is Integer && (p[0] as Integer).ival >= 0) ||
-		   p[0] is FunctionCall || p[0] is Symbol || p[0] is List)
-			guard = false;
-
-		if(guard)
-			buffer.append("(");
-		p[0].accept(this);
-		if(guard)
-			buffer.append(")");
-
-		buffer.append("^");
-
-		guard = true;
-
-		if(p[1] is Integer || p[1] is Factorial || p[1] is FunctionCall ||
-		   p[1] is Symbol || p[1] is List)
-			guard = false;
-
-		if(guard)
-			buffer.append("(");
-		p[1].accept(this);
-		if(guard)
-			buffer.append(")");
-	}
-
-	public override void visit_product(Product p) {
-		assert(p.size > 0);
-
-		foreach(var f in p) {
-			bool guard = false;
-
-			if(f is Sum || f is Equality)
-				guard = true;
-
-			if(guard)
-				buffer.append("(");
-			f.accept(this);
-			if(guard)
-				buffer.append(")");
-			buffer.append("*");
-		}
-		buffer.erase(buffer.len - 1, 1);
-	}
-
-	public override void visit_sum(Sum s) {
-		assert(s.size > 0);
-
-		foreach(var t in s) {
-			t.accept(this);
-			buffer.append(" + ");
-		}
-		buffer.erase(buffer.len - 3, 3);
 	}
 
 	public override void visit_symbol(Symbol s) {

@@ -5,11 +5,40 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public abstract class Iko.CAS.CompoundExpression : Expression {
+public class Iko.CAS.CompoundExpression : Expression {
 	Node? head;
 	Node? tail;
 
 	public int size { get; private set; }
+
+	public CompoundExpression.from_binary(Kind kind, Expression x1, Expression x2) {
+		Object(kind : kind);
+		append(x1);
+		append(x2);
+	}
+
+	public CompoundExpression.from_empty(Kind kind) {
+		Object(kind : kind);
+	}
+
+	public CompoundExpression.from_list(Kind kind, List l) {
+		Object(kind : kind);
+		foreach(var t in l)
+			append(t);
+	}
+
+	public CompoundExpression.from_unary(Kind kind, Expression x) {
+		Object(kind : kind);
+		append(x);
+	}
+
+	public static CompoundExpression from_va(Kind kind, int n, ...) {
+		var s = new CompoundExpression.from_empty(kind);
+		var args = va_list();
+		while(n-- > 0)
+			s.append(args.arg<Expression?>());
+		return s;
+	}
 
 	public override void accept(Visitor v) {
 		base.accept(v);

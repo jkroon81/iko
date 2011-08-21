@@ -11,7 +11,10 @@ public class Iko.CAS.Symbol : AtomicExpression {
 	public string name { get; construct; }
 
 	public Symbol(string name) {
-		Object(name : name);
+		Object(
+			kind : Kind.SYMBOL,
+			name : name
+		);
 	}
 
 	public override void accept(Visitor v) {
@@ -59,12 +62,7 @@ public class Iko.CAS.Symbol : AtomicExpression {
 			arg = args.arg<Expression?>();
 		}
 
-		CompoundExpression x;
-
-		if(c is FunctionCall)
-			x = new FunctionCall((c as FunctionCall).symbol);
-		else
-			x = Object.new(c.get_type()) as CompoundExpression;
+		CompoundExpression x = new CompoundExpression.from_empty(c.kind);
 
 		foreach(var op in c) {
 			l[0] = op;

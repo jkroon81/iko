@@ -5,12 +5,16 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public class Iko.CAS.Fraction : Constant {
+public class Iko.CAS.Fraction : AtomicExpression {
 	public Integer num { get; construct; }
 	public Integer den { get; construct; }
 
 	public Fraction(Integer num, Integer den) {
-		Object(num : num, den : den);
+		Object(
+			kind : Kind.FRACTION,
+			num : num,
+			den : den
+		);
 	}
 
 	public override void accept(Visitor v) {
