@@ -1,3 +1,6 @@
+.ic.vala :
+	$(top_builddir)/icc/icc $<
+
 ikocaslib-1.0.typelib : ikocaslib-1.0.gir
 	g-ir-compiler $< -o $@
 
@@ -20,8 +23,12 @@ libikocaslib_la_LIBADD = \
 libikocaslib_la_SOURCES = \
 	iko-cas-lib.vala \
 	iko-cas-lib-basic-algebraic-expression.vala \
+	iko-cas-lib-basic-algebraic-expression-ic.vala \
+	iko-cas-lib-boolean.vala \
+	iko-cas-lib-general-polynomial-expression.vala \
 	iko-cas-lib-integer.vala \
-	iko-cas-lib-rational-number-expression.vala
+	iko-cas-lib-rational-number-expression.vala \
+	iko-cas-lib-set.vala
 
 libikocaslib_la_VALAFLAGS = \
 	--gir=ikocaslib-1.0.gir \

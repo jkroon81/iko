@@ -7,6 +7,7 @@
 
 public errordomain Iko.CAS.Error {
 	INTERNAL,
+	IO,
 	RUNTIME,
 	SYNTAX
 }

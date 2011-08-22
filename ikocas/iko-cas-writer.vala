@@ -18,6 +18,13 @@ public class Iko.CAS.Writer : Visitor {
 		return buffer.str;
 	}
 
+	public override void visit_boolean(Boolean b) {
+		if(b.bval)
+			buffer.append("true");
+		else
+			buffer.append("false");
+	}
+
 	public override void visit_compound_expression(CompoundExpression ce) {
 		if(ce.kind == Kind.PLUS) {
 			assert(ce.size > 0);
@@ -90,6 +97,18 @@ public class Iko.CAS.Writer : Visitor {
 			ce[1].accept(this);
 			if(guard)
 				buffer.append(")");
+		} else if(ce.kind == Kind.SET) {
+			if(ce.size == 0)
+				buffer.append("{}");
+			else {
+				buffer.append("{ ");
+				for(var i = 0; i < ce.size; i++) {
+					ce[i].accept(this);
+					if(i != ce.size - 1)
+						buffer.append(", ");
+				}
+				buffer.append(" }");
+			}
 		} else if(ce.kind == Kind.FUNCTION) {
 			ce[0].accept(this);
 			buffer.append("(");

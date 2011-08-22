@@ -43,7 +43,8 @@ public class Iko.CAS.Parser : Object {
 			return;
 		else
 			throw new Error.SYNTAX(
-				"expected '%s' not '%s'".printf(
+				"%s:expected '%s' not '%s'".printf(
+					get_src(get_location()).to_string(),
 					token.to_string(),
 					current().to_string()
 				)
@@ -55,8 +56,61 @@ public class Iko.CAS.Parser : Object {
 		return SourceLocation.extract_string(tokens[prev_index]);
 	}
 
+	SourceLocation get_location() {
+		return tokens[index].begin;
+	}
+
+	SourceReference get_src(SourceLocation begin) {
+		return new SourceReference(scanner.source, begin, tokens[index].end);
+	}
+
+	Expression parse_array_access(Symbol s) throws Error {
+		var aa = new CompoundExpression.from_unary(Kind.ARRAY, s);
+		expect(TokenType.OPEN_BRACKET);
+		aa.append(parse_expression());
+		expect(TokenType.CLOSE_BRACKET);
+		return aa;
+	}
+
+	Assignment parse_assignment() throws Error {
+		var begin = get_location();
+		var symbol = parse_symbol();
+		Assignment a;
+
+		switch(current()) {
+		case TokenType.EQ:
+			next();
+			a = new Assignment(symbol, parse_expression());
+			break;
+		case TokenType.PLUS:
+			next();
+			expect(TokenType.EQ);
+			a = new Assignment(
+				symbol,
+				new CompoundExpression.from_binary(
+					Kind.PLUS,
+					symbol,
+					parse_expression()
+				)
+			);
+			break;
+		default:
+			throw new Error.SYNTAX("%s: expected assignment", get_src(begin).to_string());
+		}
+		expect(TokenType.SEMICOLON);
+		return a;
+	}
+
+	Expression parse_boolean() throws Error {
+		if(accept(TokenType.FALSE))
+			return bool_false();
+		else if(accept(TokenType.TRUE))
+			return bool_true();
+		assert_not_reached();
+	}
+
 	Expression parse_expression() throws Error {
-		return parse_expression_additive();
+		return parse_expression_logical();
 	}
 
 	Expression parse_expression_additive() throws Error {
@@ -77,6 +131,78 @@ public class Iko.CAS.Parser : Object {
 				next();
 				var right = parse_expression_multiplicative();
 				left = new CompoundExpression.from_binary(Kind.PLUS, left, right);
+				break;
+			default:
+				loop = false;
+				break;
+			}
+		}
+		return left;
+	}
+
+	Expression parse_expression_conditional() throws Error {
+		var left = parse_expression_additive();
+		var loop = true;
+		while(loop) {
+			switch(current()) {
+			case TokenType.EQ:
+				next();
+				expect(TokenType.EQ);
+				var right = parse_expression_additive();
+				left = new CompoundExpression.from_binary(Kind.EQ, left, right);
+				break;
+			case TokenType.GT:
+				next();
+				if(accept(TokenType.EQ)) {
+					var right = parse_expression_additive();
+					left = new CompoundExpression.from_binary(Kind.GE, left, right);
+				} else {
+					var right = parse_expression_additive();
+					left = new CompoundExpression.from_binary(Kind.GT, left, right);
+				}
+				break;
+			case TokenType.IS:
+				next();
+				var right = parse_symbol();
+				left = new CompoundExpression.from_binary(Kind.IS, left, right);
+				break;
+			case TokenType.LT:
+				next();
+				if(accept(TokenType.EQ)) {
+					var right = parse_expression_additive();
+					left = new CompoundExpression.from_binary(Kind.LE, left, right);
+				} else if(accept(TokenType.GT)) {
+					var right = parse_expression_additive();
+					left = new CompoundExpression.from_binary(Kind.NE, left, right);
+				} else {
+					var right = parse_expression_additive();
+					left = new CompoundExpression.from_binary(Kind.LT, left, right);
+				}
+				break;
+			default:
+				loop = false;
+				break;
+			}
+		}
+		return left;
+	}
+
+	Expression parse_expression_logical() throws Error {
+		var left = parse_expression_conditional();
+		var loop = true;
+		while(loop) {
+			switch(current()) {
+			case TokenType.AND:
+				next();
+				expect(TokenType.AND);
+				var right = parse_expression_conditional();
+				left = new CompoundExpression.from_binary(Kind.AND, left, right);
+				break;
+			case TokenType.OR:
+				next();
+				expect(TokenType.OR);
+				var right = parse_expression_conditional();
+				left = new CompoundExpression.from_binary(Kind.OR, left, right);
 				break;
 			default:
 				loop = false;
@@ -113,6 +239,11 @@ public class Iko.CAS.Parser : Object {
 		return left;
 	}
 
+	Expression parse_expression_not() throws Error {
+		expect(TokenType.NOT);
+		return new CompoundExpression.from_unary(Kind.NOT, parse_expression_logical());
+	}
+
 	Expression parse_expression_parenthesized() throws Error {
 		expect(TokenType.OPEN_PARENS);
 		var expr = parse_expression();
@@ -134,12 +265,18 @@ public class Iko.CAS.Parser : Object {
 	}
 
 	Expression parse_expression_primary() throws Error {
+		var begin = get_location();
+
 		switch(current()) {
 		case TokenType.DOT:
 			return parse_numerical();
+		case TokenType.FALSE:
+			return parse_boolean();
 		case TokenType.IDENTIFIER:
 			var s = parse_symbol();
 			switch(current()) {
+			case TokenType.OPEN_BRACKET:
+				return parse_array_access(s);
 			case TokenType.OPEN_PARENS:
 				return parse_function_call(s);
 			default:
@@ -147,10 +284,18 @@ public class Iko.CAS.Parser : Object {
 			}
 		case TokenType.INTEGER:
 			return parse_numerical();
+		case TokenType.NOT:
+			return parse_expression_not();
+		case TokenType.OPEN_BRACE:
+			return parse_set();
+		case TokenType.OPEN_BRACKET:
+			return parse_list();
 		case TokenType.OPEN_PARENS:
 			return parse_expression_parenthesized();
+		case TokenType.TRUE:
+			return parse_boolean();
 		default:
-			throw new Error.SYNTAX("expected expression");
+			throw new Error.SYNTAX("%s:expected expression", get_src(begin).to_string());
 		}
 	}
 
@@ -171,6 +316,58 @@ public class Iko.CAS.Parser : Object {
 		return e;
 	}
 
+	ForStatement parse_for_statement() throws Error {
+		expect(TokenType.FOR);
+		expect(TokenType.OPEN_PARENS);
+		var k = parse_symbol();
+		expect(TokenType.EQ);
+		var start = parse_expression();
+		expect(TokenType.TO);
+		var end = parse_expression();
+		expect(TokenType.CLOSE_PARENS);
+		var f = new ForStatement(k, start, end);
+		if(accept(TokenType.OPEN_BRACE)) {
+			while(!accept(TokenType.CLOSE_BRACE))
+				f.body.append(parse_statement());
+		} else
+			f.body.append(parse_statement());
+		return f;
+	}
+
+	ForEachStatement parse_foreach_statement() throws Error {
+		expect(TokenType.FOREACH);
+		expect(TokenType.OPEN_PARENS);
+		var c = parse_symbol();
+		expect(TokenType.IN);
+		var p = parse_expression();
+		expect(TokenType.CLOSE_PARENS);
+		var f = new ForEachStatement(c, p);
+		if(accept(TokenType.OPEN_BRACE)) {
+			while(!accept(TokenType.CLOSE_BRACE))
+				f.body.append(parse_statement());
+		} else
+			f.body.append(parse_statement());
+		return f;
+	}
+
+	Function parse_function() throws Error {
+		var is_public = false;
+		if(accept(TokenType.PUBLIC))
+			is_public = true;
+		expect(TokenType.FUNCTION);
+		var f = new Function(parse_identifier(), is_public);
+		expect(TokenType.OPEN_PARENS);
+		do {
+			if(accept(TokenType.IDENTIFIER))
+				f.arg.append(new Symbol(get_prev_string()));
+		} while(accept(TokenType.COMMA));
+		expect(TokenType.CLOSE_PARENS);
+		expect(TokenType.OPEN_BRACE);
+		while(!accept(TokenType.CLOSE_BRACE))
+			f.body.append(parse_statement());
+		return f;
+	}
+
 	Expression parse_function_call(Symbol s) throws Error {
 		expect(TokenType.OPEN_PARENS);
 		var fc = new CompoundExpression.from_unary(Kind.FUNCTION, s);
@@ -186,6 +383,39 @@ public class Iko.CAS.Parser : Object {
 	string parse_identifier() throws Error {
 		expect(TokenType.IDENTIFIER);
 		return get_prev_string();
+	}
+
+	public IfStatement parse_if_statement() throws Error {
+		expect(TokenType.IF);
+		expect(TokenType.OPEN_PARENS);
+		var cond = parse_expression();
+		expect(TokenType.CLOSE_PARENS);
+		var i = new IfStatement(cond);
+		if(accept(TokenType.OPEN_BRACE))
+			while(!accept(TokenType.CLOSE_BRACE))
+				i.body_true.append(parse_statement());
+		else
+			i.body_true.append(parse_statement());
+		if(accept(TokenType.ELSE)) {
+			if(accept(TokenType.OPEN_BRACE))
+				while(!accept(TokenType.CLOSE_BRACE))
+					i.body_false.append(parse_statement());
+			else
+				i.body_false.append(parse_statement());
+		}
+		return i;
+	}
+
+	Expression parse_list() throws Error {
+		expect(TokenType.OPEN_BRACKET);
+		var l = new List();
+		if(accept(TokenType.CLOSE_BRACKET))
+			return l;
+		do {
+			l.append(parse_expression());
+		} while(accept(TokenType.COMMA));
+		expect(TokenType.CLOSE_BRACKET);
+		return l;
 	}
 
 	Expression parse_numerical() throws Error {
@@ -215,8 +445,43 @@ public class Iko.CAS.Parser : Object {
 		);
 	}
 
+	public ReturnStatement parse_return_statement() throws Error {
+		expect(TokenType.RETURN);
+		var r = new ReturnStatement(parse_expression());
+		expect(TokenType.SEMICOLON);
+		return r;
+	}
+
+	Expression parse_set() throws Error {
+		expect(TokenType.OPEN_BRACE);
+		var s = new CompoundExpression.from_empty(Kind.SET);
+		if(accept(TokenType.CLOSE_BRACE))
+			return s;
+		do {
+			s.append(parse_expression());
+		} while(accept(TokenType.COMMA));
+		expect(TokenType.CLOSE_BRACE);
+		return s;
+	}
+
+	public SourceFile parse_source_file(string filename) throws Error {
+		try {
+			scanner = new Scanner.from_file(filename);
+			index = -1;
+			size = 0;
+			next();
+
+			var sf = new SourceFile(filename);
+			while(current() != TokenType.EOF)
+				sf.function.append(parse_function());
+			return sf;
+		} catch(FileError e) {
+			throw new Error.IO("error opening file '%s'", filename);
+		}
+	}
+
 	public Expression parse_source_string(string text) throws Error {
-		scanner = new Scanner(text);
+		scanner = new Scanner.from_string(text);
 		index = -1;
 		size = 0;
 		next();
@@ -225,7 +490,54 @@ public class Iko.CAS.Parser : Object {
 		return e;
 	}
 
+	Statement parse_statement() throws Error {
+		switch(current()) {
+		case TokenType.FOR:
+			return parse_for_statement();
+		case TokenType.FOREACH:
+			return parse_foreach_statement();
+		case TokenType.IF:
+			return parse_if_statement();
+		case TokenType.RETURN:
+			return parse_return_statement();
+		case TokenType.VALA:
+			return parse_vala_block();
+		case TokenType.WHILE:
+			return parse_while_statement();
+		default:
+			return parse_assignment();
+		}
+	}
+
 	Symbol parse_symbol() throws Error {
 		return new Symbol(parse_identifier());
+	}
+
+	ValaBlock parse_vala_block() throws Error {
+		var begin = get_location();
+		expect(TokenType.VALA);
+		if(current() != TokenType.OPEN_BRACE)
+			throw new Error.SYNTAX(
+				"%s:expected Vala block",
+				get_src(begin).to_string()
+			);
+		var vb = new ValaBlock(scanner.parse_block());
+		next();
+		next();
+		return vb;
+	}
+
+	WhileStatement parse_while_statement() throws Error {
+		expect(TokenType.WHILE);
+		expect(TokenType.OPEN_PARENS);
+		var cond = parse_expression();
+		expect(TokenType.CLOSE_PARENS);
+		var w = new WhileStatement(cond);
+		if(accept(TokenType.OPEN_BRACE))
+			while(!accept(TokenType.CLOSE_BRACE))
+				w.body.append(parse_statement());
+		else
+			w.body.append(parse_statement());
+		return w;
 	}
 }

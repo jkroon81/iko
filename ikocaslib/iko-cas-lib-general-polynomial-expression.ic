@@ -1,0 +1,129 @@
+public function gpe_coefficient(u, x, j) {
+	if(!gpe_polynomial(u, x))
+		return Undefined;
+
+	if(u is sum) {
+		r = 0;
+		foreach(t in u) {
+			c = t / x^j;
+			if(free_of(c, x))
+				r += c;
+		}
+		return r;
+	} else {
+		r = u / x^j;
+		if(free_of(r, x))
+			return r;
+		else
+			return 0;
+	}
+}
+
+public function gpe_polynomial_division(u, v, x) {
+	if(!gpe_polynomial(u,x) || !gpe_polynomial(v,x))
+		return Undefined;
+
+	q = 0;
+	r = u;
+	m = gpe_polynomial_degree(r, x);
+	n = gpe_polynomial_degree(v, x);
+	lcv = gpe_coefficient(v,x,n);
+
+	while(m >= n) {
+		lcr = gpe_coefficient(r, x, m);
+		s = lcr / lcv;
+		q += s * x^(m - n);
+		r = bae_expand((r - lcr * x^m) - (v - lcv * x^n) * s * x^(m - n));
+		m = gpe_polynomial_degree(r, x);
+	}
+
+	return [q, r];
+}
+
+public function gpe_monomial(u, v) {
+	if(v is set)
+		S = v;
+	else
+		S = { v };
+
+	if(set_member(u, S))
+		return true;
+	else if(u is power) {
+		radix = u[1];
+		exp = u[2];
+		if(set_member(radix, S ) && exp is integer && exp > 1)
+			return true;
+	} else if(u is product) {
+		foreach(f in u)
+			if(!gpe_monomial(f, S))
+				return false;
+		return true;
+	}
+	return free_of(u, S);
+}
+
+public function gpe_monomial_degree(u, v) {
+	if(v is set)
+		S = v;
+	else
+		S = { v };
+
+	if(!gpe_monomial(u, S))
+		return Undefined;
+
+	if(u == 0)
+		return -Infinity;
+
+	if(set_member(u, S))
+		return 1;
+	else if(u is power) {
+		if(set_member(u[1], S))
+			return u[2];
+		else
+			return 0;
+	} else if(u is product) {
+		r = 0;
+		foreach(f in u)
+			r += gpe_monomial_degree(f, S);
+		return r;
+	} else
+		return 0;
+}
+
+public function gpe_polynomial(u, v) {
+	if(v is set)
+		S = v;
+	else
+		S = { v };
+
+	if(u is sum) {
+		if(set_member(u, S))
+			return true;
+		foreach(t in u)
+			if(!gpe_monomial(t, S))
+				return false;
+		return true;
+	} else
+		return gpe_monomial(u, S);
+}
+
+public function gpe_polynomial_degree(u, v) {
+	if(v is set)
+		S = v;
+	else
+		S = { v };
+
+	if(!gpe_polynomial(u, S))
+		return Undefined;
+
+	if(u is sum) {
+		r = 0;
+		foreach(t in u) {
+			d = gpe_monomial_degree(t, S);
+			if(d > r)
+				r = d;
+		}
+		return r;
+	} else
+		return gpe_monomial_degree(u, S);
+}

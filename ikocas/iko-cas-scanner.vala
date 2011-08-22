@@ -10,11 +10,69 @@ public class Iko.CAS.Scanner : Object {
 	char *end;
 	int line;
 	int column;
+	MappedFile mapped_file;
 
-	public Scanner(string text) {
+	public string source { get; construct; }
+
+	public Scanner.from_file(string filename) throws FileError {
+		Object(source : filename);
+
+		mapped_file = new MappedFile(filename, false);
+		var begin = mapped_file.get_contents();
+		end = begin + mapped_file.get_length();
+		current = begin;
+		line = column = 1;
+	}
+
+	public Scanner.from_string(string text) {
+		Object(source : "(string)");
+
 		end = (char*)text + text.length;
 		current = text;
 		line = column = 1;
+	}
+
+	bool matches(char *begin, string keyword) {
+		long len = keyword.length;
+
+		for(int i = 0; i < len; i++)
+			if(begin[i] != ((char*)keyword)[i])
+				return false;
+		return true;
+	}
+
+	TokenType get_identifier_or_keyword(char *begin, int len) {
+		switch(len) {
+		case 2:
+			if(matches(begin, "if")) return TokenType.IF;
+			if(matches(begin, "in")) return TokenType.IN;
+			if(matches(begin, "is")) return TokenType.IS;
+			if(matches(begin, "to")) return TokenType.TO;
+			break;
+		case 3:
+			if(matches(begin, "for")) return TokenType.FOR;
+			break;
+		case 4:
+			if(matches(begin, "else")) return TokenType.ELSE;
+			if(matches(begin, "true")) return TokenType.TRUE;
+			if(matches(begin, "vala")) return TokenType.VALA;
+			break;
+		case 5:
+			if(matches(begin, "false")) return TokenType.FALSE;
+			if(matches(begin, "while")) return TokenType.WHILE;
+			break;
+		case 6:
+			if(matches(begin, "public")) return TokenType.PUBLIC;
+			if(matches(begin, "return")) return TokenType.RETURN;
+			break;
+		case 7:
+			if(matches(begin, "foreach")) return TokenType.FOREACH;
+			break;
+		case 8:
+			if(matches(begin, "function")) return TokenType.FUNCTION;
+			break;
+		}
+		return TokenType.IDENTIFIER;
 	}
 
 	void whitespace() {
@@ -26,6 +84,32 @@ public class Iko.CAS.Scanner : Object {
 			current++;
 			column++;
 		}
+	}
+
+	public string parse_block() {
+		var buffer = new StringBuilder();
+		var depth = 1;
+
+		while(current != end) {
+			switch(current[0]) {
+			case '{':
+				depth++;
+				break;
+			case '}':
+				depth--;
+				if(depth == 0)
+					return buffer.str;
+				break;
+			case '\n':
+				line++;
+				column = 0;
+				break;
+			}
+			buffer.append_c(current[0]);
+			current++;
+			column++;
+		}
+		return buffer.str;
 	}
 
 	public TokenInfo read_token() {
@@ -49,13 +133,14 @@ public class Iko.CAS.Scanner : Object {
 				current++;
 				len++;
 			}
-			token = TokenType.IDENTIFIER;
+			token = get_identifier_or_keyword(current - len, len);
 		} else if(current[0].isdigit()) {
 			while(current < end && current[0].isdigit())
 				current++;
 			token = TokenType.INTEGER;
 		} else {
 			switch(current[0]) {
+			case '&': token = TokenType.AND;           break;
 			case '^': token = TokenType.CARET;         break;
 			case '}': token = TokenType.CLOSE_BRACE;   break;
 			case ']': token = TokenType.CLOSE_BRACKET; break;
@@ -63,12 +148,15 @@ public class Iko.CAS.Scanner : Object {
 			case ',': token = TokenType.COMMA;         break;
 			case '.': token = TokenType.DOT;           break;
 			case '=': token = TokenType.EQ;            break;
+			case '>': token = TokenType.GT;            break;
 			default : token = TokenType.INVALID;       break;
+			case '<': token = TokenType.LT;            break;
 			case '-': token = TokenType.MINUS;         break;
 			case '!': token = TokenType.NOT;           break;
 			case '{': token = TokenType.OPEN_BRACE;    break;
 			case '[': token = TokenType.OPEN_BRACKET;  break;
 			case '(': token = TokenType.OPEN_PARENS;   break;
+			case '|': token = TokenType.OR;            break;
 			case '+': token = TokenType.PLUS;          break;
 			case ';': token = TokenType.SEMICOLON;     break;
 			case '/': token = TokenType.SLASH;         break;

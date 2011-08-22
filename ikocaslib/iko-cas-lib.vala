@@ -13,6 +13,29 @@ namespace Iko.CAS.Library {
 		"init"
 	};
 
+	public Expression free_of(Expression u, Expression t) {
+		if(t.kind == Kind.SET) {
+			foreach(var e in t as CompoundExpression)
+				if(!(free_of(u, e) as Boolean).bval)
+					return bool_false();
+			return bool_true();
+		} else {
+			if(u.to_polish() == t.to_polish())
+				return bool_false();
+			else if(u.kind == Kind.SYMBOL ||
+			        u.kind == Kind.INTEGER ||
+			        u.kind == Kind.FRACTION)
+				return bool_true();
+			else {
+				var ce = u as CompoundExpression;
+				foreach(var e in ce)
+					if(!(free_of(e, t) as Boolean).bval)
+						return bool_false();
+			}
+			return bool_true();
+		}
+	}
+
 	public bool init() {
 		var repo = Repository.get_default();
 
@@ -55,20 +78,38 @@ namespace Iko.CAS.Library {
 			x = new Symbol("simplify").map(x, null);
 
 		switch(x.kind) {
+		case Kind.AND:
+			return b_simplify(x);
+		case Kind.BOOLEAN:
+			return x;
+		case Kind.EQ:
+			return b_simplify(x);
 		case Kind.FACTORIAL:
 			return bae_simplify(x);
 		case Kind.FRACTION:
 			return rne_simplify(x);
 		case Kind.FUNCTION:
 			return simplify_function_call(x);
+		case Kind.GE:
+			return b_simplify(x);
+		case Kind.GT:
+			return b_simplify(x);
 		case Kind.INTEGER:
+			return x;
+		case Kind.LIST:
 			return x;
 		case Kind.MUL:
 			return bae_simplify(x);
+		case Kind.NOT:
+			return b_simplify(x);
+		case Kind.OR:
+			return b_simplify(x);
 		case Kind.PLUS:
 			return bae_simplify(x);
 		case Kind.POWER:
 			return bae_simplify(x);
+		case Kind.SET:
+			return set_simplify(x);
 		case Kind.SYMBOL:
 			return x;
 		default:

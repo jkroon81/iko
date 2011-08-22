@@ -1,0 +1,39 @@
+public function bae_expand(u) {
+	if(u is sum) {
+		v = u[1];
+		return bae_expand(v) + bae_expand(u - v);
+	} else if(u is product) {
+		v = u[1];
+		return bae_expand_product(bae_expand(v), bae_expand(u / v));
+	} else if(u is power) {
+		radix = u[1];
+		exp = u[2];
+		if(exp is integer && exp >= 2)
+			return bae_expand_power(bae_expand(radix), exp);
+	}
+	return u;
+}
+
+function bae_expand_power(u, n) {
+	if(u is sum) {
+		f = u[1];
+		r = u - f;
+		s = 0;
+		for(k = 0 to n) {
+			c = n! / (k! * (n - k)!);
+			s += bae_expand_product(c * f^(n - k), bae_expand_power(r, k));
+		}
+		return s;
+	} else
+		return u^n;
+}
+
+function bae_expand_product(r, s) {
+	if(r is sum) {
+		f = r[1];
+		return bae_expand_product(f, s) + bae_expand_product(r - f, s);
+	} else if(s is sum) {
+		return bae_expand_product(s, r);
+	} else
+		return r * s;
+}
