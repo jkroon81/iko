@@ -7,6 +7,9 @@
 
 public class Iko.CAS.Undefined : Symbol {
 	public Undefined() {
-		Object(name : "Undefined");
+		Object(
+			kind : Kind.SYMBOL,
+			name : "Undefined"
+		);
 	}
 }

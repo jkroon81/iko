@@ -6,7 +6,7 @@
  */
 
 public abstract class Iko.CAS.Expression : Node {
-	public Kind kind { get; construct; }
+	public Kind kind { get; construct; default = Kind.UNDEFINED; }
 
 	public Expression constant() {
 		if(kind == Kind.SYMBOL ||

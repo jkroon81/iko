@@ -15,7 +15,8 @@ public enum Iko.CAS.Kind {
 	MUL,
 	PLUS,
 	POWER,
-	SYMBOL;
+	SYMBOL,
+	UNDEFINED;
 
 	public string to_string() {
 		switch(this) {
@@ -39,6 +40,8 @@ public enum Iko.CAS.Kind {
 			return "^";
 		case SYMBOL:
 			return "symbol";
+		case UNDEFINED:
+			return "undefined";
 		default:
 			assert_not_reached();
 		}
@@ -66,6 +69,8 @@ public enum Iko.CAS.Kind {
 			return "Kind.POWER";
 		case SYMBOL:
 			return "Kind.SYMBOL";
+		case UNDEFINED:
+			return "Kind.UNDEFINED";
 		default:
 			assert_not_reached();
 		}
