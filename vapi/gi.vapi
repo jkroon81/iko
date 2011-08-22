@@ -60,7 +60,7 @@ namespace GI {
 	[Compact]
 	[CCode (cprefix = "g_function_info_")]
 	public class FunctionInfo : CallableInfo {
-		public bool invoke(Argument[] ?in_args, Argument[] ?out_args, out Argument return_value) throws InvokeError;
+		public bool invoke(Argument[] ?in_args, Argument[] ?out_args, out Argument return_value) throws InvokeError, Iko.CAS.Error;
 	}
 
 	[CCode (cname="GArgument")]

@@ -22,13 +22,13 @@ public class Iko.CAS.Symbol : AtomicExpression {
 		v.visit_symbol(this);
 	}
 
-	public Expression invoke(List args) {
+	public Expression invoke(List args) throws Error {
 		var repo = Repository.get_default();
 		var info = repo.find_by_name("ikocaslib", "cas_library_" + name);
 		if(info == null)
-			return undefined();
+			throw new Error.RUNTIME("Function '%s' not found", name);
 		if(info.get_type() != InfoType.FUNCTION)
-			return undefined();
+			throw new Error.RUNTIME("Symbol '%s' is not a function", name);
 
 		Argument[] arg_in = new Argument[args.size];
 		Argument retval;
@@ -39,28 +39,26 @@ public class Iko.CAS.Symbol : AtomicExpression {
 		try {
 			((FunctionInfo)info).invoke(arg_in, null, out retval);
 		} catch (InvokeError e) {
-			return undefined();
+			throw new Error.RUNTIME("Invalid arguments to function '%s'", name);
 		}
 
 		return (retval.pointer as Expression);
 	}
 
-	public Expression map(Expression e, ...) {
+	public Expression map(Expression e, List? args) throws Error {
 		var c = e as CompoundExpression;
 
 		if(c == null)
 			return undefined();
 
-		var l = new List();
-		l.append(e);
+		List l;
 
-		var args = va_list();
-		var arg = args.arg<Expression?>();
+		if(args != null)
+			l = args.copy();
+		else
+			l = new List();
 
-		while(arg != null) {
-			l.append(arg);
-			arg = args.arg<Expression?>();
-		}
+		l.prepend(e);
 
 		CompoundExpression x = new CompoundExpression.from_empty(c.kind);
 

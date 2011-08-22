@@ -6,7 +6,7 @@
  */
 
 namespace Iko.CAS.Library {
-	List bae_merge_products(List p, List q) {
+	List bae_merge_products(List p, List q) throws Error {
 		if(q.size == 0)
 			return p;
 
@@ -41,7 +41,7 @@ namespace Iko.CAS.Library {
 		assert_not_reached();
 	}
 
-	List bae_merge_sums(List p, List q) {
+	List bae_merge_sums(List p, List q) throws Error {
 		if(q.size == 0)
 			return p;
 
@@ -186,7 +186,7 @@ namespace Iko.CAS.Library {
 		return !bae_compare(v, u);
 	}
 
-	Expression bae_simplify(Expression e) {
+	Expression bae_simplify(Expression e) throws Error {
 		switch(e.kind) {
 		case Kind.FACTORIAL:
 			return bae_simplify_factorial(e as CompoundExpression);
@@ -197,7 +197,7 @@ namespace Iko.CAS.Library {
 		case Kind.POWER:
 			return bae_simplify_power(e as CompoundExpression);
 		default:
-			error("%s: Unhandled kind '%s'", Log.METHOD, e.kind.to_string());
+			throw new Error.INTERNAL("%s: Unhandled kind '%s'", Log.METHOD, e.kind.to_string());
 		}
 	}
 
@@ -228,7 +228,7 @@ namespace Iko.CAS.Library {
 		return new Integer.from_int(r);
 	}
 
-	public Expression bae_simplify_integer_power(Expression radix, Integer exp) {
+	public Expression bae_simplify_integer_power(Expression radix, Integer exp) throws Error {
 		if(radix.kind == Kind.INTEGER || radix.kind == Kind.FRACTION)
 			return rne_simplify(
 				new CompoundExpression.from_binary(Kind.POWER, radix, exp)
@@ -258,14 +258,14 @@ namespace Iko.CAS.Library {
 		}
 
 		if(radix.kind == Kind.MUL) {
-			var p_new = new Symbol("bae_simplify_integer_power").map(radix, exp);
+			var p_new = new Symbol("bae_simplify_integer_power").map(radix, new List.from_unary(exp));
 			return bae_simplify_product(p_new as CompoundExpression);
 		}
 
 		return new CompoundExpression.from_binary(Kind.POWER, radix, exp);
 	}
 
-	Expression bae_simplify_power(CompoundExpression p) {
+	Expression bae_simplify_power(CompoundExpression p) throws Error {
 		var radix = p[0];
 		var exp = p[1];
 
@@ -289,7 +289,7 @@ namespace Iko.CAS.Library {
 		return p;
 	}
 
-	Expression bae_simplify_product(CompoundExpression p) {
+	Expression bae_simplify_product(CompoundExpression p) throws Error {
 		foreach(var f in p) {
 			if(f is Undefined)
 				return f;
@@ -310,7 +310,7 @@ namespace Iko.CAS.Library {
 			return new CompoundExpression.from_list(Kind.MUL, v);
 	}
 
-	List bae_simplify_product_rec(List l) {
+	List bae_simplify_product_rec(List l) throws Error {
 		if(l.size == 2) {
 			var u1 = l[0];
 			var u2 = l[1];
@@ -385,7 +385,7 @@ namespace Iko.CAS.Library {
 		}
 	}
 
-	Expression bae_simplify_sum(CompoundExpression s) {
+	Expression bae_simplify_sum(CompoundExpression s) throws Error {
 		foreach(var t in s)
 			if(t is Undefined)
 				return t;
@@ -403,7 +403,7 @@ namespace Iko.CAS.Library {
 			return new CompoundExpression.from_list(Kind.PLUS, v);
 	}
 
-	List bae_simplify_sum_rec(List l) {
+	List bae_simplify_sum_rec(List l) throws Error {
 		if(l.size == 2) {
 			var u1 = l[0];
 			var u2 = l[1];

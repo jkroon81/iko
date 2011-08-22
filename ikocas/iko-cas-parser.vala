@@ -5,10 +5,6 @@
  *   Jacob Kroon <jacob.kroon@gmail.com>
  */
 
-public errordomain Iko.CAS.ParseError {
-	SYNTAX
-}
-
 public class Iko.CAS.Parser : Object {
 	const int TOKEN_BUFFER_SIZE = 16;
 
@@ -42,11 +38,11 @@ public class Iko.CAS.Parser : Object {
 			return false;
 	}
 
-	void expect(TokenType token) throws ParseError {
+	void expect(TokenType token) throws Error {
 		if(accept(token))
 			return;
 		else
-			throw new ParseError.SYNTAX(
+			throw new Error.SYNTAX(
 				"expected '%s' not '%s'".printf(
 					token.to_string(),
 					current().to_string()
@@ -59,11 +55,11 @@ public class Iko.CAS.Parser : Object {
 		return SourceLocation.extract_string(tokens[prev_index]);
 	}
 
-	Expression parse_expression() throws ParseError {
+	Expression parse_expression() throws Error {
 		return parse_expression_additive();
 	}
 
-	Expression parse_expression_additive() throws ParseError {
+	Expression parse_expression_additive() throws Error {
 		var left = parse_expression_multiplicative();
 		var loop = true;
 		while(loop) {
@@ -90,7 +86,7 @@ public class Iko.CAS.Parser : Object {
 		return left;
 	}
 
-	Expression parse_expression_multiplicative() throws ParseError {
+	Expression parse_expression_multiplicative() throws Error {
 		var left = parse_expression_power();
 		var loop = true;
 		while(loop) {
@@ -117,14 +113,14 @@ public class Iko.CAS.Parser : Object {
 		return left;
 	}
 
-	Expression parse_expression_parenthesized() throws ParseError {
+	Expression parse_expression_parenthesized() throws Error {
 		expect(TokenType.OPEN_PARENS);
 		var expr = parse_expression();
 		expect(TokenType.CLOSE_PARENS);
 		return expr;
 	}
 
-	Expression parse_expression_power() throws ParseError {
+	Expression parse_expression_power() throws Error {
 		var left = parse_expression_unary();
 		var loop = true;
 		while(loop) {
@@ -137,7 +133,7 @@ public class Iko.CAS.Parser : Object {
 		return left;
 	}
 
-	Expression parse_expression_primary() throws ParseError {
+	Expression parse_expression_primary() throws Error {
 		switch(current()) {
 		case TokenType.DOT:
 			return parse_numerical();
@@ -154,11 +150,11 @@ public class Iko.CAS.Parser : Object {
 		case TokenType.OPEN_PARENS:
 			return parse_expression_parenthesized();
 		default:
-			throw new ParseError.SYNTAX("expected expression");
+			throw new Error.SYNTAX("expected expression");
 		}
 	}
 
-	Expression parse_expression_unary() throws ParseError {
+	Expression parse_expression_unary() throws Error {
 		if(current() == TokenType.MINUS) {
 			next();
 			return new CompoundExpression.from_binary(
@@ -175,7 +171,7 @@ public class Iko.CAS.Parser : Object {
 		return e;
 	}
 
-	Expression parse_function_call(Symbol s) throws ParseError {
+	Expression parse_function_call(Symbol s) throws Error {
 		expect(TokenType.OPEN_PARENS);
 		var fc = new CompoundExpression.from_unary(Kind.FUNCTION, s);
 		if(!accept(TokenType.CLOSE_PARENS)) {
@@ -187,12 +183,12 @@ public class Iko.CAS.Parser : Object {
 		return fc;
 	}
 
-	string parse_identifier() throws ParseError {
+	string parse_identifier() throws Error {
 		expect(TokenType.IDENTIFIER);
 		return get_prev_string();
 	}
 
-	Expression parse_numerical() throws ParseError {
+	Expression parse_numerical() throws Error {
 		var integer = "0";
 		var fraction = "";
 
@@ -219,7 +215,7 @@ public class Iko.CAS.Parser : Object {
 		);
 	}
 
-	public Expression parse_source_string(string text) throws ParseError {
+	public Expression parse_source_string(string text) throws Error {
 		scanner = new Scanner(text);
 		index = -1;
 		size = 0;
@@ -229,7 +225,7 @@ public class Iko.CAS.Parser : Object {
 		return e;
 	}
 
-	Symbol parse_symbol() throws ParseError {
+	Symbol parse_symbol() throws Error {
 		return new Symbol(parse_identifier());
 	}
 }

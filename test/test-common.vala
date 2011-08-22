@@ -12,6 +12,7 @@ namespace TestCommon {
 
 	public static int test(string lhs_in, string rhs_in) {
 		Iko.CAS.Expression lhs, rhs;
+		string lhs_gen, rhs_gen;
 		int retval;
 
 		var parser = new Iko.CAS.Parser();
@@ -19,12 +20,11 @@ namespace TestCommon {
 		try {
 			lhs = parser.parse_source_string(lhs_in);
 			rhs = parser.parse_source_string(rhs_in);
-		} catch(Iko.CAS.ParseError e) {
+			lhs_gen = Iko.CAS.Library.simplify(lhs).to_string();
+			rhs_gen = Iko.CAS.Library.simplify(rhs).to_string();
+		} catch(Iko.CAS.Error e) {
 			assert_not_reached();
 		}
-
-		var lhs_gen = Iko.CAS.Library.simplify(lhs).to_string();
-		var rhs_gen = Iko.CAS.Library.simplify(rhs).to_string();
 
 		if(lhs_gen != rhs_gen) {
 			stdout.printf(RED + "FAIL" + RESET);

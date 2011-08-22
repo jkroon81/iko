@@ -49,10 +49,10 @@ namespace Iko.CAS.Library {
 		return func;
 	}
 
-	public Expression simplify(Expression e) {
+	public Expression simplify(Expression e) throws Error {
 		var x = e;
 		if(x is CompoundExpression)
-			x = new Symbol("simplify").map(x);
+			x = new Symbol("simplify").map(x, null);
 
 		switch(x.kind) {
 		case Kind.FACTORIAL:
@@ -72,11 +72,11 @@ namespace Iko.CAS.Library {
 		case Kind.SYMBOL:
 			return x;
 		default:
-			error("%s: Unhandled kind '%s'", Log.METHOD, x.kind.to_string());
+			throw new Error.INTERNAL("%s: Unhandled kind '%s'", Log.METHOD, x.kind.to_string());
 		}
 	}
 
-	Expression simplify_function_call(Expression e) {
+	Expression simplify_function_call(Expression e) throws Error {
 		if(e.kind != Kind.FUNCTION)
 			return e;
 

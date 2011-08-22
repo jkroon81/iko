@@ -6,6 +6,10 @@
  */
 
 public class Iko.CAS.List : CompoundExpression {
+	public List() {
+		Object(kind : Kind.LIST);
+	}
+
 	public List.from_binary(Expression e1, Expression e2) {
 		Object(kind : Kind.LIST);
 		append(e1);
@@ -15,6 +19,15 @@ public class Iko.CAS.List : CompoundExpression {
 	public List.from_unary(Expression e) {
 		Object(kind : Kind.LIST);
 		append(e);
+	}
+
+	public List copy() {
+		var r = new List();
+
+		foreach(var e in this)
+			r.append(e);
+
+		return r;
 	}
 
 	public List tail() {
