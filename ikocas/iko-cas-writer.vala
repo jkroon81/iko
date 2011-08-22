@@ -108,9 +108,10 @@ public class Iko.CAS.Writer : Visitor {
 				buffer.append("[ ");
 				foreach(var e in ce) {
 					e.accept(this);
-					buffer.append(" ");
+					buffer.append(", ");
 				}
-				buffer.append("]");
+				buffer.erase(buffer.len - 2, 2);
+				buffer.append(" ]");
 			}
 		} else {
 			error("%s: Unhandled kind '%s'\n", Log.METHOD, ce.kind.to_string());
