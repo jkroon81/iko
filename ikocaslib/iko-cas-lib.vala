@@ -100,6 +100,8 @@ namespace Iko.CAS.Library {
 			return x;
 		case Kind.MUL:
 			return bae_simplify(x);
+		case Kind.NE:
+			return b_simplify(x);
 		case Kind.NOT:
 			return b_simplify(x);
 		case Kind.OR:

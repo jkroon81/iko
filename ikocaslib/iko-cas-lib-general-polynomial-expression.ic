@@ -1,5 +1,5 @@
-public function gpe_coefficient(u, x, j) {
-	if(!gpe_polynomial(u, x))
+function gpe_coefficient(u, x, j) {
+	if(!gpe_is_polynomial(u, x))
 		return Undefined;
 
 	if(u is sum) {
@@ -19,8 +19,8 @@ public function gpe_coefficient(u, x, j) {
 	}
 }
 
-public function gpe_polynomial_division(u, v, x) {
-	if(!gpe_polynomial(u,x) || !gpe_polynomial(v,x))
+public function gpe_division(u, v, x) {
+	if(!gpe_is_polynomial(u,x) || !gpe_is_polynomial(v,x))
 		return Undefined;
 
 	q = 0;
@@ -40,7 +40,33 @@ public function gpe_polynomial_division(u, v, x) {
 	return [q, r];
 }
 
-public function gpe_monomial(u, v) {
+public function gpe_expansion(u, v, x, t) {
+	if(u == 0)
+		return 0;
+	else {
+		d = gpe_division(u, v, x);
+		q = d[1];
+		r = d[2];
+		return (bae_expand(t * gpe_expansion(q, v, x, t) + r));
+	}
+}
+
+public function gpe_gcd(u, v, x) {
+	if(u == 0 && v == 0)
+		return 0;
+	else {
+		U = u;
+		V = v;
+		while(V <> 0) {
+			d = gpe_division(U, V, x);
+			U = V;
+			V = d[2];
+		}
+		return bae_expand(1 / gpe_coefficient(U, x, gpe_polynomial_degree(U, x)) * U);
+	}
+}
+
+function gpe_is_monomial(u, v) {
 	if(v is set)
 		S = v;
 	else
@@ -55,20 +81,37 @@ public function gpe_monomial(u, v) {
 			return true;
 	} else if(u is product) {
 		foreach(f in u)
-			if(!gpe_monomial(f, S))
+			if(!gpe_is_monomial(f, S))
 				return false;
 		return true;
 	}
 	return free_of(u, S);
 }
 
-public function gpe_monomial_degree(u, v) {
+function gpe_is_polynomial(u, v) {
 	if(v is set)
 		S = v;
 	else
 		S = { v };
 
-	if(!gpe_monomial(u, S))
+	if(u is sum) {
+		if(set_member(u, S))
+			return true;
+		foreach(t in u)
+			if(!gpe_is_monomial(t, S))
+				return false;
+		return true;
+	} else
+		return gpe_is_monomial(u, S);
+}
+
+function gpe_monomial_degree(u, v) {
+	if(v is set)
+		S = v;
+	else
+		S = { v };
+
+	if(!gpe_is_monomial(u, S))
 		return Undefined;
 
 	if(u == 0)
@@ -90,30 +133,13 @@ public function gpe_monomial_degree(u, v) {
 		return 0;
 }
 
-public function gpe_polynomial(u, v) {
+function gpe_polynomial_degree(u, v) {
 	if(v is set)
 		S = v;
 	else
 		S = { v };
 
-	if(u is sum) {
-		if(set_member(u, S))
-			return true;
-		foreach(t in u)
-			if(!gpe_monomial(t, S))
-				return false;
-		return true;
-	} else
-		return gpe_monomial(u, S);
-}
-
-public function gpe_polynomial_degree(u, v) {
-	if(v is set)
-		S = v;
-	else
-		S = { v };
-
-	if(!gpe_polynomial(u, S))
+	if(!gpe_is_polynomial(u, S))
 		return Undefined;
 
 	if(u is sum) {

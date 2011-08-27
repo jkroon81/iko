@@ -59,6 +59,12 @@ namespace Iko.CAS.Library {
 				return bool_true();
 			else
 				return bool_false();
+		case Kind.NE:
+			var ne = x as CompoundExpression;
+			if(ne[0].to_polish() != ne[1].to_polish())
+				return bool_true();
+			else
+				return bool_false();
 		case Kind.NOT:
 			var n = x as CompoundExpression;
 			if((b_simplify(n[0]) as Boolean).bval)
