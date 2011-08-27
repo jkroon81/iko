@@ -10,6 +10,7 @@ public class Iko.CAS.Scanner : Object {
 	char *end;
 	int line;
 	int column;
+	string str;
 	MappedFile mapped_file;
 
 	public string source { get; construct; }
@@ -27,8 +28,9 @@ public class Iko.CAS.Scanner : Object {
 	public Scanner.from_string(string text) {
 		Object(source : "(string)");
 
-		end = (char*)text + text.length;
-		current = text;
+		str = text.dup();
+		end = (char*)str + str.length;
+		current = str;
 		line = column = 1;
 	}
 

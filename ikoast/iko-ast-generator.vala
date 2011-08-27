@@ -190,7 +190,8 @@ public class Iko.AST.Generator : Iko.Visitor {
 
 	public override void visit_float_literal(Iko.FloatLiteral fl) {
 		try {
-			q.push_head(cas_parser.parse_source_string(fl.value));
+			cas_parser.set_source_from_text(fl.value);
+			q.push_head(cas_parser.parse_numerical());
 		} catch(Iko.CAS.Error e) {
 			assert_not_reached();
 		}

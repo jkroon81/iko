@@ -24,13 +24,13 @@ libikocas_la_SOURCES = \
 	iko-cas-integer.vala \
 	iko-cas-kind.vala \
 	iko-cas-list.vala \
+	iko-cas-namespace.vala \
 	iko-cas-node.vala \
 	iko-cas-parser.vala \
 	iko-cas-polish.vala \
 	iko-cas-return-statement.vala \
 	iko-cas-scanner.vala \
 	iko-cas-singletons.vala \
-	iko-cas-source-file.vala \
 	iko-cas-source-location.vala \
 	iko-cas-source-reference.vala \
 	iko-cas-statement.vala \

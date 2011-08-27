@@ -18,8 +18,12 @@ class ValaWriter : Visitor {
 		parens_count = 0;
 	}
 
-	public void compile(SourceFile sf) {
-		sf.accept(this);
+	public void compile(Namespace ns, string outfile) throws Error {
+		dst = FileStream.open(outfile, "w");
+		if(dst == null)
+			throw new Error.IO("Can't open file '%s' for writing", outfile);
+		ns.accept(this);
+		dst = null;
 	}
 
 	SList<unowned string> get_locals(SList<Statement> body) {
@@ -198,20 +202,17 @@ class ValaWriter : Visitor {
 		}
 	}
 
+	public override void visit_namespace(Namespace ns) {
+		write("namespace Iko.CAS.Library {");
+		foreach(var f in ns.function)
+			f.accept(this);
+		write("}");
+	}
+
 	public override void visit_return_statement(ReturnStatement r) {
 		write("return simplify(");
 		r.expr.accept(this);
 		write(");");
-	}
-
-	public override void visit_source_file(SourceFile sf) {
-		var outfile = sf.filename.replace(".ic", ".vala");
-		dst = FileStream.open(outfile, "w");
-		write("namespace Iko.CAS.Library {");
-		foreach(var f in sf.function)
-			f.accept(this);
-		write("}");
-		dst = null;
 	}
 
 	public override void visit_symbol(Symbol s) {

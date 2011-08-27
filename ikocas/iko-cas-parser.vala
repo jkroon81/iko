@@ -72,7 +72,7 @@ public class Iko.CAS.Parser : Object {
 		return aa;
 	}
 
-	Assignment parse_assignment() throws Error {
+	public Assignment parse_assignment() throws Error {
 		var begin = get_location();
 		var symbol = parse_symbol();
 		Assignment a;
@@ -109,7 +109,7 @@ public class Iko.CAS.Parser : Object {
 		assert_not_reached();
 	}
 
-	Expression parse_expression() throws Error {
+	public Expression parse_expression() throws Error {
 		return parse_expression_logical();
 	}
 
@@ -418,7 +418,7 @@ public class Iko.CAS.Parser : Object {
 		return l;
 	}
 
-	Expression parse_numerical() throws Error {
+	public Expression parse_numerical() throws Error {
 		var integer = "0";
 		var fraction = "";
 
@@ -452,6 +452,13 @@ public class Iko.CAS.Parser : Object {
 		return r;
 	}
 
+	public Namespace parse_root() throws Error {
+		var root = new Namespace("root");
+		while(current() != TokenType.EOF)
+			root.function.append(parse_function());
+		return root;
+	}
+
 	Expression parse_set() throws Error {
 		expect(TokenType.OPEN_BRACE);
 		var s = new CompoundExpression.from_empty(Kind.SET);
@@ -462,32 +469,6 @@ public class Iko.CAS.Parser : Object {
 		} while(accept(TokenType.COMMA));
 		expect(TokenType.CLOSE_BRACE);
 		return s;
-	}
-
-	public SourceFile parse_source_file(string filename) throws Error {
-		try {
-			scanner = new Scanner.from_file(filename);
-			index = -1;
-			size = 0;
-			next();
-
-			var sf = new SourceFile(filename);
-			while(current() != TokenType.EOF)
-				sf.function.append(parse_function());
-			return sf;
-		} catch(FileError e) {
-			throw new Error.IO("error opening file '%s'", filename);
-		}
-	}
-
-	public Expression parse_source_string(string text) throws Error {
-		scanner = new Scanner.from_string(text);
-		index = -1;
-		size = 0;
-		next();
-		var e = parse_expression();
-		expect(TokenType.EOF);
-		return e;
 	}
 
 	Statement parse_statement() throws Error {
@@ -539,5 +520,23 @@ public class Iko.CAS.Parser : Object {
 		else
 			w.body.append(parse_statement());
 		return w;
+	}
+
+	public void set_source_from_file(string filename) throws Error {
+		try {
+			scanner = new Scanner.from_file(filename);
+			index = -1;
+			size = 0;
+			next();
+		} catch(FileError e) {
+			throw new Error.IO("error opening file '%s'", filename);
+		}
+	}
+
+	public void set_source_from_text(string text) {
+		scanner = new Scanner.from_string(text);
+		index = -1;
+		size = 0;
+		next();
 	}
 }

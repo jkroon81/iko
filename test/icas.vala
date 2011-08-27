@@ -25,11 +25,27 @@ static string? compl_func(string text, int state) {
 	return null;
 }
 
+class Session : Object {
+	public HashTable<string, Iko.CAS.Expression> variable { get; construct; }
+
+	construct {
+		variable = new HashTable<string, Iko.CAS.Expression>(str_hash, str_equal);
+	}
+
+	public Iko.CAS.Expression eval(Iko.CAS.Expression e) throws Iko.CAS.Error {
+		var x = e;
+		foreach(var v in variable.get_keys())
+			x = Iko.CAS.Library.subs(x, new Iko.CAS.Symbol(v), variable[v]);
+		return x;
+	}
+}
+
 int main(string[] args) {
 	Environment.set_prgname("icas");
 	Iko.CAS.Library.init();
 	db = Iko.CAS.Library.get_functions();
 	var parser = new Iko.CAS.Parser();
+	var session = new Session();
 
 	Readline.basic_word_break_characters ="0123456789+-*/^()[],. ";
 	Readline.bind_key('\t', Readline.complete);
@@ -42,14 +58,53 @@ int main(string[] args) {
 			stdout.putc('\n');
 			break;
 		}
-		if(line[0] != 0) {
-			try {
-				var expr = parser.parse_source_string(line);
-				stdout.printf("%s\n", Iko.CAS.Library.simplify(expr).to_string());
-			} catch(Iko.CAS.Error e) {
-				stdout.printf("Error: %s\n", e.message);
+		switch(line) {
+		case "":
+			break;
+		case "clear":
+			session.variable.remove_all();
+			break;
+		case "who":
+			foreach(var v in session.variable.get_keys())
+				stdout.printf(v + "\n");
+			break;
+		default:
+			if(line[0] != 0) {
+				try {
+					string name;
+					Iko.CAS.Expression expr;
+
+					try {
+						parser.set_source_from_text(line + ";");
+						var a = parser.parse_assignment();
+						name = a.symbol.name;
+						expr = a.expr;
+					} catch(Iko.CAS.Error e) {
+						try {
+							parser.set_source_from_text(line);
+							name = "Ans";
+							expr = parser.parse_expression();
+							if(expr is Iko.CAS.Symbol) {
+								var s = expr as Iko.CAS.Symbol;
+								if(session.variable[s.name] != null) {
+									name = s.name;
+									expr = session.variable[s.name];
+								}
+							}
+						} catch(Iko.CAS.Error e) {
+							throw e;
+						}
+					}
+					expr = session.eval(expr);
+					expr = Iko.CAS.Library.simplify(expr);
+					session.variable[name] = expr;
+					stdout.printf("\n%s = %s\n\n", name, expr.to_string());
+				} catch(Iko.CAS.Error e) {
+					stdout.printf("Error: %s\n", e.message);
+				}
+				Readline.History.add(line);
 			}
-			Readline.History.add(line);
+			break;
 		}
 	}
 

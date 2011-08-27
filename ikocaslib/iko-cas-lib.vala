@@ -129,4 +129,21 @@ namespace Iko.CAS.Library {
 
 		return simplify((fc[0] as Symbol).invoke(fc.to_list().tail()));
 	}
+
+	public Expression subs(Expression e, Expression u, Expression v) throws Error {
+		if(e is CompoundExpression) {
+			var r = new CompoundExpression.from_empty(e.kind);
+			foreach(var op in e as CompoundExpression)
+				r.append(subs(op, u, v));
+			return r;
+		} else if(e is Symbol) {
+			if(u is Symbol && (e as Symbol).name == (u as Symbol).name)
+				return v;
+			else
+				return e;
+		} else if(e is Integer)
+			return e;
+		else
+			throw new Error.INTERNAL("%s: Unhandled kind '%s'", Log.METHOD, e.kind.to_string());
+	}
 }

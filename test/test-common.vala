@@ -18,8 +18,10 @@ namespace TestCommon {
 		var parser = new Iko.CAS.Parser();
 
 		try {
-			lhs = parser.parse_source_string(lhs_in);
-			rhs = parser.parse_source_string(rhs_in);
+			parser.set_source_from_text(lhs_in);
+			lhs = parser.parse_expression();
+			parser.set_source_from_text(rhs_in);
+			rhs = parser.parse_expression();
 			lhs_gen = Iko.CAS.Library.simplify(lhs).to_string();
 			rhs_gen = Iko.CAS.Library.simplify(rhs).to_string();
 		} catch(Iko.CAS.Error e) {
