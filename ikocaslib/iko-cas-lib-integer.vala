@@ -6,12 +6,12 @@
  */
 
 namespace Iko.CAS.Library {
-	public Expression i_ext_euc_alg(Expression x1, Expression x2) {
+	public Expression i_ext_euc_alg(Expression x1, Expression x2) throws Error {
 		var a = x1 as Integer;
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			return undefined();
+			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
 
 		int mpp = 1;
 		int mp = 0;
@@ -47,12 +47,12 @@ namespace Iko.CAS.Library {
 		return l;
 	}
 
-	public Expression i_gcd(Expression x1, Expression x2) {
+	public Expression i_gcd(Expression x1, Expression x2) throws Error {
 		var a = x1 as Integer;
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			return undefined();
+			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
 
 		var A = a.ival;
 		var B = b.ival;
@@ -65,21 +65,27 @@ namespace Iko.CAS.Library {
 		return new Integer.from_int(A.abs());
 	}
 
-	public Expression i_quot(Expression x1, Expression x2) {
+	public Expression i_quot(Expression x1, Expression x2) throws Error {
 		var a = x1 as Integer;
 		var b = x2 as Integer;
 
-		if(a == null || b == null || b.ival == 0)
+		if(a == null || b == null)
+			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
+
+		if(b.ival == 0)
 			return undefined();
 
 		return new Integer.from_int(a.ival / b.ival);
 	}
 
-	public Expression i_rem(Expression x1, Expression x2) {
+	public Expression i_rem(Expression x1, Expression x2) throws Error {
 		var a = x1 as Integer;
 		var b = x2 as Integer;
 
-		if(a == null || b == null || b.ival == 0)
+		if(a == null || b == null)
+			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
+
+		if(b.ival == 0)
 			return undefined();
 
 		return new Integer.from_int(a.ival % b.ival);

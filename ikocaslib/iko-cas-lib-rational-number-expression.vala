@@ -85,9 +85,13 @@ namespace Iko.CAS.Library {
 				var n = (t as Fraction).num;
 				var d = (t as Fraction).den;
 
-				var lcm = rd * d.ival / (i_gcd(new Integer.from_int(rd), d) as Integer).ival;
-				rn = rn * lcm / rd + n.ival * lcm / d.ival;
-				rd = lcm;
+				try {
+					var lcm = rd * d.ival / (i_gcd(new Integer.from_int(rd), d) as Integer).ival;
+					rn = rn * lcm / rd + n.ival * lcm / d.ival;
+					rd = lcm;
+				} catch(Error e) {
+					assert_not_reached();
+				}
 			} else
 				return s;
 		}
@@ -111,19 +115,23 @@ namespace Iko.CAS.Library {
 			var n = f.num;
 			var d = f.den;
 
-			if((i_rem(n, d) as Integer).ival == 0)
-				return i_quot(n, d);
-			else {
-				var g = i_gcd(n, d);
-				if(d.ival > 0)
-					return new Fraction(i_quot(n, g) as Integer, i_quot(d, g) as Integer);
-				else if(d.ival < 0) {
-					return new Fraction(
-						i_quot(new Integer.from_int(-n.ival),g) as Integer,
-						i_quot(new Integer.from_int(-d.ival),g) as Integer
-					);
-				} else
-					return e;
+			try {
+				if((i_rem(n, d) as Integer).ival == 0)
+					return i_quot(n, d);
+				else {
+					var g = i_gcd(n, d);
+					if(d.ival > 0)
+						return new Fraction(i_quot(n, g) as Integer, i_quot(d, g) as Integer);
+					else if(d.ival < 0) {
+						return new Fraction(
+							i_quot(new Integer.from_int(-n.ival),g) as Integer,
+							i_quot(new Integer.from_int(-d.ival),g) as Integer
+						);
+					} else
+						return e;
+				}
+			} catch(Error e) {
+				assert_not_reached();
 			}
 		} else
 			return e;
