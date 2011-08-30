@@ -6,6 +6,7 @@
  */
 
 public class Iko.CAS.Scanner : Object {
+	char *current_line;
 	char *current;
 	char *end;
 	int line;
@@ -13,7 +14,7 @@ public class Iko.CAS.Scanner : Object {
 	string str;
 	MappedFile mapped_file;
 
-	public string source { get; construct; }
+	public string? source { get; construct; }
 
 	public Scanner.from_file(string filename) throws FileError {
 		Object(source : filename);
@@ -21,16 +22,16 @@ public class Iko.CAS.Scanner : Object {
 		mapped_file = new MappedFile(filename, false);
 		var begin = mapped_file.get_contents();
 		end = begin + mapped_file.get_length();
-		current = begin;
+		current_line = current = begin;
 		line = column = 1;
 	}
 
 	public Scanner.from_string(string text) {
-		Object(source : "(string)");
+		Object(source : null);
 
 		str = text.dup();
 		end = (char*)str + str.length;
-		current = str;
+		current_line = current = str;
 		line = column = 1;
 	}
 
@@ -82,6 +83,7 @@ public class Iko.CAS.Scanner : Object {
 			if(current[0] == '\n') {
 				line++;
 				column = 0;
+				current_line = current + 1;
 			}
 			current++;
 			column++;
@@ -104,6 +106,7 @@ public class Iko.CAS.Scanner : Object {
 				break;
 			case '\n':
 				line++;
+				current_line = current + 1;
 				column = 0;
 				break;
 			}
@@ -124,7 +127,7 @@ public class Iko.CAS.Scanner : Object {
 		whitespace();
 
 		begin = current;
-		token_begin = new SourceLocation(begin, line, column);
+		token_begin = new SourceLocation(line, column, begin, current_line);
 
 		if(current == end) {
 			token = TokenType.EOF;
@@ -168,7 +171,7 @@ public class Iko.CAS.Scanner : Object {
 		}
 
 		column += (int) (current - begin);
-		token_end = new SourceLocation(current, line, column - 1);
+		token_end = new SourceLocation(line, column - 1, current, current_line);
 
 		return new TokenInfo(token, token_begin, token_end);
 	}

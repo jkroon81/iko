@@ -6,12 +6,18 @@
  */
 
 public class Iko.CAS.SourceLocation : Object {
-	public char *pos    { private get; construct; }
-	public int   line   { private get; construct; }
-	public int   column { private get; construct; }
+	public int   line   { get; construct; }
+	public int   column { get; construct; }
+	public char *pos    { get; construct; }
+	public char *src    { get; construct; }
 
-	public SourceLocation(char *pos, int line, int column) {
-		Object(pos : pos, line : line, column : column);
+	public SourceLocation(int line, int column, char *pos, char *src) {
+		Object(
+			line : line,
+			column : column,
+			pos : pos,
+			src : src
+		);
 	}
 
 	public bool matches(SourceLocation location) {

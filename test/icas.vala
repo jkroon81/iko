@@ -77,6 +77,7 @@ int main(string[] args) {
 					try {
 						parser.set_source_from_text(line + ";");
 						var a = parser.parse_assignment();
+						parser.expect(Iko.CAS.TokenType.EOF);
 						name = a.symbol.name;
 						expr = a.expr;
 					} catch(Iko.CAS.Error e) {
@@ -84,6 +85,7 @@ int main(string[] args) {
 							parser.set_source_from_text(line);
 							name = "Ans";
 							expr = parser.parse_expression();
+							parser.expect(Iko.CAS.TokenType.EOF);
 							if(expr is Iko.CAS.Symbol) {
 								var s = expr as Iko.CAS.Symbol;
 								if(session.variable[s.name] != null) {
@@ -100,7 +102,7 @@ int main(string[] args) {
 					session.variable[name] = expr;
 					stdout.printf("\n%s = %s\n\n", name, expr.to_string());
 				} catch(Iko.CAS.Error e) {
-					stdout.printf("Error: %s\n", e.message);
+					stdout.printf(e.message);
 				}
 				Readline.History.add(line);
 			}

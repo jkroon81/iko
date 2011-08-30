@@ -26,9 +26,9 @@ public class Iko.CAS.Symbol : AtomicExpression {
 		var repo = Repository.get_default();
 		var info = repo.find_by_name("ikocaslib", "cas_library_" + name);
 		if(info == null)
-			throw new Error.RUNTIME("Function '%s' not found", name);
+			throw new Error.RUNTIME("Function '%s' not found\n", name);
 		if(info.get_type() != InfoType.FUNCTION)
-			throw new Error.RUNTIME("Symbol '%s' is not a function", name);
+			throw new Error.RUNTIME("Symbol '%s' is not a function\n", name);
 
 		Argument[] arg_in = new Argument[args.size];
 		Argument retval;
@@ -39,7 +39,7 @@ public class Iko.CAS.Symbol : AtomicExpression {
 		try {
 			((FunctionInfo)info).invoke(arg_in, null, out retval);
 		} catch (InvokeError e) {
-			throw new Error.RUNTIME("Invalid arguments to function '%s'", name);
+			throw new Error.RUNTIME("Invalid arguments to function '%s'\n", name);
 		}
 
 		return (retval.pointer as Expression);

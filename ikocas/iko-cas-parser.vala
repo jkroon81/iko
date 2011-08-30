@@ -38,16 +38,12 @@ public class Iko.CAS.Parser : Object {
 			return false;
 	}
 
-	void expect(TokenType token) throws Error {
+	public void expect(TokenType token) throws Error {
 		if(accept(token))
 			return;
 		else
 			throw new Error.SYNTAX(
-				"%s:expected '%s' not '%s'".printf(
-					get_src(get_location()).to_string(),
-					token.to_string(),
-					current().to_string()
-				)
+				get_src(get_location()).to_string("expected '%s'".printf(token.to_string()))
 			);
 	}
 
@@ -95,7 +91,7 @@ public class Iko.CAS.Parser : Object {
 			);
 			break;
 		default:
-			throw new Error.SYNTAX("%s: expected assignment", get_src(begin).to_string());
+			throw new Error.SYNTAX(get_src(begin).to_string("expected assignment"));
 		}
 		expect(TokenType.SEMICOLON);
 		return a;
@@ -295,7 +291,7 @@ public class Iko.CAS.Parser : Object {
 		case TokenType.TRUE:
 			return parse_boolean();
 		default:
-			throw new Error.SYNTAX("%s:expected expression", get_src(begin).to_string());
+			throw new Error.SYNTAX(get_src(begin).to_string("expected expression"));
 		}
 	}
 
@@ -498,10 +494,7 @@ public class Iko.CAS.Parser : Object {
 		var begin = get_location();
 		expect(TokenType.VALA);
 		if(current() != TokenType.OPEN_BRACE)
-			throw new Error.SYNTAX(
-				"%s:expected Vala block",
-				get_src(begin).to_string()
-			);
+			throw new Error.SYNTAX(get_src(begin).to_string("expected Vala block"));
 		var vb = new ValaBlock(scanner.parse_block());
 		next();
 		next();
