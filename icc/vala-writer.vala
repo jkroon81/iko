@@ -101,7 +101,7 @@ class ValaWriter : Visitor {
 			ce[0].accept(this);
 			write(" as CompoundExpression)[(");
 			ce[1].accept(this);
-			write(" as Integer).ival - 1]");
+			write(" as Integer).to_int() - 1]");
 		} else if(ce.kind == Kind.FUNCTION) {
 			ce[0].accept(this);
 			write("(");
@@ -133,9 +133,9 @@ class ValaWriter : Visitor {
 	public override void visit_for_statement(ForStatement f) {
 		write("for(int %s_ = (".printf(f.k.name));
 		f.start.accept(this);
-		write(" as Integer).ival; %s_ <= (".printf(f.k.name));
+		write(" as Integer).to_int(); %s_ <= (".printf(f.k.name));
 		f.end.accept(this);
-		write(" as Integer).ival; %s_++) {".printf(f.k.name));
+		write(" as Integer).to_int(); %s_++) {".printf(f.k.name));
 		write("Integer %s = new Integer.from_int(%s_);".printf(f.k.name, f.k.name));
 		foreach(var s in f.body)
 			s.accept(this);
@@ -186,18 +186,18 @@ class ValaWriter : Visitor {
 	}
 
 	public override void visit_integer(Integer i) {
-		switch(i.ival) {
-		case -1:
+		switch(i.to_string()) {
+		case "-1":
 			write("int_neg_one()");
 			break;
-		case 0:
+		case "0":
 			write("int_zero()");
 			break;
-		case 1:
+		case "1":
 			write("int_one()");
 			break;
 		default:
-			write("new Integer.from_int(%d)".printf(i.ival));
+			write("new Integer.from_string(\"%s\")".printf(i.to_string()));
 			break;
 		}
 	}

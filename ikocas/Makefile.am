@@ -7,7 +7,8 @@ libikocas_la_CFLAGS = \
 
 libikocas_la_LIBADD = \
 	@GOBJECT_LIBS@ \
-	@GI_LIBS@
+	@GI_LIBS@ \
+	-lgmp
 
 libikocas_la_SOURCES = \
 	iko-cas-assignment.vala \
@@ -47,6 +48,7 @@ libikocas_la_VALAFLAGS = \
 	--header=ikocas.h \
 	--library=ikocas \
 	--pkg=gi \
+	--pkg=gmp \
 	--vapidir=$(top_srcdir)/vapi
 
 CLEANFILES = *~

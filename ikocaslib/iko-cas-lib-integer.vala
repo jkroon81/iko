@@ -13,36 +13,36 @@ namespace Iko.CAS.Library {
 		if(a == null || b == null)
 			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
 
-		int mpp = 1;
-		int mp = 0;
-		int m;
-		int npp = 0;
-		int np = 1;
-		int n;
-		int A = a.ival;
-		int B = b.ival;
+		var mpp = int_one();
+		var mp = int_zero();
+		Integer m;
+		var npp = int_zero();
+		var np = int_one();
+		Integer n;
+		var A = a;
+		var B = b;
 
-		while(B != 0) {
-			int Q = A / B;
-			int R = A % B;
+		while(Integer.cmp(B, int_zero()) != 0) {
+			var Q = Integer.quote(A, B);
+			var R = Integer.rem(A, B);
 			A = B;
 			B = R;
-			m = mpp - Q * mp;
-			n = npp - Q * np;
+			m = Integer.sub(mpp, Integer.mul(Q, mp));
+			n = Integer.sub(npp, Integer.mul(Q, np));
 			mpp = mp;
 			mp = m;
 			npp = np;
 			np = n;
 		}
 		var l = new List();
-		if(A >= 0) {
-			l.append(new Integer.from_int(A));
-			l.append(new Integer.from_int(mpp));
-			l.append(new Integer.from_int(npp));
+		if(Integer.cmp(A, int_zero()) >= 0) {
+			l.append(A);
+			l.append(mpp);
+			l.append(npp);
 		} else {
-			l.append(new Integer.from_int(-A));
-			l.append(new Integer.from_int(-mpp));
-			l.append(new Integer.from_int(-npp));
+			l.append(Integer.neg(A));
+			l.append(Integer.neg(mpp));
+			l.append(Integer.neg(npp));
 		}
 		return l;
 	}
@@ -54,15 +54,17 @@ namespace Iko.CAS.Library {
 		if(a == null || b == null)
 			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
 
-		var A = a.ival;
-		var B = b.ival;
+		return Integer.gcd(a, b);
+	}
 
-		while(B != 0) {
-			var R = A % B;
-			A = B;
-			B = R;
-		}
-		return new Integer.from_int(A.abs());
+	public Expression i_lcm(Expression x1, Expression x2) throws Error {
+		var a = x1 as Integer;
+		var b = x2 as Integer;
+
+		if(a == null || b == null)
+			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
+
+		return Integer.lcm(a, b);
 	}
 
 	public Expression i_quot(Expression x1, Expression x2) throws Error {
@@ -72,10 +74,10 @@ namespace Iko.CAS.Library {
 		if(a == null || b == null)
 			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
 
-		if(b.ival == 0)
+		if(Integer.cmp(b, int_zero()) == 0)
 			return undefined();
 
-		return new Integer.from_int(a.ival / b.ival);
+		return Integer.quote(a, b);
 	}
 
 	public Expression i_rem(Expression x1, Expression x2) throws Error {
@@ -85,9 +87,9 @@ namespace Iko.CAS.Library {
 		if(a == null || b == null)
 			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
 
-		if(b.ival == 0)
+		if(Integer.cmp(b, int_zero()) == 0)
 			return undefined();
 
-		return new Integer.from_int(a.ival % b.ival);
+		return Integer.rem(a, b);
 	}
 }

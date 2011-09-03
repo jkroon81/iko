@@ -1,5 +1,6 @@
 icas
 test-addition
+test-big-number
 test-constant-folding
 test-multiplication
 test-power

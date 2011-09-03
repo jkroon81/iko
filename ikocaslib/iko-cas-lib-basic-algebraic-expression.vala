@@ -79,20 +79,22 @@ namespace Iko.CAS.Library {
 	bool bae_compare(Expression u, Expression v) {
 		if((u.kind == Kind.INTEGER || u.kind == Kind.FRACTION) &&
 		   (v.kind == Kind.INTEGER || v.kind == Kind.FRACTION)) {
-			float u_val;
-			float v_val;
+			Fraction uf;
+			Fraction vf;
 
 			if(u.kind == Kind.INTEGER)
-				u_val = (u as Integer).ival;
+				uf = new Fraction(u as Integer, int_one());
 			else
-				u_val = (u as Fraction).num.ival / (u as Fraction).den.ival;
+				uf = u as Fraction;
 
 			if(v.kind == Kind.INTEGER)
-				v_val = (v as Integer).ival;
+				vf = new Fraction(v as Integer, int_one());
 			else
-				v_val = (v as Fraction).num.ival / (v as Fraction).den.ival;
+				vf = v as Fraction;
 
-			return (u_val < v_val);
+			var a = Integer.mul(uf.num, vf.den);
+			var b = Integer.mul(vf.num, uf.den);
+			return (Integer.cmp(a, b) < 0);
 		}
 
 		if(u.kind == Kind.SYMBOL && v.kind == Kind.SYMBOL)
@@ -212,20 +214,22 @@ namespace Iko.CAS.Library {
 	}
 
 	Expression bae_simplify_integer_factorial(Integer f) {
-		int s = f.ival;
+		var s = f;
 
-		if(s < 0)
+		if(Integer.cmp(s, int_zero()) < 0)
 			return undefined();
 
-		if(s == 0)
+		if(Integer.cmp(s, int_zero()) == 0)
 			return int_one();
 
-		int r = s;
+		var r = s;
+		s = Integer.sub(s, int_one());
+		while(Integer.cmp(s, int_zero()) > 0) {
+			r = Integer.mul(r, s);
+			s = Integer.sub(s, int_one());
+		}
 
-		while(--s > 0)
-			r *= s;
-
-		return new Integer.from_int(r);
+		return r;
 	}
 
 	public Expression bae_simplify_integer_power(Expression radix, Integer exp) throws Error {
@@ -234,10 +238,10 @@ namespace Iko.CAS.Library {
 				new CompoundExpression.from_binary(Kind.POWER, radix, exp)
 			);
 
-		if(exp.ival == 0)
+		if(Integer.cmp(exp, int_zero()) == 0)
 			return int_one();
 
-		if(exp.ival == 1)
+		if(Integer.cmp(exp, int_one()) == 0)
 			return radix;
 
 		if(radix.kind == Kind.POWER) {
@@ -272,15 +276,15 @@ namespace Iko.CAS.Library {
 		if(radix is Undefined || exp is Undefined)
 			return undefined();
 
-		if(radix.kind == Kind.INTEGER && (radix as Integer).ival == 0) {
-			if((exp.kind == Kind.INTEGER && (exp as Integer).ival > 0) ||
-			   (exp.kind == Kind.FRACTION && (exp as Fraction).num.ival > 0))
+		if(radix.kind == Kind.INTEGER && Integer.cmp(radix as Integer, int_zero()) == 0) {
+			if((exp.kind == Kind.INTEGER && Integer.cmp(exp as Integer, int_zero()) > 0) ||
+			   (exp.kind == Kind.FRACTION && Integer.cmp((exp as Fraction).num, int_zero()) > 0))
 				return int_zero();
 			else
 				return undefined();
 		}
 
-		if(radix.kind == Kind.INTEGER && (radix as Integer).ival == 1)
+		if(radix.kind == Kind.INTEGER && Integer.cmp(radix as Integer, int_one()) == 0)
 			return int_one();
 
 		if(exp.kind == Kind.INTEGER)
@@ -293,7 +297,7 @@ namespace Iko.CAS.Library {
 		foreach(var f in p) {
 			if(f is Undefined)
 				return f;
-			if(f.kind == Kind.INTEGER && (f as Integer).ival == 0)
+			if(f.kind == Kind.INTEGER && Integer.cmp(f as Integer, int_zero()) == 0)
 				return f;
 		}
 
@@ -321,16 +325,16 @@ namespace Iko.CAS.Library {
 					var p = rne_simplify(
 						new CompoundExpression.from_binary(Kind.MUL, u1, u2)
 					);
-					if(p.kind == Kind.INTEGER && (p as Integer).ival == 1)
+					if(p.kind == Kind.INTEGER && Integer.cmp(p as Integer, int_one()) == 0)
 						return new List();
 					else
 						return new List.from_unary(p);
 				}
 
-				if(u1.kind == Kind.INTEGER && (u1 as Integer).ival == 1)
+				if(u1.kind == Kind.INTEGER && Integer.cmp(u1 as Integer, int_one()) == 0)
 					return new List.from_unary(u2);
 
-				if(u2.kind == Kind.INTEGER && (u2 as Integer).ival == 1)
+				if(u2.kind == Kind.INTEGER && Integer.cmp(u2 as Integer, int_one()) == 0)
 					return new List.from_unary(u1);
 
 				if(u1.radix().to_polish() == u2.radix().to_polish()) {
@@ -345,7 +349,7 @@ namespace Iko.CAS.Library {
 						new CompoundExpression.from_binary(Kind.POWER, u1.radix(), s)
 					);
 
-					if(p.kind == Kind.INTEGER && (p as Integer).ival == 1)
+					if(p.kind == Kind.INTEGER && Integer.cmp(p as Integer, int_one()) == 0)
 						return new List();
 					else
 						return new List.from_unary(p);
@@ -414,16 +418,16 @@ namespace Iko.CAS.Library {
 					var p = rne_simplify(
 						new CompoundExpression.from_binary(Kind.PLUS, u1, u2)
 					);
-					if(p.kind == Kind.INTEGER && (p as Integer).ival == 0)
+					if(p.kind == Kind.INTEGER && Integer.cmp(p as Integer, int_zero()) == 0)
 						return new List();
 					else
 						return new List.from_unary(p);
 				}
 
-				if(u1.kind == Kind.INTEGER && (u1 as Integer).ival == 0)
+				if(u1.kind == Kind.INTEGER && Integer.cmp(u1 as Integer, int_zero()) == 0)
 					return new List.from_unary(u2);
 
-				if(u2.kind == Kind.INTEGER && (u2 as Integer).ival == 0)
+				if(u2.kind == Kind.INTEGER && Integer.cmp(u2 as Integer, int_zero()) == 0)
 					return new List.from_unary(u1);
 
 				if(u1.term().to_polish() == u2.term().to_polish()) {
@@ -438,7 +442,7 @@ namespace Iko.CAS.Library {
 						new CompoundExpression.from_binary(Kind.MUL, s, u1.term())
 					);
 
-					if(p.kind == Kind.INTEGER && (p as Integer).ival == 0)
+					if(p.kind == Kind.INTEGER && Integer.cmp(p as Integer, int_zero()) == 0)
 						return new List();
 					else
 						return new List.from_unary(p);

@@ -98,6 +98,10 @@ namespace Iko.CAS.Library {
 			return x;
 		case Kind.LIST:
 			return x;
+		case Kind.LE:
+			return b_simplify(x);
+		case Kind.LT:
+			return b_simplify(x);
 		case Kind.MUL:
 			return bae_simplify(x);
 		case Kind.NE:
@@ -114,8 +118,10 @@ namespace Iko.CAS.Library {
 			return set_simplify(x);
 		case Kind.SYMBOL:
 			return x;
+		case Kind.UNDEFINED:
+			return x;
 		default:
-			throw new Error.INTERNAL("%s: Unhandled kind '%s'", Log.METHOD, x.kind.to_string());
+			throw new Error.INTERNAL("%s: Unhandled kind '%s'\n", Log.METHOD, x.kind.to_string());
 		}
 	}
 

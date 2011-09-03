@@ -54,7 +54,7 @@ public class Iko.CAS.Writer : Visitor {
 		} else if(ce.kind == Kind.FACTORIAL) {
 			bool guard = true;
 
-			if((ce[0].kind == Kind.INTEGER && (ce[0] as Integer).ival >= 0) ||
+			if((ce[0].kind == Kind.INTEGER && Integer.cmp(ce[0] as Integer, int_zero()) >= 0) ||
 			   ce[0].kind == Kind.SYMBOL ||
 			   ce[0].kind == Kind.FUNCTION ||
 			   ce[0].kind == Kind.LIST)
@@ -69,7 +69,7 @@ public class Iko.CAS.Writer : Visitor {
 		} else if(ce.kind == Kind.POWER) {
 			bool guard = true;
 
-			if((ce[0].kind == Kind.INTEGER && (ce[0] as Integer).ival >= 0) ||
+			if((ce[0].kind == Kind.INTEGER && Integer.cmp(ce[0] as Integer, int_zero()) >= 0) ||
 			   ce[0].kind == Kind.FUNCTION ||
 			   ce[0].kind == Kind.SYMBOL ||
 			   ce[0].kind == Kind.LIST)
@@ -144,7 +144,7 @@ public class Iko.CAS.Writer : Visitor {
 	}
 
 	public override void visit_integer(Integer i) {
-		buffer.append(i.sval);
+		buffer.append(i.to_string());
 	}
 
 	public override void visit_symbol(Symbol s) {

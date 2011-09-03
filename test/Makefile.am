@@ -3,6 +3,7 @@ bin_PROGRAMS = \
 
 check_PROGRAMS = \
 	test-addition \
+	test-big-number \
 	test-constant-folding \
 	test-multiplication \
 	test-power
@@ -32,6 +33,10 @@ icas_VALAFLAGS = \
 test_addition_SOURCES = \
 	test-common.vala \
 	test-addition.vala
+
+test_big_number_SOURCES = \
+	test-big-number.vala \
+	test-common.vala
 
 test_constant_folding_SOURCES = \
 	test-common.vala \
@@ -65,10 +70,12 @@ LDADD = \
 
 TESTS = \
 	test-addition \
+	test-big-number \
 	test-constant-folding \
 	test-multiplication \
 	test-power
 
 XFAIL_TESTS = \
+	test-multiplication \
 	test-power
 

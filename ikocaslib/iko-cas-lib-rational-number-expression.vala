@@ -14,20 +14,20 @@ namespace Iko.CAS.Library {
 			return p;
 
 		if(radix.kind == Kind.INTEGER || radix.kind == Kind.FRACTION) {
-			if(exp.ival > 0) {
+			if(Integer.cmp(exp, int_zero()) > 0) {
 				var s = rne_eval_power(
 					new CompoundExpression.from_binary(
 						Kind.POWER,
 						radix,
-						new Integer.from_int(exp.ival - 1)
+						Integer.sub(exp, int_one())
 					)
 				);
 				return rne_eval_product(
 					new CompoundExpression.from_binary(Kind.MUL, s, radix)
 				);
-			} else if(exp.ival == 0)
+			} else if(Integer.cmp(exp, int_zero()) == 0)
 				return int_one();
-			else if(exp.ival == -1) {
+			else if(Integer.cmp(exp, int_neg_one()) == 0) {
 				if(radix.kind == Kind.INTEGER)
 					return new Fraction(int_one(), radix as Integer);
 				else
@@ -39,7 +39,7 @@ namespace Iko.CAS.Library {
 						new CompoundExpression.from_binary(
 							Kind.POWER,
 							s,
-							new Integer.from_int(-exp.ival)
+							Integer.neg(exp)
 						)
 					);
 				} else {
@@ -48,7 +48,7 @@ namespace Iko.CAS.Library {
 						new CompoundExpression.from_binary(
 							Kind.POWER,
 							s,
-							new Integer.from_int(-exp.ival)
+							Integer.neg(exp)
 						)
 					);
 				}
@@ -58,45 +58,41 @@ namespace Iko.CAS.Library {
 	}
 
 	Expression rne_eval_product(CompoundExpression p) {
-		var rn = 1;
-		var rd = 1;
+		var rn = int_one();
+		var rd = int_one();
 
 		foreach(var f in p) {
 			if(f.kind == Kind.INTEGER)
-				rn *= (f as Integer).ival;
+				rn = Integer.mul(rn, f as Integer);
 			else if(f.kind == Kind.FRACTION) {
-				rn *= (f as Fraction).num.ival;
-				rd *= (f as Fraction).den.ival;
+				rn = Integer.mul(rn, (f as Fraction).num);
+				rd = Integer.mul(rd, (f as Fraction).den);
 			} else
 				return p;
 		}
 
-		return new Fraction(new Integer.from_int(rn), new Integer.from_int(rd));
+		return new Fraction(rn, rd);
 	}
 
 	Expression rne_eval_sum(CompoundExpression s) {
-		var rn = 0;
-		var rd = 1;
+		var rn = int_zero();
+		var rd = int_one();
 
 		foreach(var t in s) {
 			if(t.kind == Kind.INTEGER)
-				rn += rd * (t as Integer).ival;
+				rn = Integer.add(rn, Integer.mul(rd, t as Integer));
 			else if(t.kind == Kind.FRACTION) {
 				var n = (t as Fraction).num;
 				var d = (t as Fraction).den;
 
-				try {
-					var lcm = rd * d.ival / (i_gcd(new Integer.from_int(rd), d) as Integer).ival;
-					rn = rn * lcm / rd + n.ival * lcm / d.ival;
-					rd = lcm;
-				} catch(Error e) {
-					assert_not_reached();
-				}
+				var lcm = Integer.lcm(rd, d);
+				rn = Integer.add(Integer.quote(Integer.mul(rn, lcm), rd), Integer.quote(Integer.mul(n, lcm), d));
+				rd = lcm;
 			} else
 				return s;
 		}
 
-		return new Fraction(new Integer.from_int(rn), new Integer.from_int(rd));
+		return new Fraction(rn, rd);
 	}
 
 	Expression rne_simplify(Expression e) {
@@ -116,16 +112,16 @@ namespace Iko.CAS.Library {
 			var d = f.den;
 
 			try {
-				if((i_rem(n, d) as Integer).ival == 0)
+				if(Integer.cmp(i_rem(n, d) as Integer, int_zero()) == 0)
 					return i_quot(n, d);
 				else {
 					var g = i_gcd(n, d);
-					if(d.ival > 0)
+					if(Integer.cmp(d, int_zero()) > 0)
 						return new Fraction(i_quot(n, g) as Integer, i_quot(d, g) as Integer);
-					else if(d.ival < 0) {
+					else if(Integer.cmp(d, int_zero()) < 0) {
 						return new Fraction(
-							i_quot(new Integer.from_int(-n.ival),g) as Integer,
-							i_quot(new Integer.from_int(-d.ival),g) as Integer
+							i_quot(Integer.neg(n),g) as Integer,
+							i_quot(Integer.neg(d),g) as Integer
 						);
 					} else
 						return e;
@@ -143,7 +139,7 @@ namespace Iko.CAS.Library {
 		else if(e.kind == Kind.FRACTION) {
 			var f = e as Fraction;
 
-			if(f.den.ival == 0)
+			if(Integer.cmp(f.den, int_zero()) == 0)
 				return undefined();
 			else
 				return e;

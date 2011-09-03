@@ -37,7 +37,7 @@ public class Iko.CAS.Polish : Visitor {
 	}
 
 	public override void visit_integer(Integer i) {
-		buffer.append(i.sval);
+		buffer.append(i.to_string());
 	}
 
 	public override void visit_symbol(Symbol s) {
