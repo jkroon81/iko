@@ -22,6 +22,7 @@ libikocaslib_la_LIBADD = \
 
 libikocaslib_la_SOURCES = \
 	iko-cas-lib.vala \
+	iko-cas-lib-algebraic-number-field.vala \
 	iko-cas-lib-basic-algebraic-expression.vala \
 	iko-cas-lib-boolean.vala \
 	iko-cas-lib-general-polynomial-expression.vala \

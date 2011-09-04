@@ -3,6 +3,7 @@ bin_PROGRAMS = \
 
 check_PROGRAMS = \
 	test-addition \
+	test-algebraic \
 	test-big-number \
 	test-constant-folding \
 	test-multiplication \
@@ -31,8 +32,12 @@ icas_VALAFLAGS = \
 	--vapidir=$(top_srcdir)/ikocaslib
 
 test_addition_SOURCES = \
-	test-common.vala \
-	test-addition.vala
+	test-addition.vala \
+	test-common.vala
+
+test_algebraic_SOURCES = \
+	test-algebraic.vala \
+	test-common.vala
 
 test_big_number_SOURCES = \
 	test-big-number.vala \
@@ -70,6 +75,7 @@ LDADD = \
 
 TESTS = \
 	test-addition \
+	test-algebraic \
 	test-big-number \
 	test-constant-folding \
 	test-multiplication \
