@@ -104,6 +104,37 @@ public function gpe_expansion(u, v, x, t) {
 	}
 }
 
+public function gpe_ext_euc_alg(u, v, x) {
+	if(u == 0 && v == 0)
+		return [0, 0, 0];
+	else {
+		U = u;
+		V = v;
+		App = 1;
+		Ap = 0;
+		Bpp = 0;
+		Bp = 1;
+		while(V <> 0) {
+			d = gpe_division(U, V, x);
+			q = d[1];
+			r = d[2];
+			A = App - q * Ap;
+			B = Bpp - q * Bp;
+			App = Ap;
+			Ap = A;
+			Bpp = Bp;
+			Bp = B;
+			U = V;
+			V = r;
+		}
+		c = gpe_lc(U, x);
+		App = expand(App / c);
+		Bpp = expand(Bpp / c);
+		U = expand(U / c);
+		return [U, App, Bpp];
+	}
+}
+
 public function gpe_gcd(u, v, x) {
 	if(u == 0 && v == 0)
 		return 0;
