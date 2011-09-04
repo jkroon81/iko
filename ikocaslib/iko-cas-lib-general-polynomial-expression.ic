@@ -199,3 +199,31 @@ function gpe_is_polynomial(u, v) {
 function gpe_lc(u, x) {
 	return gpe_coefficient(u, x, gpe_degree(u, x));
 }
+
+public function gpe_partial_fraction(u, v, x) {
+	if(!(v is product))
+		return u / v;
+	else {
+		f = v[1];
+		r = v / f;
+		if(free_of(f, x))
+			return 1 / f * gpe_partial_fraction(u, r, x);
+		else {
+			s = gpe_partial_fraction_binary(u, expand(f), expand(r), x);
+			u1 = s[1];
+			w = s[2];
+			return u1 / f + gpe_partial_fraction(w, r, x);
+		}
+	}
+}
+
+function gpe_partial_fraction_binary(u, v1, v2, x) {
+	s = gpe_ext_euc_alg(v1, v2, x);
+	A = s[2];
+	B = s[3];
+	d = gpe_division(expand(B * u), v1, x);
+	u1 = d[2];
+	d = gpe_division(expand(A * u), v2, x);
+	u2 = d[2];
+	return [u1, u2];
+}
