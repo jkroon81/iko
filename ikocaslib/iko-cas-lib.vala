@@ -13,29 +13,6 @@ namespace Iko.CAS.Library {
 		"init"
 	};
 
-	public Expression free_of(Expression u, Expression t) {
-		if(t.kind == Kind.SET) {
-			foreach(var e in t as CompoundExpression)
-				if(!(free_of(u, e) as Boolean).bval)
-					return bool_false();
-			return bool_true();
-		} else {
-			if(u.to_polish() == t.to_polish())
-				return bool_false();
-			else if(u.kind == Kind.SYMBOL ||
-			        u.kind == Kind.INTEGER ||
-			        u.kind == Kind.FRACTION)
-				return bool_true();
-			else {
-				var ce = u as CompoundExpression;
-				foreach(var e in ce)
-					if(!(free_of(e, t) as Boolean).bval)
-						return bool_false();
-			}
-			return bool_true();
-		}
-	}
-
 	public bool init() {
 		var repo = Repository.get_default();
 
@@ -70,88 +47,5 @@ namespace Iko.CAS.Library {
 			func[i] = func_array.index(i);
 
 		return func;
-	}
-
-	public Expression simplify(Expression e) throws Error {
-		var x = e;
-		if(x is CompoundExpression)
-			x = new Symbol("simplify").map(x, null);
-
-		switch(x.kind) {
-		case Kind.AND:
-			return b_simplify(x);
-		case Kind.BOOLEAN:
-			return x;
-		case Kind.EQ:
-			return b_simplify(x);
-		case Kind.FACTORIAL:
-			return bae_simplify(x);
-		case Kind.FRACTION:
-			return rne_simplify(x);
-		case Kind.FUNCTION:
-			return simplify_function_call(x);
-		case Kind.GE:
-			return b_simplify(x);
-		case Kind.GT:
-			return b_simplify(x);
-		case Kind.INTEGER:
-			return x;
-		case Kind.LIST:
-			return x;
-		case Kind.LE:
-			return b_simplify(x);
-		case Kind.LT:
-			return b_simplify(x);
-		case Kind.MUL:
-			return bae_simplify(x);
-		case Kind.NE:
-			return b_simplify(x);
-		case Kind.NOT:
-			return b_simplify(x);
-		case Kind.OR:
-			return b_simplify(x);
-		case Kind.PLUS:
-			return bae_simplify(x);
-		case Kind.POWER:
-			return bae_simplify(x);
-		case Kind.SET:
-			return set_simplify(x);
-		case Kind.SYMBOL:
-			return x;
-		case Kind.UNDEFINED:
-			return x;
-		default:
-			throw new Error.INTERNAL("%s: Unhandled kind '%s'\n", Log.METHOD, x.kind.to_string());
-		}
-	}
-
-	Expression simplify_function_call(Expression e) throws Error {
-		if(e.kind != Kind.FUNCTION)
-			return e;
-
-		var fc = e as CompoundExpression;
-
-		foreach(var arg in fc)
-			if(arg is Undefined)
-				return arg;
-
-		return simplify((fc[0] as Symbol).invoke(fc.to_list().tail()));
-	}
-
-	public Expression subs(Expression e, Expression u, Expression v) throws Error {
-		if(e is CompoundExpression) {
-			var r = new CompoundExpression.from_empty(e.kind);
-			foreach(var op in e as CompoundExpression)
-				r.append(subs(op, u, v));
-			return r;
-		} else if(e is Symbol) {
-			if(u is Symbol && (e as Symbol).name == (u as Symbol).name)
-				return v;
-			else
-				return e;
-		} else if(e is Integer)
-			return e;
-		else
-			throw new Error.INTERNAL("%s: Unhandled kind '%s'", Log.METHOD, e.kind.to_string());
 	}
 }
