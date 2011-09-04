@@ -104,6 +104,8 @@ public function simplify(e) {
 			return simplify_function_call(x);
 		case Kind.SET:
 			return set_simplify(x);
+		case Kind.ARRAY:
+			return simplify_array_access(x);
 		default:
 			throw new Error.INTERNAL(
 				"%s: Kind '%s' not handled\n",
@@ -111,6 +113,33 @@ public function simplify(e) {
 				x.kind.to_string()
 			);
 		}
+	}
+}
+
+function simplify_array_access(e) {
+	vala {
+		if(e.kind != Kind.ARRAY)
+			return e;
+
+		var aa = e as CompoundExpression;
+
+		if(aa[0].kind != Kind.LIST)
+			throw new Error.RUNTIME("'%s' is not a list\n", aa[0].to_string());
+
+		if(aa[1].kind != Kind.INTEGER)
+			throw new Error.RUNTIME("'%s' is not an integer\n", aa[1].to_string());
+
+		var list = aa[0] as CompoundExpression;
+		var index = (aa[1] as Integer).to_int();
+
+		if(index < 1 || index > list.size)
+			throw new Error.RUNTIME(
+				"Index %d for '%s' is out of bounds\n",
+				index,
+				list.to_string()
+			);
+
+		return list[index - 1];
 	}
 }
 

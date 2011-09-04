@@ -221,9 +221,7 @@ function gpe_partial_fraction_binary(u, v1, v2, x) {
 	s = gpe_ext_euc_alg(v1, v2, x);
 	A = s[2];
 	B = s[3];
-	d = gpe_division(expand(B * u), v1, x);
-	u1 = d[2];
-	d = gpe_division(expand(A * u), v2, x);
-	u2 = d[2];
+	u1 = gpe_division(expand(B * u), v1, x)[2];
+	u2 = gpe_division(expand(A * u), v2, x)[2];
 	return [u1, u2];
 }

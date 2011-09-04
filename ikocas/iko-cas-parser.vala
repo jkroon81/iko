@@ -60,14 +60,6 @@ public class Iko.CAS.Parser : Object {
 		return new SourceReference(scanner.source, begin, tokens[index].end);
 	}
 
-	Expression parse_array_access(Symbol s) throws Error {
-		var aa = new CompoundExpression.from_unary(Kind.ARRAY, s);
-		expect(TokenType.OPEN_BRACKET);
-		aa.append(parse_expression());
-		expect(TokenType.CLOSE_BRACKET);
-		return aa;
-	}
-
 	public Assignment parse_assignment() throws Error {
 		var begin = get_location();
 		var symbol = parse_symbol();
@@ -134,6 +126,16 @@ public class Iko.CAS.Parser : Object {
 			}
 		}
 		return left;
+	}
+
+	Expression parse_expression_array_access() throws Error {
+		var p = parse_expression_primary();
+		if(accept(TokenType.OPEN_BRACKET)) {
+			var index = parse_expression();
+			expect(TokenType.CLOSE_BRACKET);
+			return new CompoundExpression.from_binary(Kind.ARRAY, p, index);
+		} else
+			return p;
 	}
 
 	Expression parse_expression_conditional() throws Error {
@@ -271,8 +273,6 @@ public class Iko.CAS.Parser : Object {
 		case TokenType.IDENTIFIER:
 			var s = parse_symbol();
 			switch(current()) {
-			case TokenType.OPEN_BRACKET:
-				return parse_array_access(s);
 			case TokenType.OPEN_PARENS:
 				return parse_function_call(s);
 			default:
@@ -301,12 +301,12 @@ public class Iko.CAS.Parser : Object {
 			return new CompoundExpression.from_binary(
 				Kind.MUL,
 				int_neg_one(),
-				parse_expression_primary()
+				parse_expression_array_access()
 			);
 		}
 		if(current() == TokenType.PLUS)
 			next();
-		var e = parse_expression_primary();
+		var e = parse_expression_array_access();
 		if(accept(TokenType.NOT))
 			e = new CompoundExpression.from_unary(Kind.FACTORIAL, e);
 		return e;
