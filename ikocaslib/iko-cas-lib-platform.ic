@@ -1,3 +1,10 @@
+#
+# Iko - Copyright (C) 2011 Jacob Kroon
+#
+# Contributor(s):
+#   Jacob Kroon <jacob.kroon@gmail.com>
+#
+
 public function expand(u) {
 	if(u is sum) {
 		v = u[1];

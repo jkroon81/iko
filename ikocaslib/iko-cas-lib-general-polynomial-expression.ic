@@ -1,3 +1,10 @@
+#
+# Iko - Copyright (C) 2011 Jacob Kroon
+#
+# Contributor(s):
+#   Jacob Kroon <jacob.kroon@gmail.com>
+#
+
 function gpe_coefficient(u, x, j) {
 	if(!gpe_is_polynomial(u, x))
 		return Undefined;

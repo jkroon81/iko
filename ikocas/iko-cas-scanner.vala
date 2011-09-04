@@ -78,13 +78,18 @@ public class Iko.CAS.Scanner : Object {
 		return TokenType.IDENTIFIER;
 	}
 
-	void whitespace() {
-		while(current < end && current[0].isspace()) {
+	void whitespace_or_comment() {
+		bool in_comment = false;
+
+		while(current < end && (current[0].isspace() || current[0] == '#' || in_comment)) {
 			if(current[0] == '\n') {
 				line++;
 				column = 0;
 				current_line = current + 1;
+				in_comment = false;
 			}
+			if(current[0] == '#')
+				in_comment = true;
 			current++;
 			column++;
 		}
@@ -124,7 +129,7 @@ public class Iko.CAS.Scanner : Object {
 		char *begin;
 		int len;
 
-		whitespace();
+		whitespace_or_comment();
 
 		begin = current;
 		token_begin = new SourceLocation(line, column, begin, current_line);
