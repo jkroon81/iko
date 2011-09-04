@@ -76,6 +76,5 @@ TESTS = \
 	test-power
 
 XFAIL_TESTS = \
-	test-multiplication \
 	test-power
 
