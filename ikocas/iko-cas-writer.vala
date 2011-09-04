@@ -30,27 +30,51 @@ public class Iko.CAS.Writer : Visitor {
 			assert(ce.size > 0);
 
 			foreach(var t in ce) {
-				t.accept(this);
-				buffer.append(" + ");
+				var c = t.constant();
+				if(t != ce[0] && c is Integer && Integer.cmp(c as Integer, int_zero()) < 0) {
+					buffer.append(" - ");
+					var c_new = Integer.abs(c as Integer);
+					if(Integer.cmp(c_new, int_one()) != 0) {
+						c_new.accept(this);
+						buffer.append("*");
+					}
+					t.term().accept(this);
+				} else if(t != ce[0] && c is Fraction && Integer.cmp((c as Fraction).num, int_zero()) < 0) {
+					var f = c as Fraction;
+					buffer.append(" - ");
+					var c_new = new Fraction(Integer.abs(f.num), f.den);
+					c_new.accept(this);
+					buffer.append("*");
+					t.term().accept(this);
+				} else {
+					if(t != ce[0])
+						buffer.append(" + ");
+					t.accept(this);
+				}
 			}
-			buffer.erase(buffer.len - 3, 3);
 		} else if(ce.kind == Kind.MUL) {
 			assert(ce.size > 0);
+			var c = ce.constant();
 
-			foreach(var f in ce) {
-				bool guard = false;
+			if(c is Integer && Integer.cmp(c as Integer, int_neg_one()) == 0) {
+				buffer.append("-");
+				ce.term().accept(this);
+			} else {
+				foreach(var f in ce) {
+					bool guard = false;
 
-				if(f.kind == Kind.EQ || f.kind == Kind.PLUS)
-					guard = true;
+					if(f.kind == Kind.EQ || f.kind == Kind.PLUS)
+						guard = true;
 
-				if(guard)
-					buffer.append("(");
-				f.accept(this);
-				if(guard)
-					buffer.append(")");
-				buffer.append("*");
+					if(guard)
+						buffer.append("(");
+					f.accept(this);
+					if(guard)
+						buffer.append(")");
+					buffer.append("*");
+				}
+				buffer.erase(buffer.len - 1, 1);
 			}
-			buffer.erase(buffer.len - 1, 1);
 		} else if(ce.kind == Kind.FACTORIAL) {
 			bool guard = true;
 
