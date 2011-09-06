@@ -1,0 +1,93 @@
+#
+# Iko - Copyright (C) 2011 Jacob Kroon
+#
+# Contributor(s):
+#   Jacob Kroon <jacob.kroon@gmail.com>
+#
+
+public function mpe_division_mb(u, v, L) {
+	q = 0;
+	r = u;
+	v_l = mpe_lm(v, L);
+	f = mpe_G(r, v_l);
+	while(f <> 0) {
+		q += f;
+		r = expand(r - f * v);
+		f = mpe_G(r, v_l);
+	}
+	return [q, r];
+}
+
+public function mpe_division_rec(u, v, L, K) {
+	if(L == []) {
+		if(sname(K) == "Z") {
+			if( u / v is integer)
+				return [ u / v, 0 ];
+			else
+				return [ 0, u ];
+		} else if(sname(K) == "Q")
+			return [ u / v, 0 ];
+		else
+			error "K must be either 'Z' or 'Q'";
+	} else {
+		x = L[1];
+		r = u;
+		m = gpe_degree(r, x);
+		n = gpe_degree(v, x);
+		q = 0;
+		lcv = gpe_lc(v, x);
+		while(m >= n) {
+			lcr = gpe_lc(r, x);
+			d = mpe_division_rec(lcr, lcv, rest(L), K);
+			if(d[2] <> 0)
+				return [expand(q), r];
+			else {
+				c = d[1];
+				q += c*x^(m - n);
+				r = expand(r - c*v*x^(m-n));
+				m = gpe_degree(r, x);
+			}
+		}
+		return [expand(q), r];
+	}
+}
+
+public function mpe_expansion(u, v, L, t) {
+	if(u == 0)
+		return 0;
+	else {
+		d = mpe_division_mb(u, v, L);
+		q = d[1];
+		r = d[2];
+		return expand(t * mpe_expansion(q, v, L, t) + r);
+	}
+}
+
+function mpe_G(u, v) {
+	if(u is sum) {
+		r = 0;
+		foreach(t in u) {
+			p = t / v;
+			if(gpe_is_polynomial(p, variables(p)))
+				r += p;
+		}
+		return r;
+	} else {
+		p = u / v;
+		if(gpe_is_polynomial(p, variables(p)))
+			return p;
+		else
+			return 0;
+	}
+}
+
+public function mpe_lm(u, L) {
+	if(L == [])
+		return u;
+	else {
+		x = L[1];
+		m = gpe_degree(u, x);
+		c = gpe_coefficient(u, x, m);
+		return x^m * mpe_lm(c, rest(L));
+	}
+}

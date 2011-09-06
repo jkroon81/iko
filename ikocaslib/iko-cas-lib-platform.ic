@@ -168,6 +168,15 @@ function simplify_function_call(e) {
 	}
 }
 
+public function sname(s) {
+	vala {
+		if(s.kind != Kind.SYMBOL)
+			throw new Error.RUNTIME("'%s' is not a symbol\n".printf(s.to_string()));
+
+		return new String((s as Symbol).name);
+	}
+}
+
 public function subs(e, u, v) {
 	vala {
 		if(e is List) {

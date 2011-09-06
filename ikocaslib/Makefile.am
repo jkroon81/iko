@@ -27,6 +27,7 @@ libikocaslib_la_SOURCES = \
 	iko-cas-lib-boolean.vala \
 	iko-cas-lib-general-polynomial-expression.vala \
 	iko-cas-lib-integer.vala \
+	iko-cas-lib-multivariate-polynomial-expression.vala \
 	iko-cas-lib-platform.vala \
 	iko-cas-lib-rational-number-expression.vala \
 	iko-cas-lib-set.vala
