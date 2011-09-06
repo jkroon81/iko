@@ -192,17 +192,21 @@ class ValaWriter : Visitor {
 			l[0].accept(this);
 			write(".kind == %s)".printf(lookup_kind(l[1].to_string())));
 		} else {
-			write("simplify(List.from_va(%s, %d, ".printf(
-					l.kind.to_vala_string(),
-					l.size
-				)
-			);
-			for(var i = 0; i < l.size; i++) {
-				l[i].accept(this);
-				if(i != l.size - 1)
-					write(", ");
+			if(l.size == 0)
+				write("new List.from_empty(%s)".printf(l.kind.to_vala_string()));
+			else {
+				write("simplify(List.from_va(%s, %d, ".printf(
+						l.kind.to_vala_string(),
+						l.size
+					)
+				);
+				for(var i = 0; i < l.size; i++) {
+					l[i].accept(this);
+					if(i != l.size - 1)
+						write(", ");
+				}
+				write("))");
 			}
-			write("))");
 		}
 	}
 
