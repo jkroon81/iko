@@ -75,7 +75,7 @@ public class Iko.CAS.Parser : Object {
 			expect(TokenType.EQ);
 			a = new Assignment(
 				symbol,
-				new CompoundExpression.from_binary(
+				new List.from_binary(
 					Kind.PLUS,
 					symbol,
 					parse_expression()
@@ -109,16 +109,16 @@ public class Iko.CAS.Parser : Object {
 			case TokenType.MINUS:
 				next();
 				var right = parse_expression_multiplicative();
-				left = new CompoundExpression.from_binary(
+				left = new List.from_binary(
 					Kind.PLUS,
 					left,
-					new CompoundExpression.from_binary(Kind.MUL, int_neg_one(), right)
+					new List.from_binary(Kind.MUL, int_neg_one(), right)
 				);
 				break;
 			case TokenType.PLUS:
 				next();
 				var right = parse_expression_multiplicative();
-				left = new CompoundExpression.from_binary(Kind.PLUS, left, right);
+				left = new List.from_binary(Kind.PLUS, left, right);
 				break;
 			default:
 				loop = false;
@@ -133,7 +133,7 @@ public class Iko.CAS.Parser : Object {
 		if(accept(TokenType.OPEN_BRACKET)) {
 			var index = parse_expression();
 			expect(TokenType.CLOSE_BRACKET);
-			return new CompoundExpression.from_binary(Kind.ARRAY, p, index);
+			return new List.from_binary(Kind.ARRAY, p, index);
 		} else
 			return p;
 	}
@@ -147,34 +147,34 @@ public class Iko.CAS.Parser : Object {
 				next();
 				expect(TokenType.EQ);
 				var right = parse_expression_additive();
-				left = new CompoundExpression.from_binary(Kind.EQ, left, right);
+				left = new List.from_binary(Kind.EQ, left, right);
 				break;
 			case TokenType.GT:
 				next();
 				if(accept(TokenType.EQ)) {
 					var right = parse_expression_additive();
-					left = new CompoundExpression.from_binary(Kind.GE, left, right);
+					left = new List.from_binary(Kind.GE, left, right);
 				} else {
 					var right = parse_expression_additive();
-					left = new CompoundExpression.from_binary(Kind.GT, left, right);
+					left = new List.from_binary(Kind.GT, left, right);
 				}
 				break;
 			case TokenType.IS:
 				next();
 				var right = parse_symbol();
-				left = new CompoundExpression.from_binary(Kind.IS, left, right);
+				left = new List.from_binary(Kind.IS, left, right);
 				break;
 			case TokenType.LT:
 				next();
 				if(accept(TokenType.EQ)) {
 					var right = parse_expression_additive();
-					left = new CompoundExpression.from_binary(Kind.LE, left, right);
+					left = new List.from_binary(Kind.LE, left, right);
 				} else if(accept(TokenType.GT)) {
 					var right = parse_expression_additive();
-					left = new CompoundExpression.from_binary(Kind.NE, left, right);
+					left = new List.from_binary(Kind.NE, left, right);
 				} else {
 					var right = parse_expression_additive();
-					left = new CompoundExpression.from_binary(Kind.LT, left, right);
+					left = new List.from_binary(Kind.LT, left, right);
 				}
 				break;
 			default:
@@ -194,13 +194,13 @@ public class Iko.CAS.Parser : Object {
 				next();
 				expect(TokenType.AND);
 				var right = parse_expression_conditional();
-				left = new CompoundExpression.from_binary(Kind.AND, left, right);
+				left = new List.from_binary(Kind.AND, left, right);
 				break;
 			case TokenType.OR:
 				next();
 				expect(TokenType.OR);
 				var right = parse_expression_conditional();
-				left = new CompoundExpression.from_binary(Kind.OR, left, right);
+				left = new List.from_binary(Kind.OR, left, right);
 				break;
 			default:
 				loop = false;
@@ -218,16 +218,16 @@ public class Iko.CAS.Parser : Object {
 			case TokenType.SLASH:
 				next();
 				var right = parse_expression_power();
-				left = new CompoundExpression.from_binary(
+				left = new List.from_binary(
 					Kind.MUL,
 					left,
-					new CompoundExpression.from_binary(Kind.POWER, right, int_neg_one())
+					new List.from_binary(Kind.POWER, right, int_neg_one())
 				);
 				break;
 			case TokenType.STAR:
 				next();
 				var right = parse_expression_power();
-				left = new CompoundExpression.from_binary(Kind.MUL, left, right);
+				left = new List.from_binary(Kind.MUL, left, right);
 				break;
 			default:
 				loop = false;
@@ -239,7 +239,7 @@ public class Iko.CAS.Parser : Object {
 
 	Expression parse_expression_not() throws Error {
 		expect(TokenType.NOT);
-		return new CompoundExpression.from_unary(Kind.NOT, parse_expression_logical());
+		return new List.from_unary(Kind.NOT, parse_expression_logical());
 	}
 
 	Expression parse_expression_parenthesized() throws Error {
@@ -255,7 +255,7 @@ public class Iko.CAS.Parser : Object {
 		while(loop) {
 			if(accept(TokenType.CARET)) {
 				var right = parse_expression_unary();
-				left = new CompoundExpression.from_binary(Kind.POWER, left, right);
+				left = new List.from_binary(Kind.POWER, left, right);
 			} else
 				loop = false;
 		}
@@ -298,7 +298,7 @@ public class Iko.CAS.Parser : Object {
 	Expression parse_expression_unary() throws Error {
 		if(current() == TokenType.MINUS) {
 			next();
-			return new CompoundExpression.from_binary(
+			return new List.from_binary(
 				Kind.MUL,
 				int_neg_one(),
 				parse_expression_array_access()
@@ -308,7 +308,7 @@ public class Iko.CAS.Parser : Object {
 			next();
 		var e = parse_expression_array_access();
 		if(accept(TokenType.NOT))
-			e = new CompoundExpression.from_unary(Kind.FACTORIAL, e);
+			e = new List.from_unary(Kind.FACTORIAL, e);
 		return e;
 	}
 
@@ -366,7 +366,7 @@ public class Iko.CAS.Parser : Object {
 
 	Expression parse_function_call(Symbol s) throws Error {
 		expect(TokenType.OPEN_PARENS);
-		var fc = new CompoundExpression.from_unary(Kind.FUNCTION, s);
+		var fc = new List.from_unary(Kind.FUNCTION, s);
 		if(!accept(TokenType.CLOSE_PARENS)) {
 			do {
 				fc.append(parse_expression());
@@ -404,7 +404,7 @@ public class Iko.CAS.Parser : Object {
 
 	Expression parse_list() throws Error {
 		expect(TokenType.OPEN_BRACKET);
-		var l = new List();
+		var l = new List.from_empty(Kind.LIST);
 		if(accept(TokenType.CLOSE_BRACKET))
 			return l;
 		do {
@@ -457,7 +457,7 @@ public class Iko.CAS.Parser : Object {
 
 	Expression parse_set() throws Error {
 		expect(TokenType.OPEN_BRACE);
-		var s = new CompoundExpression.from_empty(Kind.SET);
+		var s = new List.from_empty(Kind.SET);
 		if(accept(TokenType.CLOSE_BRACE))
 			return s;
 		do {

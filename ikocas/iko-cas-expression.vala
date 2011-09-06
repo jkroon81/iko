@@ -16,7 +16,7 @@ public abstract class Iko.CAS.Expression : Node {
 		   kind == Kind.FUNCTION)
 			return int_one();
 		if(kind == Kind.MUL) {
-			var p = this as CompoundExpression;
+			var p = this as List;
 			if(p[0].kind == Kind.INTEGER || p[0].kind == Kind.FRACTION)
 				return p[0];
 			else
@@ -35,7 +35,7 @@ public abstract class Iko.CAS.Expression : Node {
 		   kind == Kind.FUNCTION)
 			return int_one();
 		if(kind == Kind.POWER)
-			return (this as CompoundExpression)[1];
+			return (this as List)[1];
 		if(kind == Kind.INTEGER || kind == Kind.FRACTION)
 			return undefined();
 		assert_not_reached();
@@ -49,7 +49,7 @@ public abstract class Iko.CAS.Expression : Node {
 		   kind == Kind.FUNCTION)
 			return this;
 		if(kind == Kind.POWER)
-			return (this as CompoundExpression)[0];
+			return (this as List)[0];
 		if(kind == Kind.INTEGER || kind == Kind.FRACTION)
 			return undefined();
 		assert_not_reached();
@@ -61,11 +61,11 @@ public abstract class Iko.CAS.Expression : Node {
 		   kind == Kind.POWER ||
 		   kind == Kind.FACTORIAL ||
 		   kind == Kind.FUNCTION)
-			return new CompoundExpression.from_unary(Kind.MUL, this);
+			return new List.from_unary(Kind.MUL, this);
 		if(kind == Kind.MUL) {
-			var p = this as CompoundExpression;
+			var p = this as List;
 			if(p[0].kind == Kind.INTEGER || p[0].kind == Kind.FRACTION)
-				return new CompoundExpression.from_list(Kind.MUL, p.to_list().tail());
+				return new List.from_list(Kind.MUL, p.rest());
 			else
 				return p;
 		}

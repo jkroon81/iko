@@ -93,10 +93,10 @@ public class Iko.AST.Generator : Iko.Visitor {
 		switch(be.op) {
 		case Iko.BinaryExpression.Operator.DIV:
 			q.push_head(
-				new Iko.CAS.CompoundExpression.from_binary(
+				new Iko.CAS.List.from_binary(
 					Iko.CAS.Kind.MUL,
 					generate_cas_expression(be.left),
-					new Iko.CAS.CompoundExpression.from_binary(
+					new Iko.CAS.List.from_binary(
 						Iko.CAS.Kind.POWER,
 						generate_cas_expression(be.right),
 						Iko.CAS.int_neg_one()
@@ -106,10 +106,10 @@ public class Iko.AST.Generator : Iko.Visitor {
 			break;
 		case Iko.BinaryExpression.Operator.MINUS:
 			q.push_head(
-				new Iko.CAS.CompoundExpression.from_binary(
+				new Iko.CAS.List.from_binary(
 					Iko.CAS.Kind.PLUS,
 					generate_cas_expression(be.left),
-					new Iko.CAS.CompoundExpression.from_binary(
+					new Iko.CAS.List.from_binary(
 						Iko.CAS.Kind.MUL,
 						Iko.CAS.int_neg_one(),
 						generate_cas_expression(be.right)
@@ -119,7 +119,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			break;
 		case Iko.BinaryExpression.Operator.MUL:
 			q.push_head(
-				new Iko.CAS.CompoundExpression.from_binary(
+				new Iko.CAS.List.from_binary(
 					Iko.CAS.Kind.MUL,
 					generate_cas_expression(be.left),
 					generate_cas_expression(be.right)
@@ -128,7 +128,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			break;
 		case Iko.BinaryExpression.Operator.PLUS:
 			q.push_head(
-				new Iko.CAS.CompoundExpression.from_binary(
+				new Iko.CAS.List.from_binary(
 					Iko.CAS.Kind.PLUS,
 					generate_cas_expression(be.left),
 					generate_cas_expression(be.right)
@@ -137,7 +137,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 			break;
 		case Iko.BinaryExpression.Operator.POWER:
 			q.push_head(
-				new Iko.CAS.CompoundExpression.from_binary(
+				new Iko.CAS.List.from_binary(
 					Iko.CAS.Kind.POWER,
 					generate_cas_expression(be.left),
 					generate_cas_expression(be.right)
@@ -175,7 +175,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 
 	public override void visit_equation(Iko.Equation eq) {
 		system.add_equation(
-			new Iko.CAS.CompoundExpression.from_binary(
+			new Iko.CAS.List.from_binary(
 				Iko.CAS.Kind.EQ,
 				generate_cas_expression(eq.left),
 				generate_cas_expression(eq.right)
@@ -206,7 +206,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 	}
 
 	public override void visit_method_call(Iko.MethodCall mc) {
-		var fc = new Iko.CAS.CompoundExpression.from_unary(
+		var fc = new Iko.CAS.List.from_unary(
 			Iko.CAS.Kind.FUNCTION,
 			new Iko.CAS.Symbol((mc.method as Symbol).name)
 		);
@@ -236,7 +236,7 @@ public class Iko.AST.Generator : Iko.Visitor {
 		switch(ue.op) {
 		case Iko.UnaryExpression.Operator.MINUS:
 			q.push_head(
-				new Iko.CAS.CompoundExpression.from_binary(
+				new Iko.CAS.List.from_binary(
 					Iko.CAS.Kind.MUL,
 					Iko.CAS.int_neg_one(),
 					generate_cas_expression(ue.expr)

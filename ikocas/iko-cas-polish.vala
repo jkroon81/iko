@@ -18,16 +18,6 @@ public class Iko.CAS.Polish : Visitor {
 		return buffer.str;
 	}
 
-	public override void visit_compound_expression(CompoundExpression ce) {
-		buffer.append("(%s ".printf(ce.kind.to_string()));
-		foreach(var x in ce) {
-			x.accept(this);
-			buffer.append(" ");
-		}
-		buffer.erase(buffer.len - 1, 1);
-		buffer.append(")");
-	}
-
 	public override void visit_fraction(Fraction f) {
 		buffer.append("(/ ");
 		f.num.accept(this);
@@ -38,6 +28,16 @@ public class Iko.CAS.Polish : Visitor {
 
 	public override void visit_integer(Integer i) {
 		buffer.append(i.to_string());
+	}
+
+	public override void visit_list(List l) {
+		buffer.append("(%s ".printf(l.kind.to_string()));
+		foreach(var x in l) {
+			x.accept(this);
+			buffer.append(" ");
+		}
+		buffer.erase(buffer.len - 1, 1);
+		buffer.append(")");
 	}
 
 	public override void visit_symbol(Symbol s) {

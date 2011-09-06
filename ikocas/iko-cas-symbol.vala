@@ -46,7 +46,7 @@ public class Iko.CAS.Symbol : AtomicExpression {
 	}
 
 	public Expression map(Expression e, List? args) throws Error {
-		var c = e as CompoundExpression;
+		var c = e as List;
 
 		if(c == null)
 			return undefined();
@@ -56,11 +56,11 @@ public class Iko.CAS.Symbol : AtomicExpression {
 		if(args != null)
 			l = args.copy();
 		else
-			l = new List();
+			l = new List.from_empty(Kind.LIST);
 
 		l.prepend(e);
 
-		CompoundExpression x = new CompoundExpression.from_empty(c.kind);
+		List x = new List.from_empty(c.kind);
 
 		foreach(var op in c) {
 			l[0] = op;

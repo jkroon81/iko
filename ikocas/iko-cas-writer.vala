@@ -25,13 +25,23 @@ public class Iko.CAS.Writer : Visitor {
 			buffer.append("false");
 	}
 
-	public override void visit_compound_expression(CompoundExpression ce) {
-		if(ce.kind == Kind.PLUS) {
-			assert(ce.size > 0);
+	public override void visit_fraction(Fraction f) {
+		f.num.accept(this);
+		buffer.append("/");
+		f.den.accept(this);
+	}
 
-			foreach(var t in ce) {
+	public override void visit_integer(Integer i) {
+		buffer.append(i.to_string());
+	}
+
+	public override void visit_list(List l) {
+		if(l.kind == Kind.PLUS) {
+			assert(l.size > 0);
+
+			foreach(var t in l) {
 				var c = t.constant();
-				if(t != ce[0] && c is Integer && Integer.cmp(c as Integer, int_zero()) < 0) {
+				if(t != l[0] && c is Integer && Integer.cmp(c as Integer, int_zero()) < 0) {
 					buffer.append(" - ");
 					var c_new = Integer.abs(c as Integer);
 					if(Integer.cmp(c_new, int_one()) != 0) {
@@ -39,7 +49,7 @@ public class Iko.CAS.Writer : Visitor {
 						buffer.append("*");
 					}
 					t.term().accept(this);
-				} else if(t != ce[0] && c is Fraction && Integer.cmp((c as Fraction).num, int_zero()) < 0) {
+				} else if(t != l[0] && c is Fraction && Integer.cmp((c as Fraction).num, int_zero()) < 0) {
 					var f = c as Fraction;
 					buffer.append(" - ");
 					var c_new = new Fraction(Integer.abs(f.num), f.den);
@@ -47,20 +57,20 @@ public class Iko.CAS.Writer : Visitor {
 					buffer.append("*");
 					t.term().accept(this);
 				} else {
-					if(t != ce[0])
+					if(t != l[0])
 						buffer.append(" + ");
 					t.accept(this);
 				}
 			}
-		} else if(ce.kind == Kind.MUL) {
-			assert(ce.size > 0);
-			var c = ce.constant();
+		} else if(l.kind == Kind.MUL) {
+			assert(l.size > 0);
+			var c = l.constant();
 
 			if(c is Integer && Integer.cmp(c as Integer, int_neg_one()) == 0) {
 				buffer.append("-");
-				ce.term().accept(this);
+				l.term().accept(this);
 			} else {
-				foreach(var f in ce) {
+				foreach(var f in l) {
 					bool guard = false;
 
 					if(f.kind == Kind.EQ || f.kind == Kind.PLUS)
@@ -75,33 +85,33 @@ public class Iko.CAS.Writer : Visitor {
 				}
 				buffer.erase(buffer.len - 1, 1);
 			}
-		} else if(ce.kind == Kind.FACTORIAL) {
+		} else if(l.kind == Kind.FACTORIAL) {
 			bool guard = true;
 
-			if((ce[0].kind == Kind.INTEGER && Integer.cmp(ce[0] as Integer, int_zero()) >= 0) ||
-			   ce[0].kind == Kind.SYMBOL ||
-			   ce[0].kind == Kind.FUNCTION ||
-			   ce[0].kind == Kind.LIST)
+			if((l[0].kind == Kind.INTEGER && Integer.cmp(l[0] as Integer, int_zero()) >= 0) ||
+			   l[0].kind == Kind.SYMBOL ||
+			   l[0].kind == Kind.FUNCTION ||
+			   l[0].kind == Kind.LIST)
 				guard = false;
 
 			if(guard)
 				buffer.append("(");
-			ce[0].accept(this);
+			l[0].accept(this);
 			if(guard)
 				buffer.append(")");
 			buffer.append("!");
-		} else if(ce.kind == Kind.POWER) {
+		} else if(l.kind == Kind.POWER) {
 			bool guard = true;
 
-			if((ce[0].kind == Kind.INTEGER && Integer.cmp(ce[0] as Integer, int_zero()) >= 0) ||
-			   ce[0].kind == Kind.FUNCTION ||
-			   ce[0].kind == Kind.SYMBOL ||
-			   ce[0].kind == Kind.LIST)
+			if((l[0].kind == Kind.INTEGER && Integer.cmp(l[0] as Integer, int_zero()) >= 0) ||
+			   l[0].kind == Kind.FUNCTION ||
+			   l[0].kind == Kind.SYMBOL ||
+			   l[0].kind == Kind.LIST)
 				guard = false;
 
 			if(guard)
 				buffer.append("(");
-			ce[0].accept(this);
+			l[0].accept(this);
 			if(guard)
 				buffer.append(")");
 
@@ -109,47 +119,47 @@ public class Iko.CAS.Writer : Visitor {
 
 			guard = true;
 
-			if(ce[1].kind == Kind.INTEGER ||
-			   ce[1].kind == Kind.FACTORIAL ||
-			   ce[1].kind == Kind.FUNCTION ||
-			   ce[1].kind == Kind.SYMBOL ||
-			   ce[1].kind == Kind.LIST)
+			if(l[1].kind == Kind.INTEGER ||
+			   l[1].kind == Kind.FACTORIAL ||
+			   l[1].kind == Kind.FUNCTION ||
+			   l[1].kind == Kind.SYMBOL ||
+			   l[1].kind == Kind.LIST)
 				guard = false;
 
 			if(guard)
 				buffer.append("(");
-			ce[1].accept(this);
+			l[1].accept(this);
 			if(guard)
 				buffer.append(")");
-		} else if(ce.kind == Kind.SET) {
-			if(ce.size == 0)
+		} else if(l.kind == Kind.SET) {
+			if(l.size == 0)
 				buffer.append("{}");
 			else {
 				buffer.append("{ ");
-				for(var i = 0; i < ce.size; i++) {
-					ce[i].accept(this);
-					if(i != ce.size - 1)
+				for(var i = 0; i < l.size; i++) {
+					l[i].accept(this);
+					if(i != l.size - 1)
 						buffer.append(", ");
 				}
 				buffer.append(" }");
 			}
-		} else if(ce.kind == Kind.FUNCTION) {
-			ce[0].accept(this);
+		} else if(l.kind == Kind.FUNCTION) {
+			l[0].accept(this);
 			buffer.append("(");
-			if(ce.size > 1) {
-				for(var i = 1; i < ce.size; i++) {
-					ce[i].accept(this);
+			if(l.size > 1) {
+				for(var i = 1; i < l.size; i++) {
+					l[i].accept(this);
 					buffer.append(", ");
 				}
 				buffer.erase(buffer.len - 2, 2);
 			}
 			buffer.append(")");
-		} else if(ce.kind == Kind.LIST) {
-			if(ce.size == 0)
+		} else if(l.kind == Kind.LIST) {
+			if(l.size == 0)
 				buffer.append("[]");
 			else {
 				buffer.append("[ ");
-				foreach(var e in ce) {
+				foreach(var e in l) {
 					e.accept(this);
 					buffer.append(", ");
 				}
@@ -157,18 +167,8 @@ public class Iko.CAS.Writer : Visitor {
 				buffer.append(" ]");
 			}
 		} else {
-			error("%s: Unhandled kind '%s'\n", Log.METHOD, ce.kind.to_string());
+			error("%s: Unhandled kind '%s'\n", Log.METHOD, l.kind.to_string());
 		}
-	}
-
-	public override void visit_fraction(Fraction f) {
-		f.num.accept(this);
-		buffer.append("/");
-		f.den.accept(this);
-	}
-
-	public override void visit_integer(Integer i) {
-		buffer.append(i.to_string());
 	}
 
 	public override void visit_symbol(Symbol s) {

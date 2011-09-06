@@ -6,7 +6,7 @@
  */
 
 namespace Iko.CAS.Library {
-	Expression rne_eval_power(CompoundExpression p) {
+	Expression rne_eval_power(List p) {
 		var radix = p[0];
 		var exp = p[1] as Integer;
 
@@ -16,14 +16,14 @@ namespace Iko.CAS.Library {
 		if(radix.kind == Kind.INTEGER || radix.kind == Kind.FRACTION) {
 			if(Integer.cmp(exp, int_zero()) > 0) {
 				var s = rne_eval_power(
-					new CompoundExpression.from_binary(
+					new List.from_binary(
 						Kind.POWER,
 						radix,
 						Integer.sub(exp, int_one())
 					)
 				);
 				return rne_eval_product(
-					new CompoundExpression.from_binary(Kind.MUL, s, radix)
+					new List.from_binary(Kind.MUL, s, radix)
 				);
 			} else if(Integer.cmp(exp, int_zero()) == 0)
 				return int_one();
@@ -36,7 +36,7 @@ namespace Iko.CAS.Library {
 				if(radix.kind == Kind.INTEGER) {
 					var s = new Fraction(int_one(), radix as Integer);
 					return rne_eval_power(
-						new CompoundExpression.from_binary(
+						new List.from_binary(
 							Kind.POWER,
 							s,
 							Integer.neg(exp)
@@ -45,7 +45,7 @@ namespace Iko.CAS.Library {
 				} else {
 					var s = new Fraction((radix as Fraction).den, (radix as Fraction).num);
 					return rne_eval_power(
-						new CompoundExpression.from_binary(
+						new List.from_binary(
 							Kind.POWER,
 							s,
 							Integer.neg(exp)
@@ -57,7 +57,7 @@ namespace Iko.CAS.Library {
 			return p;
 	}
 
-	Expression rne_eval_product(CompoundExpression p) {
+	Expression rne_eval_product(List p) {
 		var rn = int_one();
 		var rd = int_one();
 
@@ -74,7 +74,7 @@ namespace Iko.CAS.Library {
 		return new Fraction(rn, rd);
 	}
 
-	Expression rne_eval_sum(CompoundExpression s) {
+	Expression rne_eval_sum(List s) {
 		var rn = int_zero();
 		var rd = int_one();
 
@@ -144,18 +144,18 @@ namespace Iko.CAS.Library {
 			else
 				return e;
 		} else if(e.kind == Kind.POWER) {
-			var p = e as CompoundExpression;
+			var p = e as List;
 			var radix = rne_simplify_rec(p[0]);
 			var exp = rne_simplify(p[1]);
 			if(radix is Undefined)
 				return radix;
 			else
 				return rne_eval_power(
-					new CompoundExpression.from_binary(Kind.POWER, radix, exp)
+					new List.from_binary(Kind.POWER, radix, exp)
 				);
 		} else if(e.kind == Kind.MUL) {
-			var p = e as CompoundExpression;
-			var p2 = new CompoundExpression.from_empty(Kind.MUL);
+			var p = e as List;
+			var p2 = new List.from_empty(Kind.MUL);
 			foreach(var f in p) {
 				f = rne_simplify_rec(f);
 				if(f is Undefined)
@@ -164,8 +164,8 @@ namespace Iko.CAS.Library {
 			}
 			return rne_eval_product(p2);
 		} else if(e.kind == Kind.PLUS) {
-			var s = e as CompoundExpression;
-			var s2 = new CompoundExpression.from_empty(Kind.PLUS);
+			var s = e as List;
+			var s2 = new List.from_empty(Kind.PLUS);
 			foreach(var t in s) {
 				t = rne_simplify_rec(t);
 				if(t is Undefined)

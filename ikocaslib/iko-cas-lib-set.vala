@@ -10,7 +10,7 @@ namespace Iko.CAS.Library {
 		if(S.kind != Kind.SET)
 			return bool_false();
 
-		foreach(var e in S as CompoundExpression)
+		foreach(var e in S as List)
 			if(e.to_polish() == u.to_polish())
 				return bool_true();
 
@@ -25,21 +25,21 @@ namespace Iko.CAS.Library {
 			return q;
 
 		var h = set_simplify_rec(
-			new List.from_binary(p[0], q[0])
+			new List.from_binary(Kind.LIST, p[0], q[0])
 		);
 
 		if(h.size == 1) {
-			var r = set_merge(p.tail(), q.tail());
+			var r = set_merge(p.rest(), q.rest());
 			r.prepend(h[0]);
 			return r;
 		}
 
 		if(bae_compare(p[0], q[0])) {
-			var r = set_merge(p.tail(), q);
+			var r = set_merge(p.rest(), q);
 			r.prepend(p[0]);
 			return r;
 		} else {
-			var r = set_merge(p, q.tail());
+			var r = set_merge(p, q.rest());
 			r.prepend(q[0]);
 			return r;
 		}
@@ -49,14 +49,14 @@ namespace Iko.CAS.Library {
 		if(e.kind != Kind.SET)
 			return e;
 
-		var s = e as CompoundExpression;
+		var s = e as List;
 
 		if(s.size == 0 || s.size == 1)
 			return s;
 
-		var v = set_simplify_rec(s.to_list());
+		var v = set_simplify_rec(s);
 
-		return new CompoundExpression.from_list(Kind.SET, v);
+		return new List.from_list(Kind.SET, v);
 	}
 
 	List set_simplify_rec(List l) {
@@ -65,15 +65,15 @@ namespace Iko.CAS.Library {
 			var u2 = l[1];
 
 			if(u1.to_polish() == u2.to_polish())
-				return new List.from_unary(u1);
+				return new List.from_unary(Kind.LIST, u1);
 
 			if(bae_compare(u2, u1))
-				return new List.from_binary(u2, u1);
+				return new List.from_binary(Kind.LIST, u2, u1);
 
 			return l;
 		} else {
-			var w = set_simplify_rec(l.tail());
-			return set_merge(new List.from_unary(l[0]), w);
+			var w = set_simplify_rec(l.rest());
+			return set_merge(new List.from_unary(Kind.LIST, l[0]), w);
 		}
 	}
 }

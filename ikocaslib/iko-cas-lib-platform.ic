@@ -48,7 +48,7 @@ function expand_product(r, s) {
 public function free_of(u, t) {
 	vala {
 		if(t.kind == Kind.SET) {
-			foreach(var e in t as CompoundExpression)
+			foreach(var e in t as List)
 				if(!(free_of(u, e) as Boolean).bval)
 					return bool_false();
 			return bool_true();
@@ -60,8 +60,8 @@ public function free_of(u, t) {
 			        u.kind == Kind.FRACTION)
 				return bool_true();
 			else {
-				var ce = u as CompoundExpression;
-				foreach(var e in ce)
+				var l = u as List;
+				foreach(var e in l)
 					if(!(free_of(e, t) as Boolean).bval)
 						return bool_false();
 			}
@@ -73,7 +73,7 @@ public function free_of(u, t) {
 public function simplify(e) {
 	vala {
 		var x = e;
-		if(x is CompoundExpression)
+		if(x is List)
 			x = new Symbol("simplify").map(x, null);
 
 		switch(x.kind) {
@@ -121,7 +121,7 @@ function simplify_array_access(e) {
 		if(e.kind != Kind.ARRAY)
 			return e;
 
-		var aa = e as CompoundExpression;
+		var aa = e as List;
 
 		if(aa[0].kind != Kind.LIST)
 			throw new Error.RUNTIME("'%s' is not a list\n", aa[0].to_string());
@@ -129,7 +129,7 @@ function simplify_array_access(e) {
 		if(aa[1].kind != Kind.INTEGER)
 			throw new Error.RUNTIME("'%s' is not an integer\n", aa[1].to_string());
 
-		var list = aa[0] as CompoundExpression;
+		var list = aa[0] as List;
 		var index = (aa[1] as Integer).to_int();
 
 		if(index < 1 || index > list.size)
@@ -148,21 +148,21 @@ function simplify_function_call(e) {
 		if(e.kind != Kind.FUNCTION)
 			return e;
 
-		var fc = e as CompoundExpression;
+		var fc = e as List;
 
 		foreach(var arg in fc)
 			if(arg is Undefined)
 				return arg;
 
-		return simplify((fc[0] as Symbol).invoke(fc.to_list().tail()));
+		return simplify((fc[0] as Symbol).invoke(fc.rest()));
 	}
 }
 
 public function subs(e, u, v) {
 	vala {
-		if(e is CompoundExpression) {
-			var r = new CompoundExpression.from_empty(e.kind);
-			foreach(var op in e as CompoundExpression)
+		if(e is List) {
+			var r = new List.from_empty(e.kind);
+			foreach(var op in e as List)
 				r.append(subs(op, u, v));
 			return r;
 		} else if(e is Symbol) {

@@ -14,26 +14,26 @@ namespace Iko.CAS.Library {
 			return q;
 
 		var h = bae_simplify_product_rec(
-			new List.from_binary(p[0], q[0])
+			new List.from_binary(Kind.LIST, p[0], q[0])
 		);
 
 		if(h.size == 0)
-			return bae_merge_products(p.tail(), q.tail());
+			return bae_merge_products(p.rest(), q.rest());
 
 		if(h.size == 1) {
-			var r = bae_merge_products(p.tail(), q.tail());
+			var r = bae_merge_products(p.rest(), q.rest());
 			r.prepend(h[0]);
 			return r;
 		}
 
-		if(h.to_polish() == new List.from_binary(p[0], q[0]).to_polish()) {
-			var r = bae_merge_products(p.tail(), q);
+		if(h.to_polish() == new List.from_binary(Kind.LIST, p[0], q[0]).to_polish()) {
+			var r = bae_merge_products(p.rest(), q);
 			r.prepend(p[0]);
 			return r;
 		}
 
-		if(h.to_polish() == new List.from_binary(q[0], p[0]).to_polish()) {
-			var r = bae_merge_products(p, q.tail());
+		if(h.to_polish() == new List.from_binary(Kind.LIST, q[0], p[0]).to_polish()) {
+			var r = bae_merge_products(p, q.rest());
 			r.prepend(q[0]);
 			return r;
 		}
@@ -49,26 +49,26 @@ namespace Iko.CAS.Library {
 			return q;
 
 		var h = bae_simplify_sum_rec(
-			new List.from_binary(p[0], q[0])
+			new List.from_binary(Kind.LIST, p[0], q[0])
 		);
 
 		if(h.size == 0)
-			return bae_merge_sums(p.tail(), q.tail());
+			return bae_merge_sums(p.rest(), q.rest());
 
 		if(h.size == 1) {
-			var r = bae_merge_sums(p.tail(), q.tail());
+			var r = bae_merge_sums(p.rest(), q.rest());
 			r.prepend(h[0]);
 			return r;
 		}
 
-		if(h.to_polish() == new List.from_binary(p[0], q[0]).to_polish()) {
-			var r = bae_merge_sums(p.tail(), q);
+		if(h.to_polish() == new List.from_binary(Kind.LIST, p[0], q[0]).to_polish()) {
+			var r = bae_merge_sums(p.rest(), q);
 			r.prepend(p[0]);
 			return r;
 		}
 
-		if(h.to_polish() == new List.from_binary(q[0], p[0]).to_polish()) {
-			var r = bae_merge_sums(p, q.tail());
+		if(h.to_polish() == new List.from_binary(Kind.LIST, q[0], p[0]).to_polish()) {
+			var r = bae_merge_sums(p, q.rest());
 			r.prepend(q[0]);
 			return r;
 		}
@@ -102,8 +102,8 @@ namespace Iko.CAS.Library {
 
 		if((u.kind == Kind.MUL && v.kind == Kind.MUL) ||
 		   (u.kind == Kind.PLUS && v.kind == Kind.PLUS)) {
-			var c1 = u as CompoundExpression;
-			var c2 = v as CompoundExpression;
+			var c1 = u as List;
+			var c2 = v as List;
 			var i = c1.size - 1;
 			var j = c2.size - 1;
 
@@ -124,11 +124,11 @@ namespace Iko.CAS.Library {
 		}
 
 		if(u.kind == Kind.FACTORIAL && v.kind == Kind.FACTORIAL)
-			return bae_compare((u as CompoundExpression)[0], (v as CompoundExpression)[0]);
+			return bae_compare((u as List)[0], (v as List)[0]);
 
 		if(u.kind == Kind.FUNCTION && v.kind == Kind.FUNCTION) {
-			var f1 = (u as CompoundExpression);
-			var f2 = (v as CompoundExpression);
+			var f1 = (u as List);
+			var f2 = (v as List);
 
 			if((f1[0] as Symbol).name != (f2[0] as Symbol).name)
 				return (f1[0] as Symbol).name < (f2[0] as Symbol).name;
@@ -149,7 +149,7 @@ namespace Iko.CAS.Library {
 			   v.kind == Kind.FACTORIAL ||
 			   v.kind == Kind.FUNCTION ||
 			   v.kind == Kind.SYMBOL)
-				return bae_compare(u, new CompoundExpression.from_unary(Kind.MUL, v));
+				return bae_compare(u, new List.from_unary(Kind.MUL, v));
 
 		if(u.kind == Kind.POWER)
 			if(v.kind == Kind.PLUS ||
@@ -158,31 +158,31 @@ namespace Iko.CAS.Library {
 			   v.kind == Kind.SYMBOL)
 				return bae_compare(
 					u,
-					new CompoundExpression.from_binary(Kind.POWER, v, int_one())
+					new List.from_binary(Kind.POWER, v, int_one())
 				);
 
 		if(u.kind == Kind.PLUS)
 			if(v.kind == Kind.FACTORIAL ||
 			   v.kind == Kind.FUNCTION ||
 			   v.kind == Kind.SYMBOL)
-				return bae_compare(u, new CompoundExpression.from_unary(Kind.PLUS, v));
+				return bae_compare(u, new List.from_unary(Kind.PLUS, v));
 
 		if(u.kind == Kind.FACTORIAL)
 			if(v.kind == Kind.FUNCTION || v.kind == Kind.SYMBOL) {
-				if((u as CompoundExpression)[0].to_polish() == v.to_polish())
+				if((u as List)[0].to_polish() == v.to_polish())
 					return false;
 				else
 					return bae_compare(
 						u,
-						new CompoundExpression.from_unary(Kind.FACTORIAL, v)
+						new List.from_unary(Kind.FACTORIAL, v)
 					);
 			}
 
 		if(u.kind == Kind.FUNCTION && v.kind == Kind.SYMBOL) {
-			if(((u as CompoundExpression)[0] as Symbol).name == (v as Symbol).name)
+			if(((u as List)[0] as Symbol).name == (v as Symbol).name)
 				return false;
 			else
-				return ((u as CompoundExpression)[0] as Symbol).name < (v as Symbol).name;
+				return ((u as List)[0] as Symbol).name < (v as Symbol).name;
 		}
 
 		return !bae_compare(v, u);
@@ -191,19 +191,19 @@ namespace Iko.CAS.Library {
 	Expression bae_simplify(Expression e) throws Error {
 		switch(e.kind) {
 		case Kind.FACTORIAL:
-			return bae_simplify_factorial(e as CompoundExpression);
+			return bae_simplify_factorial(e as List);
 		case Kind.MUL:
-			return bae_simplify_product(e as CompoundExpression);
+			return bae_simplify_product(e as List);
 		case Kind.PLUS:
-			return bae_simplify_sum(e as CompoundExpression);
+			return bae_simplify_sum(e as List);
 		case Kind.POWER:
-			return bae_simplify_power(e as CompoundExpression);
+			return bae_simplify_power(e as List);
 		default:
 			throw new Error.INTERNAL("%s: Unhandled kind '%s'", Log.METHOD, e.kind.to_string());
 		}
 	}
 
-	Expression bae_simplify_factorial(CompoundExpression f) {
+	Expression bae_simplify_factorial(List f) {
 		if(f[0].kind == Kind.INTEGER)
 			return bae_simplify_integer_factorial((f[0] as Integer));
 
@@ -235,7 +235,7 @@ namespace Iko.CAS.Library {
 	public Expression bae_simplify_integer_power(Expression radix, Integer exp) throws Error {
 		if(radix.kind == Kind.INTEGER || radix.kind == Kind.FRACTION)
 			return rne_simplify(
-				new CompoundExpression.from_binary(Kind.POWER, radix, exp)
+				new List.from_binary(Kind.POWER, radix, exp)
 			);
 
 		if(Integer.cmp(exp, int_zero()) == 0)
@@ -245,16 +245,16 @@ namespace Iko.CAS.Library {
 			return radix;
 
 		if(radix.kind == Kind.POWER) {
-			var radix_inner = (radix as CompoundExpression)[0];
-			var exp_inner = (radix as CompoundExpression)[1];
+			var radix_inner = (radix as List)[0];
+			var exp_inner = (radix as List)[1];
 			var exp_new = bae_simplify_product(
-				new CompoundExpression.from_binary(Kind.MUL, exp_inner, exp)
+				new List.from_binary(Kind.MUL, exp_inner, exp)
 			);
 
 			if(exp_new.kind == Kind.INTEGER)
 				return bae_simplify_integer_power(radix_inner, exp_new as Integer);
 			else
-				return new CompoundExpression.from_binary(
+				return new List.from_binary(
 					Kind.POWER,
 					radix_inner,
 					exp_new
@@ -262,14 +262,14 @@ namespace Iko.CAS.Library {
 		}
 
 		if(radix.kind == Kind.MUL) {
-			var p_new = new Symbol("bae_simplify_integer_power").map(radix, new List.from_unary(exp));
-			return bae_simplify_product(p_new as CompoundExpression);
+			var p_new = new Symbol("bae_simplify_integer_power").map(radix, new List.from_unary(Kind.LIST, exp));
+			return bae_simplify_product(p_new as List);
 		}
 
-		return new CompoundExpression.from_binary(Kind.POWER, radix, exp);
+		return new List.from_binary(Kind.POWER, radix, exp);
 	}
 
-	Expression bae_simplify_power(CompoundExpression p) throws Error {
+	Expression bae_simplify_power(List p) throws Error {
 		var radix = p[0];
 		var exp = p[1];
 
@@ -293,7 +293,7 @@ namespace Iko.CAS.Library {
 		return p;
 	}
 
-	Expression bae_simplify_product(CompoundExpression p) throws Error {
+	Expression bae_simplify_product(List p) throws Error {
 		foreach(var f in p) {
 			if(f is Undefined)
 				return f;
@@ -304,14 +304,14 @@ namespace Iko.CAS.Library {
 		if(p.size == 1)
 			return p[0];
 
-		var v = bae_simplify_product_rec(p.to_list());
+		var v = bae_simplify_product_rec(p);
 
 		if(v.size == 0)
 			return int_one();
 		else if(v.size == 1)
 			return v[0];
 		else
-			return new CompoundExpression.from_list(Kind.MUL, v);
+			return new List.from_list(Kind.MUL, v);
 	}
 
 	List bae_simplify_product_rec(List l) throws Error {
@@ -323,73 +323,73 @@ namespace Iko.CAS.Library {
 				if((u1.kind == Kind.INTEGER || u1.kind == Kind.FRACTION) &&
 				   (u2.kind == Kind.INTEGER || u2.kind == Kind.FRACTION)) {
 					var p = rne_simplify(
-						new CompoundExpression.from_binary(Kind.MUL, u1, u2)
+						new List.from_binary(Kind.MUL, u1, u2)
 					);
 					if(p.kind == Kind.INTEGER && Integer.cmp(p as Integer, int_one()) == 0)
-						return new List();
+						return new List.from_empty(Kind.LIST);
 					else
-						return new List.from_unary(p);
+						return new List.from_unary(Kind.LIST, p);
 				}
 
 				if(u1.kind == Kind.INTEGER && Integer.cmp(u1 as Integer, int_one()) == 0)
-					return new List.from_unary(u2);
+					return new List.from_unary(Kind.LIST, u2);
 
 				if(u2.kind == Kind.INTEGER && Integer.cmp(u2 as Integer, int_one()) == 0)
-					return new List.from_unary(u1);
+					return new List.from_unary(Kind.LIST, u1);
 
 				if(u1.radix().to_polish() == u2.radix().to_polish()) {
 					var s = bae_simplify_sum(
-						new CompoundExpression.from_binary(
+						new List.from_binary(
 							Kind.PLUS,
 							u1.exponent(),
 							u2.exponent()
 						)
 					);
 					var p = bae_simplify_power(
-						new CompoundExpression.from_binary(Kind.POWER, u1.radix(), s)
+						new List.from_binary(Kind.POWER, u1.radix(), s)
 					);
 
 					if(p.kind == Kind.INTEGER && Integer.cmp(p as Integer, int_one()) == 0)
-						return new List();
+						return new List.from_empty(Kind.LIST);
 					else
-						return new List.from_unary(p);
+						return new List.from_unary(Kind.LIST, p);
 				}
 
 				if(bae_compare(u2, u1))
-					return new List.from_binary(u2, u1);
+					return new List.from_binary(Kind.LIST, u2, u1);
 
 				return l;
 			} else {
 				if(u1.kind == Kind.MUL && u2.kind == Kind.MUL)
 					return bae_merge_products(
-						(u1 as CompoundExpression).to_list(),
-						(u2 as CompoundExpression).to_list()
+						u1 as List,
+						u2 as List
 					);
 
 				if(u1.kind == Kind.MUL)
 					return bae_merge_products(
-						(u1 as CompoundExpression).to_list(),
-						new List.from_unary(u2)
+						u1 as List,
+						new List.from_unary(Kind.LIST, u2)
 					);
 
 				if(u2.kind == Kind.MUL)
 					return bae_merge_products(
-						new List.from_unary(u1),
-						(u2 as CompoundExpression).to_list()
+						new List.from_unary(Kind.LIST, u1),
+						u2 as List
 					);
 
 				assert_not_reached();
 			}
 		} else {
-			var w = bae_simplify_product_rec(l.tail());
+			var w = bae_simplify_product_rec(l.rest());
 			if(l[0].kind == Kind.MUL)
-				return bae_merge_products((l[0] as CompoundExpression).to_list(), w);
+				return bae_merge_products(l[0] as List, w);
 			else
-				return bae_merge_products(new List.from_unary(l[0]), w);
+				return bae_merge_products(new List.from_unary(Kind.LIST, l[0]), w);
 		}
 	}
 
-	Expression bae_simplify_sum(CompoundExpression s) throws Error {
+	Expression bae_simplify_sum(List s) throws Error {
 		foreach(var t in s)
 			if(t is Undefined)
 				return t;
@@ -397,14 +397,14 @@ namespace Iko.CAS.Library {
 		if(s.size == 1)
 			return s[0];
 
-		var v = bae_simplify_sum_rec(s.to_list());
+		var v = bae_simplify_sum_rec(s);
 
 		if(v.size == 0)
 			return int_zero();
 		else if(v.size == 1)
 			return v[0];
 		else
-			return new CompoundExpression.from_list(Kind.PLUS, v);
+			return new List.from_list(Kind.PLUS, v);
 	}
 
 	List bae_simplify_sum_rec(List l) throws Error {
@@ -416,69 +416,69 @@ namespace Iko.CAS.Library {
 				if((u1.kind == Kind.INTEGER || u1.kind == Kind.FRACTION) &&
 				   (u2.kind == Kind.INTEGER || u2.kind == Kind.FRACTION)) {
 					var p = rne_simplify(
-						new CompoundExpression.from_binary(Kind.PLUS, u1, u2)
+						new List.from_binary(Kind.PLUS, u1, u2)
 					);
 					if(p.kind == Kind.INTEGER && Integer.cmp(p as Integer, int_zero()) == 0)
-						return new List();
+						return new List.from_empty(Kind.LIST);
 					else
-						return new List.from_unary(p);
+						return new List.from_unary(Kind.LIST, p);
 				}
 
 				if(u1.kind == Kind.INTEGER && Integer.cmp(u1 as Integer, int_zero()) == 0)
-					return new List.from_unary(u2);
+					return new List.from_unary(Kind.LIST, u2);
 
 				if(u2.kind == Kind.INTEGER && Integer.cmp(u2 as Integer, int_zero()) == 0)
-					return new List.from_unary(u1);
+					return new List.from_unary(Kind.LIST, u1);
 
 				if(u1.term().to_polish() == u2.term().to_polish()) {
 					var s = bae_simplify_sum(
-						new CompoundExpression.from_binary(
+						new List.from_binary(
 							Kind.PLUS,
 							u1.constant(),
 							u2.constant()
 						)
 					);
 					var p = bae_simplify_product(
-						new CompoundExpression.from_binary(Kind.MUL, s, u1.term())
+						new List.from_binary(Kind.MUL, s, u1.term())
 					);
 
 					if(p.kind == Kind.INTEGER && Integer.cmp(p as Integer, int_zero()) == 0)
-						return new List();
+						return new List.from_empty(Kind.LIST);
 					else
-						return new List.from_unary(p);
+						return new List.from_unary(Kind.LIST, p);
 				}
 
 				if(bae_compare(u2, u1))
-					return new List.from_binary(u2, u1);
+					return new List.from_binary(Kind.LIST, u2, u1);
 
 				return l;
 			} else {
 				if(u1.kind == Kind.PLUS && u2.kind == Kind.PLUS)
 					return bae_merge_sums(
-						(u1 as CompoundExpression).to_list(),
-						(u2 as CompoundExpression).to_list()
+						u1 as List,
+						u2 as List
 					);
 
 				if(u1.kind == Kind.PLUS)
 					return bae_merge_sums(
-						(u1 as CompoundExpression).to_list(),
-						new List.from_unary(u2)
+						u1 as List,
+						new List.from_unary(Kind.LIST, u2)
 					);
 
 				if(u2.kind == Kind.PLUS)
 					return bae_merge_sums(
-						new List.from_unary(u1),
-						(u2 as CompoundExpression).to_list()
+						new List.from_unary(Kind.LIST, u1),
+						u2 as List
 					);
 
 				assert_not_reached();
 			}
 		} else {
-			var w = bae_simplify_sum_rec(l.tail());
+			var w = bae_simplify_sum_rec(l.rest());
 			if(l[0].kind == Kind.PLUS)
-				return bae_merge_sums((l[0] as CompoundExpression).to_list(), w);
+				return bae_merge_sums(l[0] as List, w);
 			else
-				return bae_merge_sums(new List.from_unary(l[0]), w);
+				return bae_merge_sums(new List.from_unary(Kind.LIST, l[0]), w);
 		}
 	}
 }

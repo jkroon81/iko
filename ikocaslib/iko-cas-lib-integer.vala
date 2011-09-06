@@ -34,7 +34,7 @@ namespace Iko.CAS.Library {
 			npp = np;
 			np = n;
 		}
-		var l = new List();
+		var l = new List.from_empty(Kind.LIST);
 		if(Integer.cmp(A, int_zero()) >= 0) {
 			l.append(A);
 			l.append(mpp);

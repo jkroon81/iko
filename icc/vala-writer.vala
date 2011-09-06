@@ -95,41 +95,6 @@ class ValaWriter : Visitor {
 			write("bool_false()");
 	}
 
-	public override void visit_compound_expression(CompoundExpression ce) {
-		if(ce.kind == Kind.ARRAY) {
-			write("(");
-			ce[0].accept(this);
-			write(" as CompoundExpression)[(");
-			ce[1].accept(this);
-			write(" as Integer).to_int() - 1]");
-		} else if(ce.kind == Kind.FUNCTION) {
-			ce[0].accept(this);
-			write("(");
-			for(var i = 1; i < ce.size; i++) {
-				ce[i].accept(this);
-				if(i != ce.size - 1)
-					write(", ");
-			}
-			write(")");
-		} else if(ce.kind == Kind.IS) {
-			write("new Boolean.from_bool(");
-			ce[0].accept(this);
-			write(".kind == %s)".printf(lookup_kind(ce[1].to_string())));
-		} else {
-			write("simplify(CompoundExpression.from_va(%s, %d, ".printf(
-					ce.kind.to_vala_string(),
-					ce.size
-				)
-			);
-			for(var i = 0; i < ce.size; i++) {
-				ce[i].accept(this);
-				if(i != ce.size - 1)
-					write(", ");
-			}
-			write("))");
-		}
-	}
-
 	public override void visit_for_statement(ForStatement f) {
 		write("for(int %s_ = (".printf(f.k.name));
 		f.start.accept(this);
@@ -143,7 +108,7 @@ class ValaWriter : Visitor {
 	}
 
 	public override void visit_foreach_statement(ForEachStatement f) {
-		write("foreach(var %s in %s as CompoundExpression) {".printf(f.child.name, f.parent.to_string()));
+		write("foreach(var %s in %s as List) {".printf(f.child.name, f.parent.to_string()));
 		foreach(var s in f.body)
 			s.accept(this);
 		write("}");
@@ -199,6 +164,41 @@ class ValaWriter : Visitor {
 		default:
 			write("new Integer.from_string(\"%s\")".printf(i.to_string()));
 			break;
+		}
+	}
+
+	public override void visit_list(Iko.CAS.List l) {
+		if(l.kind == Kind.ARRAY) {
+			write("(");
+			l[0].accept(this);
+			write(" as List)[(");
+			l[1].accept(this);
+			write(" as Integer).to_int() - 1]");
+		} else if(l.kind == Kind.FUNCTION) {
+			l[0].accept(this);
+			write("(");
+			for(var i = 1; i < l.size; i++) {
+				l[i].accept(this);
+				if(i != l.size - 1)
+					write(", ");
+			}
+			write(")");
+		} else if(l.kind == Kind.IS) {
+			write("new Boolean.from_bool(");
+			l[0].accept(this);
+			write(".kind == %s)".printf(lookup_kind(l[1].to_string())));
+		} else {
+			write("simplify(List.from_va(%s, %d, ".printf(
+					l.kind.to_vala_string(),
+					l.size
+				)
+			);
+			for(var i = 0; i < l.size; i++) {
+				l[i].accept(this);
+				if(i != l.size - 1)
+					write(", ");
+			}
+			write("))");
 		}
 	}
 

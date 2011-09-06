@@ -9,7 +9,7 @@ namespace Iko.CAS.Library {
 	Expression b_simplify(Expression x) {
 		switch(x.kind) {
 		case Kind.AND:
-			var ae = x as CompoundExpression;
+			var ae = x as List;
 			foreach(var b in ae)
 				if(!(b_simplify(b) as Boolean).bval)
 					return bool_false();
@@ -17,31 +17,31 @@ namespace Iko.CAS.Library {
 		case Kind.BOOLEAN:
 			return x;
 		case Kind.EQ:
-			var eq = x as CompoundExpression;
+			var eq = x as List;
 			return b_simplify_eq(eq[0], eq[1]);
 		case Kind.GE:
-			var ge = x as CompoundExpression;
+			var ge = x as List;
 			return b_simplify_ge(ge[0], ge[1]);
 		case Kind.GT:
-			var gt = x as CompoundExpression;
+			var gt = x as List;
 			return b_simplify_gt(gt[0], gt[1]);
 		case Kind.LE:
-			var le = x as CompoundExpression;
+			var le = x as List;
 			return b_simplify_le(le[0], le[1]);
 		case Kind.LT:
-			var lt = x as CompoundExpression;
+			var lt = x as List;
 			return b_simplify_lt(lt[0], lt[1]);
 		case Kind.NE:
-			var ne = x as CompoundExpression;
+			var ne = x as List;
 			if(ne[0].to_polish() != ne[1].to_polish())
 				return bool_true();
 			else
 				return bool_false();
 		case Kind.NOT:
-			var n = x as CompoundExpression;
+			var n = x as List;
 			return b_simplify_not(n[0]);
 		case Kind.OR:
-			var oe = x as CompoundExpression;
+			var oe = x as List;
 			return b_simplify_or(oe[0], oe[1]);
 		default:
 			assert_not_reached();
@@ -83,12 +83,12 @@ namespace Iko.CAS.Library {
 		if(a.kind == Kind.MUL && b.kind == Kind.INTEGER) {
 			var ca = a.constant();
 			if(ca.to_polish() == int_neg_one().to_polish()) {
-				var inv = new CompoundExpression.from_binary(
+				var inv = new List.from_binary(
 					Kind.POWER, ca, int_neg_one()
 				);
 				try {
-					var an = simplify(new CompoundExpression.from_binary(Kind.MUL, a, inv));
-					var bn = simplify(new CompoundExpression.from_binary(Kind.MUL, b, inv));
+					var an = simplify(new List.from_binary(Kind.MUL, a, inv));
+					var bn = simplify(new List.from_binary(Kind.MUL, b, inv));
 					return b_simplify_lt(an, bn);
 				} catch(Error r) {
 					assert_not_reached();
