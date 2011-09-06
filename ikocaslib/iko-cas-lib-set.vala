@@ -76,4 +76,20 @@ namespace Iko.CAS.Library {
 			return set_merge(new List.from_unary(Kind.LIST, l[0]), w);
 		}
 	}
+
+	public Expression set_union(Expression a, Expression b) {
+		List r;
+
+		if(a.kind != Kind.SET)
+			r = new List.from_unary(Kind.SET, a);
+		else
+			r = new List.from_list(Kind.SET, a as List);
+		if(b.kind != Kind.SET)
+			r.append(b);
+		else {
+			foreach(var e in b as List)
+				r.append(e);
+		}
+		return set_simplify(r);
+	}
 }

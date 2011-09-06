@@ -70,6 +70,15 @@ public function free_of(u, t) {
 	}
 }
 
+public function rest(e) {
+	vala {
+		if(e.kind != Kind.LIST)
+			throw new Error.RUNTIME("'%s' is not a list\n", e.to_string());
+
+		return (e as List).rest();
+	}
+}
+
 public function simplify(e) {
 	vala {
 		var x = e;
@@ -174,5 +183,24 @@ public function subs(e, u, v) {
 			return e;
 		else
 			throw new Error.INTERNAL("%s: Unhandled kind '%s'", Log.METHOD, e.kind.to_string());
+	}
+}
+
+public function variables(u) {
+	vala {
+		switch(u.kind) {
+		case Kind.SYMBOL:
+			return new List.from_unary(Kind.SET, u);
+		case Kind.MUL:
+		case Kind.POWER:
+		case Kind.PLUS:
+			var l = u as List;
+			Expression r = new List.from_empty(Kind.SET);
+			foreach(var e in l)
+				r = set_union(r, variables(e));
+			return r;
+		default:
+			return new List.from_empty(Kind.SET);
+		}
 	}
 }
