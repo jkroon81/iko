@@ -97,6 +97,13 @@ public class Iko.CAS.Parser : Object {
 		assert_not_reached();
 	}
 
+	ErrorStatement parse_error_statement() throws Error {
+		expect(TokenType.ERROR);
+		var msg = parse_string();
+		expect(TokenType.SEMICOLON);
+		return new ErrorStatement(msg);
+	}
+
 	public Expression parse_expression() throws Error {
 		return parse_expression_logical();
 	}
@@ -469,6 +476,8 @@ public class Iko.CAS.Parser : Object {
 
 	Statement parse_statement() throws Error {
 		switch(current()) {
+		case TokenType.ERROR:
+			return parse_error_statement();
 		case TokenType.FOR:
 			return parse_for_statement();
 		case TokenType.FOREACH:
@@ -484,6 +493,11 @@ public class Iko.CAS.Parser : Object {
 		default:
 			return parse_assignment();
 		}
+	}
+
+	string parse_string() throws Error {
+		expect(TokenType.STRING);
+		return get_prev_string();
 	}
 
 	Symbol parse_symbol() throws Error {

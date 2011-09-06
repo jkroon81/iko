@@ -15,6 +15,7 @@ libikocas_la_SOURCES = \
 	iko-cas-atomic-expression.vala \
 	iko-cas-boolean.vala \
 	iko-cas-error.vala \
+	iko-cas-error-statement.vala \
 	iko-cas-expression.vala \
 	iko-cas-for-statement.vala \
 	iko-cas-foreach-statement.vala \

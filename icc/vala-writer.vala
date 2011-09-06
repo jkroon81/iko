@@ -95,6 +95,10 @@ class ValaWriter : Visitor {
 			write("bool_false()");
 	}
 
+	public override void visit_error_statement(ErrorStatement e) {
+		write("throw new Error.RUNTIME(%s + \"\\n\");".printf(e.msg));
+	}
+
 	public override void visit_for_statement(ForStatement f) {
 		write("for(int %s_ = (".printf(f.k.name));
 		f.start.accept(this);

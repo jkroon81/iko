@@ -16,6 +16,7 @@ public enum Iko.CAS.TokenType {
 	ELSE,
 	EOF,
 	EQ,
+	ERROR,
 	FALSE,
 	FOR,
 	FOREACH,
@@ -40,6 +41,7 @@ public enum Iko.CAS.TokenType {
 	SEMICOLON,
 	SLASH,
 	STAR,
+	STRING,
 	TO,
 	TRUE,
 	VALA,
@@ -57,6 +59,7 @@ public enum Iko.CAS.TokenType {
 		case ELSE:          return "ELSE";
 		case EOF:           return "EOF";
 		case EQ:            return "=";
+		case ERROR:         return "ERROR";
 		case FALSE:         return "FALSE";
 		case FOR:           return "FOR";
 		case FOREACH:       return "FOREACH";
@@ -81,6 +84,7 @@ public enum Iko.CAS.TokenType {
 		case SEMICOLON:     return ";";
 		case SLASH:         return "/";
 		case STAR:          return "*";
+		case STRING:        return "STRING";
 		case TO:            return "TO";
 		case TRUE:          return "TRUE";
 		case VALA:          return "VALA";

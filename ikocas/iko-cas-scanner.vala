@@ -61,6 +61,7 @@ public class Iko.CAS.Scanner : Object {
 			if(matches(begin, "vala")) return TokenType.VALA;
 			break;
 		case 5:
+			if(matches(begin, "error")) return TokenType.ERROR;
 			if(matches(begin, "false")) return TokenType.FALSE;
 			if(matches(begin, "while")) return TokenType.WHILE;
 			break;
@@ -148,6 +149,12 @@ public class Iko.CAS.Scanner : Object {
 			while(current < end && current[0].isdigit())
 				current++;
 			token = TokenType.INTEGER;
+		} else if(current[0] == '"') {
+			current++;
+			while(current < end && current[0] != '"')
+				current++;
+			current++;
+			token = TokenType.STRING;
 		} else {
 			switch(current[0]) {
 			case '&': token = TokenType.AND;           break;
