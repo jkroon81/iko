@@ -30,26 +30,24 @@ public class Iko.CAS.SourceReference : Object {
 			buffer.append_c('\n');
 			var col = 1;
 			while(p < c) {
-				if(*p == ' ' || *p == '\t')
-					buffer.append_c(*p);
-				else {
-					var mark = false;
-					if(begin.line == end.line) {
-						if(col >= begin.column && col <= end.column)
-							mark = true;
-					} else if(line == begin.line) {
-						if(col >= begin.column)
-							mark = true;
-					} else if(line == end.line) {
-						if(col <= end.column)
-							mark = true;
-					} else
+				var mark = false;
+				if(begin.line == end.line) {
+					if(col >= begin.column && col <= end.column)
 						mark = true;
-					if(mark)
-						buffer.append_c('^');
-					else
-						buffer.append_c(' ');
-				}
+				} else if(line == begin.line) {
+					if(col >= begin.column)
+						mark = true;
+				} else if(line == end.line) {
+					if(col <= end.column)
+						mark = true;
+				} else
+					mark = true;
+				if(mark)
+					buffer.append_c('^');
+				else if(*p == '\t')
+					buffer.append_c('\t');
+				else
+					buffer.append_c(' ');
 				p++;
 				col++;
 			}
