@@ -27,6 +27,7 @@ public enum Iko.CAS.Kind {
 	PLUS,
 	POWER,
 	SET,
+	STRING,
 	SYMBOL,
 	UNDEFINED;
 
@@ -74,6 +75,8 @@ public enum Iko.CAS.Kind {
 			return "^";
 		case SET:
 			return "set";
+		case STRING:
+			return "string";
 		case SYMBOL:
 			return "symbol";
 		case UNDEFINED:
@@ -127,6 +130,8 @@ public enum Iko.CAS.Kind {
 			return "Kind.POWER";
 		case SET:
 			return "Kind.SET";
+		case STRING:
+			return "Kind.STRING";
 		case SYMBOL:
 			return "Kind.SYMBOL";
 		case UNDEFINED:

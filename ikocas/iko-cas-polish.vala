@@ -40,6 +40,10 @@ public class Iko.CAS.Polish : Visitor {
 		buffer.append(")");
 	}
 
+	public override void visit_string(String s) {
+		buffer.append("\"" + s.value + "\"");
+	}
+
 	public override void visit_symbol(Symbol s) {
 		buffer.append(s.name);
 	}

@@ -96,7 +96,7 @@ class ValaWriter : Visitor {
 	}
 
 	public override void visit_error_statement(ErrorStatement e) {
-		write("throw new Error.RUNTIME(%s + \"\\n\");".printf(e.msg));
+		write("throw new Error.RUNTIME(\"%s\\n\");".printf(e.msg.value));
 	}
 
 	public override void visit_for_statement(ForStatement f) {
@@ -221,6 +221,10 @@ class ValaWriter : Visitor {
 		write("return simplify(");
 		r.expr.accept(this);
 		write(");");
+	}
+
+	public override void visit_string(String s) {
+		write("new String(\"%s\")".printf(s.value));
 	}
 
 	public override void visit_symbol(Symbol s) {

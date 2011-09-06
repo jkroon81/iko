@@ -6,9 +6,9 @@
  */
 
 public class Iko.CAS.ErrorStatement : Statement {
-	public string msg { get; construct; }
+	public String msg { get; construct; }
 
-	public ErrorStatement(string msg) {
+	public ErrorStatement(String msg) {
 		Object(msg : msg);
 	}
 

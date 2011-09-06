@@ -295,6 +295,8 @@ public class Iko.CAS.Parser : Object {
 			return parse_list();
 		case TokenType.OPEN_PARENS:
 			return parse_expression_parenthesized();
+		case TokenType.STRING:
+			return parse_string();
 		case TokenType.TRUE:
 			return parse_boolean();
 		default:
@@ -495,9 +497,10 @@ public class Iko.CAS.Parser : Object {
 		}
 	}
 
-	string parse_string() throws Error {
+	String parse_string() throws Error {
 		expect(TokenType.STRING);
-		return get_prev_string();
+		var s = get_prev_string();
+		return new String(s.substring(1, s.length - 2));
 	}
 
 	Symbol parse_symbol() throws Error {

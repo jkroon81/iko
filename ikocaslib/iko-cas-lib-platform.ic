@@ -89,6 +89,7 @@ public function simplify(e) {
 		case Kind.BOOLEAN:
 		case Kind.INTEGER:
 		case Kind.LIST:
+		case Kind.STRING:
 		case Kind.SYMBOL:
 		case Kind.UNDEFINED:
 			return x;
@@ -179,7 +180,7 @@ public function subs(e, u, v) {
 				return v;
 			else
 				return e;
-		} else if(e is Integer || e is Fraction)
+		} else if(e is Integer || e is Fraction || e is String)
 			return e;
 		else
 			throw new Error.INTERNAL("%s: Unhandled kind '%s'", Log.METHOD, e.kind.to_string());

@@ -19,6 +19,7 @@ public abstract class Iko.CAS.Visitor : Object {
 	public virtual void visit_namespace(Namespace ns) {}
 	public virtual void visit_return_statement(ReturnStatement r) {}
 	public virtual void visit_statement(Statement stmt) {}
+	public virtual void visit_string(String s) {}
 	public virtual void visit_symbol(Symbol s) {}
 	public virtual void visit_vala_block(ValaBlock vb) {}
 	public virtual void visit_while_statement(WhileStatement w) {}

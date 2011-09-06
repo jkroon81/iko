@@ -35,6 +35,7 @@ libikocas_la_SOURCES = \
 	iko-cas-source-location.vala \
 	iko-cas-source-reference.vala \
 	iko-cas-statement.vala \
+	iko-cas-string.vala \
 	iko-cas-symbol.vala \
 	iko-cas-token-info.vala \
 	iko-cas-token-type.vala \
