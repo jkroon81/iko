@@ -5,6 +5,15 @@
 #   Jacob Kroon <jacob.kroon@gmail.com>
 #
 
+public function bool(e) {
+	vala {
+		if(!(e is Boolean))
+			throw new Error.RUNTIME("'%s' is not a boolean\n", e.to_string());
+
+		return e;
+	}
+}
+
 public function expand(u) {
 	if(u is sum) {
 		v = u[1];
@@ -67,6 +76,24 @@ public function free_of(u, t) {
 			}
 			return bool_true();
 		}
+	}
+}
+
+public function int(e) {
+	vala {
+		if(!(e is Integer))
+			throw new Error.RUNTIME("'%s' is not an integer\n", e.to_string());
+
+		return e;
+	}
+}
+
+public function list(e) {
+	vala {
+		if(!(e is List))
+			throw new Error.RUNTIME("'%s' is not a compound expression\n", e.to_string());
+
+		return e;
 	}
 }
 

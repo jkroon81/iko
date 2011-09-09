@@ -100,11 +100,11 @@ class ValaWriter : Visitor {
 	}
 
 	public override void visit_for_statement(ForStatement f) {
-		write("for(int %s_ = (".printf(f.k.name));
+		write("for(int %s_ = (int(".printf(f.k.name));
 		f.start.accept(this);
-		write(" as Integer).to_int(); %s_ <= (".printf(f.k.name));
+		write(") as Integer).to_int(); %s_ <= (int(".printf(f.k.name));
 		f.end.accept(this);
-		write(" as Integer).to_int(); %s_++) {".printf(f.k.name));
+		write(") as Integer).to_int(); %s_++) {".printf(f.k.name));
 		write("Integer %s = new Integer.from_int(%s_);".printf(f.k.name, f.k.name));
 		foreach(var s in f.body)
 			s.accept(this);
@@ -112,7 +112,7 @@ class ValaWriter : Visitor {
 	}
 
 	public override void visit_foreach_statement(ForEachStatement f) {
-		write("foreach(var %s in %s as List) {".printf(f.child.name, f.parent.to_string()));
+		write("foreach(var %s in list(%s) as List) {".printf(f.child.name, f.parent.to_string()));
 		foreach(var s in f.body)
 			s.accept(this);
 		write("}");
@@ -140,7 +140,7 @@ class ValaWriter : Visitor {
 	}
 
 	public override void visit_if_statement(IfStatement i) {
-		write("if((simplify(");
+		write("if((bool(");
 		i.cond.accept(this);
 		write(") as Boolean).bval) {");
 		foreach(var s in i.body_true)
@@ -218,9 +218,9 @@ class ValaWriter : Visitor {
 	}
 
 	public override void visit_return_statement(ReturnStatement r) {
-		write("return simplify(");
+		write("return ");
 		r.expr.accept(this);
-		write(");");
+		write(";");
 	}
 
 	public override void visit_string(String s) {
@@ -246,7 +246,7 @@ class ValaWriter : Visitor {
 	}
 
 	public override void visit_while_statement(WhileStatement w) {
-		write("while((simplify(");
+		write("while((bool(");
 		w.cond.accept(this);
 		write(") as Boolean).bval) {");
 		foreach(var s in w.body)
