@@ -173,11 +173,11 @@ class ValaWriter : Visitor {
 
 	public override void visit_list(Iko.CAS.List l) {
 		if(l.kind == Kind.ARRAY) {
-			write("(");
+			write("op(");
 			l[0].accept(this);
-			write(" as List)[(");
+			write(", ");
 			l[1].accept(this);
-			write(" as Integer).to_int() - 1]");
+			write(")");
 		} else if(l.kind == Kind.FUNCTION) {
 			l[0].accept(this);
 			write("(");

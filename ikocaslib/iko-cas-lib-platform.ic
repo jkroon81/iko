@@ -70,6 +70,23 @@ public function free_of(u, t) {
 	}
 }
 
+public function op(e, n) {
+	vala {
+		if(!(e is List))
+			throw new Error.RUNTIME("'%s' is not a compound expression\n", e.to_string());
+		var l = e as List;
+
+		if(!(n is Integer))
+			throw new Error.RUNTIME("'%s' is not an integer\n", n.to_string());
+		var index = (n as Integer).to_int();
+
+		if(index < 1 || index > l.size)
+			throw new Error.RUNTIME("Index '%s' out of bounds\n", n.to_string());
+
+		return l[index - 1];
+	}
+}
+
 public function rest(e) {
 	vala {
 		if(e.kind != Kind.LIST)
@@ -133,23 +150,7 @@ function simplify_array_access(e) {
 
 		var aa = e as List;
 
-		if(aa[0].kind != Kind.LIST)
-			throw new Error.RUNTIME("'%s' is not a list\n", aa[0].to_string());
-
-		if(aa[1].kind != Kind.INTEGER)
-			throw new Error.RUNTIME("'%s' is not an integer\n", aa[1].to_string());
-
-		var list = aa[0] as List;
-		var index = (aa[1] as Integer).to_int();
-
-		if(index < 1 || index > list.size)
-			throw new Error.RUNTIME(
-				"Index %d for '%s' is out of bounds\n",
-				index,
-				list.to_string()
-			);
-
-		return list[index - 1];
+		return op(aa[0], aa[1]);
 	}
 }
 
