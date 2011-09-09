@@ -18,6 +18,24 @@ public function mpe_division_mb(u, v, L) {
 	return [q, r];
 }
 
+public function mpe_division_pseudo(u, v, x) {
+	p = 0;
+	s = u;
+	m = gpe_degree(s, x);
+	n = gpe_degree(v, x);
+	d = max( { m - n + 1, 0 } );
+	lcv = gpe_coefficient(v, x, n);
+	k = 0;
+	while( m >= n ) {
+		lcs = gpe_coefficient(s, x, m);
+		p = lcv * p + lcs * x^(m - n);
+		s = expand(lcv * s - lcs * v * x^(m - n));
+		k += 1;
+		m = gpe_degree(s, x);
+	}
+	return [ expand(lcv^(d - k) * p), expand(lcv^(d - k) * s) ];
+}
+
 public function mpe_division_rec(u, v, L, K) {
 	if(L == []) {
 		if(sname(K) == "Z") {
