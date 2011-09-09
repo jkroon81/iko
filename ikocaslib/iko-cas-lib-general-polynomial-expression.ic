@@ -42,10 +42,10 @@ function gpe_degree_monomial(u, v) {
 	if(u == 0)
 		return -Infinity;
 
-	if(set_member(u, S))
+	if(member(u, S))
 		return 1;
 	else if(u is power) {
-		if(set_member(u[1], S))
+		if(member(u[1], S))
 			return u[2];
 		else
 			return 0;
@@ -163,12 +163,12 @@ function gpe_is_monomial(u, v) {
 	else
 		S = { v };
 
-	if(set_member(u, S))
+	if(member(u, S))
 		return true;
 	else if(u is power) {
 		radix = u[1];
 		exp = u[2];
-		if(set_member(radix, S ) && exp is integer && exp > 1)
+		if(member(radix, S ) && exp is integer && exp > 1)
 			return true;
 	} else if(u is product) {
 		foreach(f in u)
@@ -186,7 +186,7 @@ function gpe_is_polynomial(u, v) {
 		S = { v };
 
 	if(u is sum) {
-		if(set_member(u, S))
+		if(member(u, S))
 			return true;
 		foreach(t in u)
 			if(!gpe_is_monomial(t, S))

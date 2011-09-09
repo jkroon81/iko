@@ -6,6 +6,20 @@
  */
 
 namespace Iko.CAS.Library {
+	Expression set_max(Expression e) throws Error {
+		if(e.kind != Kind.SET)
+			throw new Error.RUNTIME("'%s' is not a set\n", e.to_string());
+
+		var s = e as List;
+		var max = s[0];
+
+		for(var i = 1; i < s.size; i++)
+			if((b_simplify(new List.from_binary(Kind.GT, s[i], max)) as Boolean).bval)
+				max = s[i];
+
+		return max;
+	}
+
 	Expression set_member(Expression u, Expression S) {
 		if(S.kind != Kind.SET)
 			return bool_false();
@@ -77,7 +91,7 @@ namespace Iko.CAS.Library {
 		}
 	}
 
-	public Expression set_union(Expression a, Expression b) {
+	Expression set_union(Expression a, Expression b) {
 		List r;
 
 		if(a.kind != Kind.SET)

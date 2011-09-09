@@ -97,6 +97,14 @@ public function list(e) {
 	}
 }
 
+public function max(S) {
+	return set_max(S);
+}
+
+public function member(u, S) {
+	return set_member(u, S);
+}
+
 public function op(e, n) {
 	vala {
 		if(!(e is List))
@@ -224,6 +232,10 @@ public function subs(e, u, v) {
 	}
 }
 
+public function union(A, B) {
+	return set_union(A, B);
+}
+
 public function variables(u) {
 	vala {
 		switch(u.kind) {
@@ -235,7 +247,7 @@ public function variables(u) {
 			var l = u as List;
 			Expression r = new List.from_empty(Kind.SET);
 			foreach(var e in l)
-				r = set_union(r, variables(e));
+				r = union(r, variables(e));
 			return r;
 		default:
 			return new List.from_empty(Kind.SET);
