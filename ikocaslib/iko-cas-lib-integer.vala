@@ -11,7 +11,7 @@ namespace Iko.CAS.Library {
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
+			throw new Error.RUNTIME("%s: Arguments must be integers\n", Log.METHOD);
 
 		var mpp = int_one();
 		var mp = int_zero();
@@ -52,7 +52,7 @@ namespace Iko.CAS.Library {
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
+			throw new Error.RUNTIME("%s: Arguments must be integers\n", Log.METHOD);
 
 		return Integer.gcd(a, b);
 	}
@@ -62,7 +62,7 @@ namespace Iko.CAS.Library {
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
+			throw new Error.RUNTIME("%s: Arguments must be integers\n", Log.METHOD);
 
 		return Integer.lcm(a, b);
 	}
@@ -72,7 +72,7 @@ namespace Iko.CAS.Library {
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
+			throw new Error.RUNTIME("%s: Arguments must be integers\n", Log.METHOD);
 
 		if(Integer.cmp(b, int_zero()) == 0)
 			return undefined();
@@ -85,7 +85,7 @@ namespace Iko.CAS.Library {
 		var b = x2 as Integer;
 
 		if(a == null || b == null)
-			throw new Error.RUNTIME("%s:line %d: Arguments must be integers", Log.FILE, Log.LINE);
+			throw new Error.RUNTIME("%s: Arguments must be integers\n", Log.METHOD);
 
 		if(Integer.cmp(b, int_zero()) == 0)
 			return undefined();
