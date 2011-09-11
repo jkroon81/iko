@@ -6,6 +6,15 @@
  */
 
 namespace Iko.CAS.Library {
+	public Expression i_abs(Expression x) throws Error {
+		var a = x as Integer;
+
+		if(a == null)
+			throw new Error.RUNTIME("%s: Argument must be integer\n", Log.METHOD);
+
+		return Integer.abs(a);
+	}
+
 	public Expression i_ext_euc_alg(Expression x1, Expression x2) throws Error {
 		var a = x1 as Integer;
 		var b = x2 as Integer;

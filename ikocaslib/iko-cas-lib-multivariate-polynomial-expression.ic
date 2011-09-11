@@ -5,6 +5,25 @@
 #   Jacob Kroon <jacob.kroon@gmail.com>
 #
 
+public function mpe_cont(u, x, R, K) {
+	if(u == 0)
+		return 0;
+
+	if(gpe_is_monomial(u, x)) {
+		c = gpe_lc(u, x);
+		return mpe_normalize(c, R, K);
+	} else if(gpe_is_polynomial(u, x)) {
+		r = 0;
+		m = gpe_degree(u, x);
+		for(n = 0 to m) {
+			c = gpe_coefficient(u, x, n);
+			r = mpe_gcd(c, r, R, K);
+		}
+		return r;
+	} else
+		return Undefined;
+}
+
 public function mpe_division_mb(u, v, L) {
 	q = 0;
 	r = u;
@@ -81,6 +100,45 @@ public function mpe_expansion(u, v, L, t) {
 	}
 }
 
+public function mpe_gcd(u, v, L, K) {
+	if(u == 0)
+		return mpe_normalize(v, L, K);
+	else if(v == 0)
+		return mpe_normalize(u, L, K);
+	else return mpe_normalize(mpe_gcd_rec(u, v, L, K), L, K);
+}
+
+function mpe_gcd_rec(u, v, L, K) {
+	if(L == []) {
+		if(sname(K) == "Z")
+			return i_gcd(u, v);
+		else if(sname(K) == "Q")
+			return 1;
+		else
+			error "'K' must be either 'Q' or 'Z'";
+	} else {
+		x = L[1];
+		R = rest(L);
+		cont_u = mpe_cont(u, x, R, K);
+		cont_v = mpe_cont(v, x, R, K);
+		d = mpe_gcd_rec(cont_u, cont_v, R, K);
+		pp_u = mpe_division_rec(u, cont_u, L, K)[1];
+		pp_v = mpe_division_rec(v, cont_v, L, K)[1];
+		while(pp_v <> 0) {
+			r = mpe_division_pseudo(pp_u, pp_v, x)[2];
+			if(r == 0)
+				pp_r = 0;
+			else {
+				cont_r = mpe_cont(r, x, R, K);
+				pp_r = mpe_division_rec(r, cont_r, L, K)[1];
+			}
+			pp_u = pp_v;
+			pp_v = pp_r;
+		}
+		return expand(d * pp_u);
+	}
+}
+
 function mpe_G(u, v) {
 	if(u is sum) {
 		r = 0;
@@ -107,5 +165,23 @@ public function mpe_lm(u, L) {
 		m = gpe_degree(u, x);
 		c = gpe_coefficient(u, x, m);
 		return x^m * mpe_lm(c, rest(L));
+	}
+}
+
+function mpe_normalize(u, L, K) {
+	if(L == []) {
+		if(sname(K) == "Z")
+			return i_abs(u);
+		else if(sname(K) == "Q")
+			return 1;
+		else
+			error "'K' must be either 'Z' or 'Q'";
+	} else {
+		x = L[1];
+		R = rest(L);
+		m = gpe_degree(u, x);
+		c = gpe_coefficient(u, x, m);
+		n = mpe_normalize(c, R, K);
+		return expand(u * mpe_division_rec(n, c, R, K)[1]);
 	}
 }
