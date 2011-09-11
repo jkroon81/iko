@@ -4,5 +4,6 @@ test-algebraic
 test-big-number
 test-constant-folding
 test-multiplication
+test-multivariate-polynomial
 test-power
 transformer

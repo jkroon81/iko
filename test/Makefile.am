@@ -7,6 +7,7 @@ check_PROGRAMS = \
 	test-big-number \
 	test-constant-folding \
 	test-multiplication \
+	test-multivariate-polynomial \
 	test-power
 
 icas_CFLAGS = \
@@ -51,6 +52,10 @@ test_multiplication_SOURCES = \
 	test-common.vala \
 	test-multiplication.vala
 
+test_multivariate_polynomial_SOURCES = \
+	test-common.vala \
+	test-multivariate-polynomial.vala
+
 test_power_SOURCES = \
 	test-common.vala \
 	test-power.vala
@@ -79,6 +84,7 @@ TESTS = \
 	test-big-number \
 	test-constant-folding \
 	test-multiplication \
+	test-multivariate-polynomial \
 	test-power
 
 XFAIL_TESTS = \
