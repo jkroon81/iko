@@ -158,7 +158,15 @@ function mpe_gcd_rec(u, v, L, K) {
 	}
 }
 
-function mpe_gcd_rec_sr(u, v, L, K) {
+public function mpe_gcd_sr(u, v, L, K) {
+	if(u == 0)
+		return mpe_normalize(v, L, K);
+	else if(v == 0)
+		return mpe_normalize(u, L, K);
+	else return mpe_normalize(mpe_gcd_sr_rec(u, v, L, K), L, K);
+}
+
+function mpe_gcd_sr_rec(u, v, L, K) {
 	if(L == []) {
 		if(sname(K) == "Z")
 			return i_gcd(u, v);
@@ -181,10 +189,10 @@ function mpe_gcd_rec_sr(u, v, L, K) {
 		}
 		cont_U = mpe_cont_sr(U, x, R, K);
 		cont_V = mpe_cont_sr(V, x, R, K);
-		d = mpe_gcd_rec_sr(cont_U, cont_V, R, K);
+		d = mpe_gcd_sr_rec(cont_U, cont_V, R, K);
 		U = mpe_division_rec(U, cont_U, L, K)[1];
 		V = mpe_division_rec(V, cont_V, L, K)[1];
-		g = mpe_gcd_rec_sr(gpe_lc(U, x), gpe_lc(V, x), R, K);
+		g = mpe_gcd_sr_rec(gpe_lc(U, x), gpe_lc(V, x), R, K);
 		i = 1;
 		while(V <> 0) {
 			r = mpe_division_pseudo(U, V, x)[2];
@@ -214,14 +222,6 @@ function mpe_gcd_rec_sr(u, v, L, K) {
 		pp_W = mpe_division_rec(W, cont_W, L, K)[1];
 		return expand(d * pp_W);
 	}
-}
-
-public function mpe_gcd_sr(u, v, L, K) {
-	if(u == 0)
-		return mpe_normalize(v, L, K);
-	else if(v == 0)
-		return mpe_normalize(u, L, K);
-	else return mpe_normalize(mpe_gcd_rec_sr(u, v, L, K), L, K);
 }
 
 function mpe_G(u, v) {
