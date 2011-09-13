@@ -175,9 +175,6 @@ function mpe_gcd_sr_rec(u, v, L, K) {
 		else
 			error "'K' must be either 'Q' or 'Z'";
 	} else {
-		sigma = 0;
-		beta = 0;
-		phi = 0;
 		x = L[1];
 		R = rest(L);
 		if(gpe_degree(u, x) >= gpe_degree(v, x)) {
@@ -193,6 +190,9 @@ function mpe_gcd_sr_rec(u, v, L, K) {
 		U = mpe_division_rec(U, cont_U, L, K)[1];
 		V = mpe_division_rec(V, cont_V, L, K)[1];
 		g = mpe_gcd_sr_rec(gpe_lc(U, x), gpe_lc(V, x), R, K);
+		sigma = 0;
+		beta = 0;
+		phi = 0;
 		i = 1;
 		while(V <> 0) {
 			r = mpe_division_pseudo(U, V, x)[2];
