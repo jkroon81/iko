@@ -264,8 +264,7 @@ function mpe_normalize(u, L, K) {
 	} else {
 		x = L[1];
 		R = rest(L);
-		m = gpe_degree(u, x);
-		c = gpe_coefficient(u, x, m);
+		c = gpe_lc(u, x);
 		n = mpe_normalize(c, R, K);
 		return expand(u * mpe_division_rec(n, c, R, K)[1]);
 	}
