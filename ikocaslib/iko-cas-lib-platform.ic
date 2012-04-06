@@ -122,6 +122,13 @@ public function op(e, n) {
 	}
 }
 
+public function print(e) {
+	vala {
+		stdout.printf(e.to_string());
+		return bool_true();
+	}
+}
+
 public function rest(e) {
 	vala {
 		if(e.kind != Kind.LIST)
