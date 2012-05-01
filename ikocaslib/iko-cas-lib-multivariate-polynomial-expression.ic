@@ -254,18 +254,30 @@ public function mpe_lm(u, L) {
 }
 
 function mpe_normalize(u, L, K) {
+	if(u == 0)
+		return 0;
+	else
+		return expand(u * mpe_unit_normal(u, L, K));
+}
+
+function mpe_unit_normal(u, L, K) {
 	if(L == []) {
 		if(sname(K) == "Z")
-			return i_abs(u);
+			if(u >= 0)
+				return 1;
+			else
+				return -1;
 		else if(sname(K) == "Q")
-			return 1;
+			if(u >= 0)
+				return u^-1;
+			else
+				return -u^-1;
 		else
 			error "'K' must be either 'Z' or 'Q'";
 	} else {
 		x = L[1];
 		R = rest(L);
 		c = gpe_lc(u, x);
-		n = mpe_normalize(c, R, K);
-		return expand(u * mpe_division_rec(n, c, R, K)[1]);
+		return mpe_unit_normal(c, R, K);
 	}
 }
