@@ -8,7 +8,7 @@
 using GI;
 
 namespace Iko.CAS.Library {
-	static const string[] black_list = {
+	const string[] black_list = {
 		"get_functions",
 		"init"
 	};
@@ -20,6 +20,7 @@ namespace Iko.CAS.Library {
 			var typelib = Typelib.new_from_const_memory(Data.ikocaslib_1_0_typelib);
 			repo.load_typelib(typelib, RepositoryLoadFlags.LAZY);
 		} catch(RepositoryError e) {
+			stdout.printf("Repository error: %s\n", e.message);
 			return false;
 		}
 		return true;

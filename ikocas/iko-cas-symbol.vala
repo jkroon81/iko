@@ -39,7 +39,7 @@ public class Iko.CAS.Symbol : AtomicExpression {
 		try {
 			((FunctionInfo)info).invoke(arg_in, null, out retval);
 		} catch (InvokeError e) {
-			throw new Error.RUNTIME("Invalid arguments to function '%s'\n", name);
+			throw new Error.RUNTIME("Error invoking '%s': %s'\n", name, e.message);
 		}
 
 		return (retval.pointer as Expression);

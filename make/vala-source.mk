@@ -1,0 +1,1 @@
+../../nonrec-make/make/vala-source.mk

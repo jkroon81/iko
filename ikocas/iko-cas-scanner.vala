@@ -31,7 +31,7 @@ public class Iko.CAS.Scanner : Object {
 
 		str = text.dup();
 		end = (char*)str + str.length;
-		current_line = current = str;
+		current_line = current = (char*)str;
 		line = column = 1;
 	}
 

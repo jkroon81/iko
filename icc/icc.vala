@@ -10,10 +10,8 @@ public errordomain Error {
 }
 
 int main(string[] args) {
-	int i;
-
-	if(args.length == 1) {
-		stdout.printf("Usage: icc infile...\n");
+	if(args.length != 3) {
+		stdout.printf("Usage: icc <infile> <outfile>\n");
 		return 0;
 	}
 
@@ -21,17 +19,15 @@ int main(string[] args) {
 
 	var parser = new Iko.CAS.Parser();
 	var vala = new ValaWriter();
-	for(i = 1; i < args.length; i++) {
-		try {
-			parser.set_source_from_file(args[i]);
-			vala.compile(parser.parse_root(), args[i].replace(".ic", ".vala"));
-		} catch(Iko.CAS.Error e) {
-			stdout.printf("icc: %s\n", e.message);
-			return -1;
-		} catch(Error e) {
-			stdout.printf("icc: %s\n", e.message);
-			return -1;
-		}
+	try {
+		parser.set_source_from_file(args[1]);
+		vala.compile(parser.parse_root(), args[2]);
+	} catch(Iko.CAS.Error e) {
+		stdout.printf("icc: %s\n", e.message);
+		return -1;
+	} catch(Error e) {
+		stdout.printf("icc: %s\n", e.message);
+		return -1;
 	}
 
 	return 0;

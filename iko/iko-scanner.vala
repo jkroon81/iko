@@ -28,7 +28,7 @@ public class Iko.Scanner : Object {
 		Object(source : "(string)");
 
 		end = (char*)code + code.length;
-		current = code;
+		current = (char*)code;
 		line = column = 1;
 	}
 

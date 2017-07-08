@@ -28,6 +28,7 @@ namespace TestCommon {
 			rhs_gen = Iko.CAS.Library.simplify(rhs).to_string();
 			t.stop();
 		} catch(Iko.CAS.Error e) {
+			stdout.printf("Error: %s", e.message);
 			assert_not_reached();
 		}
 
