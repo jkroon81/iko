@@ -1,5 +1,5 @@
 ld-sharedlib := ikoast
-ikoast-sources := $(notdir $(wildcard $(srcdir)/*.vala))
+ikoast-sources := $(sort $(notdir $(wildcard $(srcdir)/*.vala)))
 ikoast-vala-sharedlibs := \
 	$(top-builddir)/iko/iko \
 	$(top-builddir)/ikocas/ikocas

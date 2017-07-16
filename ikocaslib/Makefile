@@ -1,5 +1,6 @@
 ld-sharedlib := ikocaslib
-ic-vala-sources := $(patsubst %.ic,%.vala,$(notdir $(wildcard $(srcdir)/*.ic)))
+ic-vala-sources := $(patsubst %.ic,%.vala,\
+  $(sort $(notdir $(wildcard $(srcdir)/*.ic))))
 ikocaslib-ccflags := \
 	$(shell pkg-config gobject-introspection-1.0 --cflags) \
 	-I$(top-srcdir)/ikocaslib \

@@ -1,5 +1,5 @@
 ld-sharedlib := ikocas
-ikocas-sources := $(notdir $(wildcard $(srcdir)/*.vala))
+ikocas-sources := $(sort $(notdir $(wildcard $(srcdir)/*.vala)))
 ikocas-ldflags := $(shell pkg-config gobject-introspection-1.0 --libs) -lgmp
 ikocas-valaflags := \
 	--pkg=gi \
